@@ -1,0 +1,27 @@
+name: Validate lab
+
+# Lints the lab on every pull request (and on demand) so a broken lab is caught
+# before it merges — not just at deploy time. Uses the prebuilt authoring image,
+# so there's nothing to install.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Validate lab
+        # Pin the tag to a released version to match your deploy (e.g. ":1").
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/lab:/lab:ro" \
+            "${SIMSPACE_AUTHORING_IMAGE:-dockersamples/simspace-authoring:latest}" \
+            npm run validate-lab -- /lab
+        env:
+          SIMSPACE_AUTHORING_IMAGE: dockersamples/simspace-authoring:latest
