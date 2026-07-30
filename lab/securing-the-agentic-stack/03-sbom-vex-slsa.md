@@ -1,5 +1,10 @@
 # Lab 1 — What Is In It? SBOM, VEX, SLSA
 
+```mermaid no-run-button
+flowchart LR
+  A([✅ Agent build]) --> B([📍 SBOM · VEX · SLSA]) --> C([Hardened base]) --> D([Sign &amp; Gate]) --> E([Agentic MCP])
+```
+
 **16 minutes · hands-on**
 
 Before you fix anything, you need to be able to describe what is wrong. This lab is the

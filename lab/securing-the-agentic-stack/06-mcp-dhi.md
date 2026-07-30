@@ -1,6 +1,28 @@
 # Lab 4 — Securing the Agentic Stack
 
+```mermaid no-run-button
+flowchart LR
+  A([✅ Agent build]) --> B([✅ SBOM · VEX · SLSA]) --> C([✅ Hardened base]) --> D([✅ Sign &amp; Gate]) --> E([📍 Agentic MCP])
+```
+
 **14 minutes · hands-on**
+
+Now an agent — not a human — decides when to invoke the catalog. The Gateway
+verifies the server's signature before it runs, and the server itself is hardened
+and sandboxed around the same database:
+
+```mermaid no-run-button
+flowchart TB
+  AG[AI Agent] --> GW{{MCP Gateway · verify signatures}}
+  GW -->|verified| SRV
+  GW -->|refuses| BAD([❌ unsigned / tampered])
+  subgraph box["🔒 catalog-mcp:dhi — read_only · cap_drop ALL · no-new-privileges"]
+    SRV([catalog-mcp]) --> T1[list_products]
+    SRV --> T2[search_products]
+    SRV --> T3[get_product]
+  end
+  SRV --> PG[(PostgreSQL · same catalog DB)]
+```
 
 Everything so far has been about an image *you* build and *a human* decides to deploy.
 Now the catalog gets a second consumer, and the human leaves the loop entirely.

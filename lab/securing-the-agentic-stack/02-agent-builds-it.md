@@ -1,7 +1,28 @@
 # An Agent Built This
 
+```mermaid no-run-button
+flowchart LR
+  A([📍 Agent build]) --> B([SBOM · VEX · SLSA]) --> C([Hardened base]) --> D([Sign &amp; Gate]) --> E([Agentic MCP])
+```
+
 You are going to give an AI agent one instruction and watch it containerise the whole
 service - with no mention of base images, versions, security, or best practice.
+
+Here is the stack it has to reason about — a backend API fronted by a UI, talking to
+PostgreSQL, Kafka, LocalStack (S3) and WireMock:
+
+```mermaid no-run-button
+flowchart TB
+  subgraph img["🖼️ catalog-service:baseline &nbsp;(node:20 · ~1.1GB · 431 pkgs)"]
+    FE[Frontend] --> BE[Backend API]
+  end
+  BE --> PG[(PostgreSQL)]
+  BE --> KA{{Kafka}}
+  BE --> LS[LocalStack S3]
+  BE --> WM[WireMock]
+  classDef box fill:#fff,stroke:#8c959f,color:#24292f
+  class FE,BE,PG,KA,LS,WM box
+```
 
 ## Ask the agent to containerise it
 

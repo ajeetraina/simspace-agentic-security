@@ -18,7 +18,9 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./lab:/usr/local/app/public/lab
+      # The dev server generates /labs.json from public/labs/*/labspace.yaml, so
+      # mount our lab collection there (plural) for it to appear in the catalog.
+      - ./lab:/usr/local/app/public/labs
 
   # One-shot validator. Run with `docker compose run --rm validate`.
   validate:

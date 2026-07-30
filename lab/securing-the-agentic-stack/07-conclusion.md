@@ -1,5 +1,10 @@
 # Conclusion
 
+```mermaid no-run-button
+flowchart LR
+  A([✅ Agent build]) --> B([✅ SBOM · VEX · SLSA]) --> C([✅ Hardened base]) --> D([✅ Sign &amp; Gate]) --> E([✅ Agentic MCP])
+```
+
 ## What you did to one application
 
 | Stage | The catalog | What you could prove |

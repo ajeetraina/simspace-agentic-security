@@ -1,6 +1,26 @@
 # Lab 2 — Start From a Trusted Base
 
+```mermaid no-run-button
+flowchart LR
+  A([✅ Agent build]) --> B([✅ SBOM · VEX · SLSA]) --> C([📍 Hardened base]) --> D([Sign &amp; Gate]) --> E([Agentic MCP])
+```
+
 **16 minutes · hands-on**
+
+The migration in one picture — a builder stage with a shell and npm produces
+`node_modules`, and only that output is copied into a distroless runtime:
+
+```mermaid no-run-button
+flowchart LR
+  subgraph dev["🛠️ builder — node:24-debian13-dev"]
+    D1[shell + npm] --> D2[npm ci --production]
+  end
+  D2 -->|"COPY --from · node_modules only"| F
+  subgraph final["🔒 final — node:24-debian13 · distroless · 248MB"]
+    F[node_modules + src] --> RUN[node src/index.js]
+    NS([no shell · no npm · no curl])
+  end
+```
 
 This is the pivot of the workshop. You spent Lab 1 learning to measure an image. Now you
 change one thing about where it starts, and measure it again.

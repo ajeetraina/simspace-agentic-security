@@ -1,6 +1,21 @@
 # Lab 3 — Sign It, Then Gate It
 
+```mermaid no-run-button
+flowchart LR
+  A([✅ Agent build]) --> B([✅ SBOM · VEX · SLSA]) --> C([✅ Hardened base]) --> D([📍 Sign &amp; Gate]) --> E([Agentic MCP])
+```
+
 **10 minutes · demo, with two hands-on steps**
+
+The pipeline you are about to build — the gate sits **before** the push, so an
+image that fails policy never reaches the registry:
+
+```mermaid no-run-button
+flowchart LR
+  P[git push] --> BLD[build · sbom · provenance] --> G{policy gate}
+  G -->|pass| S[cosign sign] --> R[(registry)]
+  G -->|fail| X([❌ blocked — never pushed])
+```
 
 You have a hardened, attested image. Nothing yet stops the next person merging a
 Dockerfile that undoes it.
