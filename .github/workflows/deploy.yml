@@ -19,7 +19,7 @@ jobs:
   deploy:
     uses: dockersamples/simspace/.github/workflows/deploy-lab.yml@main
     with:
-      lab-dir: lab
+      labs-dir: lab
       # Pin to a released version for stable labs, e.g. "1". "latest" tracks the
       # newest runtime — convenient, but the app can change under you.
       runtime-tag: "latest"
