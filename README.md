@@ -1,12 +1,25 @@
-# My Simspace lab
+# Securing the Agentic Stack — a Simspace lab
 
 An interactive, fully in-browser lab built on
 [Simspace](https://github.com/dockersamples/simspace). Everything in the terminal
 is simulated — no real Docker, backend, or network — so it runs the same for
 everyone, with nothing to install.
 
-You edit the lab under [`lab/`](lab/); the app that runs it is a prebuilt image,
-and the lab is loaded at runtime, so there's no build step for content.
+**The story:** an AI agent containerises a real Node.js catalog service — frontend,
+backend, Kafka, LocalStack and WireMock — without supervision. Over eight sections
+you turn what it shipped into a signed, attested, policy-gated artifact, then extend
+the same guarantees to the tools the agent itself calls:
+
+1. **An Agent Built This** — prompt the agent (`claude -p "…"`) and watch it build
+2. **SBOM, VEX, SLSA** — learn to measure what's inside the image
+3. **Start From a Trusted Base** — migrate to Docker Hardened Images (the pivot)
+4. **Sign It, Then Gate It** — cosign + a Scout policy gate in CI
+5. **Securing the Agentic Stack** — a hardened, sandboxed MCP server
+
+The lab lives under [`lab/securing-the-agentic-stack/`](lab/securing-the-agentic-stack/):
+`labspace.yaml` (config + seeded virtual filesystem), `simulator.yaml` (command
+behaviour), and one markdown file per section. It's loaded at runtime by a prebuilt
+image, so there's no build step for content.
 
 ## Author locally
 
@@ -17,11 +30,12 @@ docker compose up dev              # live preview at http://localhost:5173
 docker compose run --rm validate   # lint the lab (fails on errors)
 ```
 
-Edit the files in `lab/` and refresh the browser to see changes:
+Edit the files under `lab/securing-the-agentic-stack/` and refresh the browser to
+see changes:
 
-- `lab/labspace.yaml` — title, terminals, seed files, sections, variables
-- `lab/simulator.yaml` — what each command does (scenarios)
-- `lab/*.md` — one file per section of instructions
+- `labspace.yaml` — title, terminals, seed files, sections, variables
+- `simulator.yaml` — what each command does (scenarios)
+- `*.md` — one file per section of instructions
 
 Pin the toolchain to a released version for reproducibility:
 

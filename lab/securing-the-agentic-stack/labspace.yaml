@@ -1,0 +1,200 @@
+title: "Securing the Agentic Stack"
+description: >
+  An AI agent containerised a real Node.js application - frontend, backend, Kafka,
+  LocalStack and WireMock - without supervision. Over the next ninety minutes you turn
+  what it shipped into a signed, attested, policy-gated artifact, then extend the same
+  guarantees to the tools the agent calls.
+
+# Command behaviour lives in simulator.yaml (relative to this file).
+simulator: simulator.yaml
+
+# Two terminals share one virtual machine and filesystem.
+terminals:
+  - id: main
+    title: Terminal
+    icon: terminal
+  - id: build
+    title: Build
+    icon: deployed_code
+
+# Seed the virtual filesystem. Built-in `ls`/`cat` reflect these immediately; the
+# agent (and later save-as blocks) add more files on top.
+files:
+  README.md: |
+    # catalog-service-node
+
+    Product Catalog service: a REST API over a PostgreSQL product database, wired to
+    Kafka (events), LocalStack (S3 uploads) and WireMock (an upstream pricing API).
+
+    Local stack:  docker compose up
+    API:          http://localhost:3050/api/products
+
+    You did not containerise this. An agent did. See the workshop.
+  package.json: |
+    {
+      "name": "catalog-service-node",
+      "version": "1.0.0",
+      "description": "Product Catalog REST API over Postgres, with Kafka, LocalStack (S3) and WireMock",
+      "main": "src/index.js",
+      "scripts": {
+        "start": "node src/index.js",
+        "dev": "nodemon src/index.js",
+        "test": "vitest run"
+      },
+      "dependencies": {
+        "express": "^4.19.2",
+        "pg": "^8.11.5",
+        "kafkajs": "^2.2.4",
+        "@aws-sdk/client-s3": "^3.588.0",
+        "axios": "^1.7.2",
+        "dotenv": "^16.4.5",
+        "pino": "^9.1.0"
+      },
+      "devDependencies": {
+        "nodemon": "^3.1.0",
+        "vitest": "^1.6.0"
+      }
+    }
+  src/index.js: |
+    const express = require("express");
+    const { Pool } = require("pg");
+    const { Kafka } = require("kafkajs");
+    const axios = require("axios");
+
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const kafka = new Kafka({ brokers: [process.env.KAFKA_BROKER || "kafka:9092"] });
+    const upstream = process.env.CATALOG_UPSTREAM || "http://wiremock:8080";
+
+    const app = express();
+    app.use(express.json());
+
+    app.get("/api/products", async (_req, res) => {
+      const { rows } = await pool.query("SELECT * FROM products ORDER BY id");
+      res.json(rows);
+    });
+
+    app.get("/api/products/:id", async (req, res) => {
+      const { rows } = await pool.query("SELECT * FROM products WHERE id = $1", [req.params.id]);
+      if (!rows.length) return res.status(404).json({ error: "not found" });
+      // upstream pricing comes from WireMock in dev
+      const price = await axios.get(`${upstream}/price/${req.params.id}`).then(r => r.data).catch(() => null);
+      res.json({ ...rows[0], price });
+    });
+
+    app.listen(3000, () => console.log("catalog-service listening on :3000"));
+  compose.yaml: |
+    services:
+      frontend:
+        build: ./frontend
+        ports: ["3000:3000"]
+        depends_on: [backend]
+
+      backend:
+        build: .
+        ports: ["3050:3000"]
+        environment:
+          DATABASE_URL: postgres://postgres:postgres@postgres:5432/catalog
+          KAFKA_BROKER: kafka:9092
+          AWS_ENDPOINT: http://localstack:4566
+          CATALOG_UPSTREAM: http://wiremock:8080
+        depends_on: [postgres, kafka, localstack, wiremock]
+
+      postgres:
+        image: postgres:16
+        environment:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: catalog
+
+      kafka:
+        image: confluentinc/cp-kafka:7.6.0
+
+      localstack:
+        image: localstack/localstack:3
+        environment:
+          SERVICES: s3
+
+      wiremock:
+        image: wiremock/wiremock:3.5.4
+        command: ["--global-response-templating"]
+  docker-scout-policy.yaml: |
+    version: "1"
+    policies:
+      - name: no-critical-cves
+        type: vulnerability
+        severity: critical
+        action: fail
+
+      - name: require-sbom
+        type: attestation
+        attestation: sbom
+        action: fail
+
+      - name: require-provenance
+        type: attestation
+        attestation: slsa-provenance
+        action: fail
+  mcp/requirements.txt: |
+    mcp==1.2.0
+    asyncpg==0.29.0
+  mcp/src/catalog_mcp.py: |
+    import os
+    import asyncpg
+    from mcp.server.fastmcp import FastMCP
+
+    # The process holds a database connection string. This is the thing an attacker
+    # wants, and the thing you are about to hand to an agent.
+    DATABASE_URL = os.environ["DATABASE_URL"]
+
+    mcp = FastMCP("catalog")
+
+    @mcp.tool()
+    async def list_products() -> list:
+        """List every product in the catalog."""
+        conn = await asyncpg.connect(DATABASE_URL)
+        rows = await conn.fetch("SELECT id, name, price FROM products ORDER BY id")
+        await conn.close()
+        return [dict(r) for r in rows]
+
+    @mcp.tool()
+    async def search_products(q: str) -> list:
+        """Search products by name."""
+        conn = await asyncpg.connect(DATABASE_URL)
+        rows = await conn.fetch("SELECT id, name, price FROM products WHERE name ILIKE $1", f"%{q}%")
+        await conn.close()
+        return [dict(r) for r in rows]
+
+    @mcp.tool()
+    async def get_product(id: int) -> dict:
+        """Get one product by id."""
+        conn = await asyncpg.connect(DATABASE_URL)
+        row = await conn.fetchrow("SELECT * FROM products WHERE id = $1", id)
+        await conn.close()
+        return dict(row) if row else {}
+
+    if __name__ == "__main__":
+        mcp.run()
+
+# Ordered instruction pages (markdown), rendered in the left-hand panel.
+sections:
+  - title: Introduction
+    contentPath: 00-introduction.md
+  - title: Setup
+    contentPath: 01-setup.md
+  - title: "An Agent Built This"
+    contentPath: 02-agent-builds-it.md
+  - title: "Lab 1 - SBOM, VEX, SLSA"
+    contentPath: 03-sbom-vex-slsa.md
+  - title: "Lab 2 - Start From a Trusted Base"
+    contentPath: 04-dhi-migration.md
+  - title: "Lab 3 - Sign It, Then Gate It"
+    contentPath: 05-ci-policy.md
+  - title: "Lab 4 - Securing the Agentic Stack"
+    contentPath: 06-mcp-dhi.md
+  - title: Conclusion
+    contentPath: 07-conclusion.md
+
+# $$name$$ in markdown is replaced with these values. `org` is overridden by the
+# :variableDefinition prompt in Setup.
+variables:
+  org: demo-org
+  dhiPrefix: "dhi.io/"
