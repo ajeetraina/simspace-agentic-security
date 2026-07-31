@@ -1,21 +1,61 @@
 # Lab 3 — Sign It, Then Gate It
 
-```mermaid no-run-button
-flowchart LR
-  A([✅ Agent build]) --> B([✅ SBOM · VEX · SLSA]) --> C([✅ Hardened base]) --> D([📍 Sign &amp; Gate]) --> E([Agentic MCP])
-```
+<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, current Sign &amp; Gate, Agentic MCP">
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
+    <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="85" y="30" fill="#14532d">✓ Agent build</text>
+    <polygon points="172,22 180,26 172,30" fill="#9aa4b2"></polygon>
+    <rect x="184" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="268" y="30" fill="#14532d">✓ SBOM · VEX · SLSA</text>
+    <polygon points="355,22 363,26 355,30" fill="#9aa4b2"></polygon>
+    <rect x="367" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="451" y="30" fill="#14532d">✓ Hardened base</text>
+    <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
+    <rect x="550" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
+    <text x="634" y="30" fill="#ffffff" font-weight="700">Sign &amp; Gate</text>
+    <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
+    <rect x="733" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="817" y="30" fill="#5b6670">Agentic MCP</text>
+  </g>
+</svg>
 
 **10 minutes · demo, with two hands-on steps**
 
 The pipeline you are about to build — the gate sits **before** the push, so an
 image that fails policy never reaches the registry:
 
-```mermaid no-run-button
-flowchart LR
-  P[git push] --> BLD[build · sbom · provenance] --> G{policy gate}
-  G -->|pass| S[cosign sign] --> R[(registry)]
-  G -->|fail| X([❌ blocked — never pushed])
-```
+<svg viewBox="0 0 720 150" width="100%" role="img" aria-label="CI pipeline: git push, then build with SBOM and provenance, then a policy gate. On pass: cosign sign then push to registry. On fail: blocked, never pushed.">
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+    <rect x="8" y="54" width="96" height="34" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="56" y="75" text-anchor="middle" fill="#24292f">git push</text>
+    <rect x="128" y="54" width="176" height="34" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="216" y="75" text-anchor="middle" fill="#24292f">build · sbom · provenance</text>
+    <rect x="328" y="54" width="116" height="34" rx="6" fill="#fff7ed" stroke="#d97706"></rect>
+    <text x="386" y="75" text-anchor="middle" fill="#9a3412" font-weight="700">policy gate</text>
+    <rect x="486" y="14" width="104" height="34" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="538" y="35" text-anchor="middle" fill="#24292f">cosign sign</text>
+    <rect x="612" y="14" width="100" height="34" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="662" y="35" text-anchor="middle" fill="#24292f">registry</text>
+    <rect x="486" y="94" width="226" height="34" rx="6" fill="#fdecea" stroke="#b91c1c"></rect>
+    <text x="599" y="115" text-anchor="middle" fill="#b91c1c" font-weight="700">blocked — never pushed</text>
+    <g stroke="#6b7280" stroke-width="1.5" fill="none">
+      <line x1="104" y1="71" x2="126" y2="71"></line>
+      <line x1="304" y1="71" x2="326" y2="71"></line>
+      <path d="M444,71 L466,71 L466,31 L484,31"></path>
+      <line x1="590" y1="31" x2="610" y2="31"></line>
+      <path d="M444,71 L466,71 L466,111 L484,111"></path>
+    </g>
+    <g fill="#6b7280">
+      <polygon points="120,67 128,71 120,75"></polygon>
+      <polygon points="320,67 328,71 320,75"></polygon>
+      <polygon points="478,27 486,31 478,35"></polygon>
+      <polygon points="604,27 612,31 604,35"></polygon>
+      <polygon points="478,107 486,111 478,115"></polygon>
+    </g>
+    <text x="472" y="20" font-size="10" fill="#1a7f37" font-weight="700">pass</text>
+    <text x="472" y="106" font-size="10" fill="#b91c1c" font-weight="700">fail</text>
+  </g>
+</svg>
 
 You have a hardened, attested image. Nothing yet stops the next person merging a
 Dockerfile that undoes it.

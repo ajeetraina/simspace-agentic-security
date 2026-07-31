@@ -1,9 +1,23 @@
 # Conclusion
 
-```mermaid no-run-button
-flowchart LR
-  A([✅ Agent build]) --> B([✅ SBOM · VEX · SLSA]) --> C([✅ Hardened base]) --> D([✅ Sign &amp; Gate]) --> E([✅ Agentic MCP])
-```
+<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Sign &amp; Gate, done Agentic MCP">
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
+    <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="85" y="30" fill="#14532d">✓ Agent build</text>
+    <polygon points="172,22 180,26 172,30" fill="#9aa4b2"></polygon>
+    <rect x="184" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="268" y="30" fill="#14532d">✓ SBOM · VEX · SLSA</text>
+    <polygon points="355,22 363,26 355,30" fill="#9aa4b2"></polygon>
+    <rect x="367" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="451" y="30" fill="#14532d">✓ Hardened base</text>
+    <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
+    <rect x="550" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="634" y="30" fill="#14532d">✓ Sign &amp; Gate</text>
+    <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
+    <rect x="733" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="817" y="30" fill="#14532d">✓ Agentic MCP</text>
+  </g>
+</svg>
 
 ## What you did to one application
 
