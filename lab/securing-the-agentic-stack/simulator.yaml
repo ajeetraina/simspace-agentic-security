@@ -148,6 +148,19 @@ scenarios:
         - { text: "  => naming to docker.io/library/catalog-service:baseline", delay: short }
         - ""
         - "● Done. Built catalog-service:baseline. It runs; nothing failed."
+        - ""
+        - { text: "  ┌── what the agent built ─────────────────────────────", delay: short }
+        - "  │"
+        - "  │   image      catalog-service:baseline"
+        - "  │   base       node:20   (~1.1GB, 431 packages)"
+        - "  │"
+        - "  │   contains   Frontend  ->  Backend API  (Express / Node.js)"
+        - "  │   talks to   PostgreSQL / Kafka / LocalStack (S3) / WireMock"
+        - "  │"
+        - "  │   evidence   SBOM [x]   provenance [x]   signature [x]   -- none yet"
+        - { text: "  └─────────────────────────────────────────────────────", delay: short }
+        - ""
+        - "Run  tree  to see the files, or carry on to measure this image."
 
   - id: agent-containerise-prompt
     when:
@@ -161,6 +174,72 @@ scenarios:
     then:
       output:
         - "Usage: claude -p \"<prompt>\"  (run the agent with a single instruction)"
+
+  # Project structure. After the agent builds, the tree includes the Dockerfile
+  # it wrote; before that, the source tree only.
+  - id: tree-built
+    when:
+      command: [tree]
+      state: { baseline.built: true }
+    then:
+      output:
+        - "."
+        - "├── Dockerfile              ← the agent added this"
+        - "├── compose.yaml"
+        - "├── package.json"
+        - "├── package-lock.json"
+        - "├── docker-scout-policy.yaml"
+        - "├── README.md"
+        - "├── src"
+        - "│   ├── index.js"
+        - "│   ├── routes"
+        - "│   │   └── products.js"
+        - "│   ├── db"
+        - "│   │   └── pool.js"
+        - "│   └── events"
+        - "│       └── kafka.js"
+        - "├── frontend"
+        - "│   ├── Dockerfile"
+        - "│   ├── package.json"
+        - "│   └── src"
+        - "│       └── App.jsx"
+        - "└── mcp"
+        - "    ├── requirements.txt"
+        - "    └── src"
+        - "        └── catalog_mcp.py"
+        - ""
+        - "8 directories, 16 files"
+
+  - id: tree-src
+    when:
+      command: [tree]
+    then:
+      output:
+        - "."
+        - "├── compose.yaml"
+        - "├── package.json"
+        - "├── package-lock.json"
+        - "├── docker-scout-policy.yaml"
+        - "├── README.md"
+        - "├── src"
+        - "│   ├── index.js"
+        - "│   ├── routes"
+        - "│   │   └── products.js"
+        - "│   ├── db"
+        - "│   │   └── pool.js"
+        - "│   └── events"
+        - "│       └── kafka.js"
+        - "├── frontend"
+        - "│   ├── Dockerfile"
+        - "│   ├── package.json"
+        - "│   └── src"
+        - "│       └── App.jsx"
+        - "└── mcp"
+        - "    ├── requirements.txt"
+        - "    └── src"
+        - "        └── catalog_mcp.py"
+        - ""
+        - "8 directories, 15 files"
 
   - id: npm-ls-count
     when:

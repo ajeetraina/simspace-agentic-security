@@ -33,7 +33,14 @@ Dockerfile, resolves the dependency tree, and builds:
 claude -p "Containerise this Node.js app (frontend, backend, LocalStack, Kafka, WireMock) for production. Add a Dockerfile and build the image as catalog-service:baseline."
 ```
 
-It succeeded. No errors, no warnings, no questions. Read what it wrote:
+It succeeded. No errors, no warnings, no questions. The terminal prints a summary of
+what it built. See the project it worked from — and the `Dockerfile` it added:
+
+```bash terminal-id=main
+tree
+```
+
+Read what it wrote:
 
 ```bash terminal-id=main
 cat Dockerfile
