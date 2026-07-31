@@ -1,26 +1,53 @@
 # Lab 2 — Start From a Trusted Base
 
-```mermaid no-run-button
-flowchart LR
-  A([✅ Agent build]) --> B([✅ SBOM · VEX · SLSA]) --> C([📍 Hardened base]) --> D([Sign &amp; Gate]) --> E([Agentic MCP])
-```
+<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, current Hardened base, Sign &amp; Gate, Agentic MCP">
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
+    <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="85" y="30" fill="#14532d">✓ Agent build</text>
+    <polygon points="172,22 180,26 172,30" fill="#9aa4b2"></polygon>
+    <rect x="184" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="268" y="30" fill="#14532d">✓ SBOM · VEX · SLSA</text>
+    <polygon points="355,22 363,26 355,30" fill="#9aa4b2"></polygon>
+    <rect x="367" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
+    <text x="451" y="30" fill="#ffffff" font-weight="700">Hardened base</text>
+    <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
+    <rect x="550" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="634" y="30" fill="#5b6670">Sign &amp; Gate</text>
+    <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
+    <rect x="733" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="817" y="30" fill="#5b6670">Agentic MCP</text>
+  </g>
+</svg>
 
 **16 minutes · hands-on**
 
 The migration in one picture — a builder stage with a shell and npm produces
 `node_modules`, and only that output is copied into a distroless runtime:
 
-```mermaid no-run-button
-flowchart LR
-  subgraph dev["🛠️ builder — node:24-debian13-dev"]
-    D1[shell + npm] --> D2[npm ci --production]
-  end
-  D2 -->|"COPY --from · node_modules only"| F
-  subgraph final["🔒 final — node:24-debian13 · distroless · 248MB"]
-    F[node_modules + src] --> RUN[node src/index.js]
-    NS([no shell · no npm · no curl])
-  end
-```
+<svg viewBox="0 0 700 200" width="100%" role="img" aria-label="Multi-stage build: a builder stage on node:24-debian13-dev runs npm ci, then only node_modules is copied into a distroless final stage on node:24-debian13 (248MB, no shell, no npm, no curl).">
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+    <rect x="8" y="20" width="296" height="162" rx="10" fill="#eef2ff" stroke="#6366f1"></rect>
+    <text x="20" y="40" font-weight="700" fill="#3730a3">builder · node:24-debian13-dev</text>
+    <rect x="30" y="54" width="244" height="30" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="152" y="74" text-anchor="middle" fill="#24292f">shell + npm</text>
+    <line x1="152" y1="84" x2="152" y2="110" stroke="#6b7280" stroke-width="1.5"></line>
+    <polygon points="148,104 152,112 156,104" fill="#6b7280"></polygon>
+    <rect x="30" y="112" width="244" height="30" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="152" y="132" text-anchor="middle" fill="#24292f">npm ci --production</text>
+    <rect x="396" y="20" width="296" height="162" rx="10" fill="#eafaf0" stroke="#1a7f37"></rect>
+    <text x="408" y="40" font-weight="700" fill="#14532d">final · node:24-debian13 · distroless · 248MB</text>
+    <rect x="418" y="54" width="252" height="30" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="544" y="74" text-anchor="middle" fill="#24292f">node src/index.js</text>
+    <line x1="544" y1="112" x2="544" y2="88" stroke="#6b7280" stroke-width="1.5"></line>
+    <polygon points="540,94 544,86 548,94" fill="#6b7280"></polygon>
+    <rect x="418" y="112" width="252" height="30" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="544" y="132" text-anchor="middle" fill="#24292f">node_modules + src</text>
+    <text x="544" y="168" text-anchor="middle" font-size="11" fill="#b91c1c" font-weight="700">no shell · no npm · no curl</text>
+    <line x1="304" y1="127" x2="416" y2="127" stroke="#6b7280" stroke-width="1.5"></line>
+    <polygon points="410,123 418,127 410,131" fill="#6b7280"></polygon>
+    <text x="360" y="119" text-anchor="middle" font-size="10" fill="#57606a">COPY node_modules</text>
+  </g>
+</svg>
 
 This is the pivot of the workshop. You spent Lab 1 learning to measure an image. Now you
 change one thing about where it starts, and measure it again.

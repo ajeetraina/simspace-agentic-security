@@ -1,9 +1,23 @@
 # Lab 4 — Securing the Agentic Stack
 
-```mermaid no-run-button
-flowchart LR
-  A([✅ Agent build]) --> B([✅ SBOM · VEX · SLSA]) --> C([✅ Hardened base]) --> D([✅ Sign &amp; Gate]) --> E([📍 Agentic MCP])
-```
+<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Sign &amp; Gate, current Agentic MCP">
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
+    <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="85" y="30" fill="#14532d">✓ Agent build</text>
+    <polygon points="172,22 180,26 172,30" fill="#9aa4b2"></polygon>
+    <rect x="184" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="268" y="30" fill="#14532d">✓ SBOM · VEX · SLSA</text>
+    <polygon points="355,22 363,26 355,30" fill="#9aa4b2"></polygon>
+    <rect x="367" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="451" y="30" fill="#14532d">✓ Hardened base</text>
+    <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
+    <rect x="550" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="634" y="30" fill="#14532d">✓ Sign &amp; Gate</text>
+    <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
+    <rect x="733" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
+    <text x="817" y="30" fill="#ffffff" font-weight="700">Agentic MCP</text>
+  </g>
+</svg>
 
 **14 minutes · hands-on**
 
@@ -11,18 +25,48 @@ Now an agent — not a human — decides when to invoke the catalog. The Gateway
 verifies the server's signature before it runs, and the server itself is hardened
 and sandboxed around the same database:
 
-```mermaid no-run-button
-flowchart TB
-  AG[AI Agent] --> GW{{MCP Gateway · verify signatures}}
-  GW -->|verified| SRV
-  GW -->|refuses| BAD([❌ unsigned / tampered])
-  subgraph box["🔒 catalog-mcp:dhi — read_only · cap_drop ALL · no-new-privileges"]
-    SRV([catalog-mcp]) --> T1[list_products]
-    SRV --> T2[search_products]
-    SRV --> T3[get_product]
-  end
-  SRV --> PG[(PostgreSQL · same catalog DB)]
-```
+<svg viewBox="0 0 640 386" width="100%" role="img" aria-label="Securing the agent's tools: an AI Agent calls the MCP Gateway, which verifies signatures. Verified traffic reaches the hardened catalog-mcp:dhi server (read_only, cap_drop ALL, no-new-privileges) exposing list_products, search_products and get_product against the same PostgreSQL catalog DB; unsigned or tampered images are refused.">
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
+    <rect x="250" y="8" width="140" height="32" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="320" y="29" text-anchor="middle" fill="#24292f">AI Agent</text>
+    <line x1="320" y1="40" x2="320" y2="60" stroke="#6b7280" stroke-width="1.5"></line>
+    <polygon points="316,54 320,62 324,54" fill="#6b7280"></polygon>
+    <rect x="206" y="62" width="228" height="38" rx="6" fill="#eef2ff" stroke="#6366f1"></rect>
+    <text x="320" y="86" text-anchor="middle" fill="#3730a3" font-weight="700">MCP Gateway · verify signatures</text>
+    <rect x="474" y="63" width="158" height="34" rx="6" fill="#fdecea" stroke="#b91c1c"></rect>
+    <text x="553" y="84" text-anchor="middle" fill="#b91c1c" font-weight="700">unsigned / tampered</text>
+    <line x1="434" y1="80" x2="472" y2="80" stroke="#6b7280" stroke-width="1.5"></line>
+    <polygon points="466,76 474,80 466,84" fill="#6b7280"></polygon>
+    <text x="450" y="74" font-size="10" fill="#b91c1c" font-weight="700">refuses</text>
+    <path d="M320,100 L320,126 L242,126 L242,150" stroke="#6b7280" stroke-width="1.5" fill="none"></path>
+    <polygon points="238,144 242,152 246,144" fill="#6b7280"></polygon>
+    <text x="250" y="120" font-size="10" fill="#1a7f37" font-weight="700">verified</text>
+    <rect x="40" y="150" width="400" height="150" rx="10" fill="#eafaf0" stroke="#1a7f37"></rect>
+    <text x="56" y="172" font-size="10" fill="#14532d" font-weight="700">catalog-mcp:dhi · read_only · cap_drop ALL · no-new-privileges</text>
+    <rect x="64" y="196" width="140" height="34" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="134" y="217" text-anchor="middle" fill="#24292f">catalog-mcp</text>
+    <rect x="250" y="184" width="150" height="26" rx="5" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="325" y="201" text-anchor="middle" fill="#24292f">list_products</text>
+    <rect x="250" y="218" width="150" height="26" rx="5" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="325" y="235" text-anchor="middle" fill="#24292f">search_products</text>
+    <rect x="250" y="252" width="150" height="26" rx="5" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="325" y="269" text-anchor="middle" fill="#24292f">get_product</text>
+    <g stroke="#6b7280" stroke-width="1.5" fill="none">
+      <path d="M204,208 L228,208 L228,197 L248,197"></path>
+      <path d="M204,213 L228,213 L228,231 L248,231"></path>
+      <path d="M204,218 L228,218 L228,265 L248,265"></path>
+    </g>
+    <g fill="#6b7280">
+      <polygon points="242,193 250,197 242,201"></polygon>
+      <polygon points="242,227 250,231 242,235"></polygon>
+      <polygon points="242,261 250,265 242,269"></polygon>
+    </g>
+    <rect x="130" y="338" width="230" height="32" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
+    <text x="245" y="359" text-anchor="middle" fill="#24292f">PostgreSQL · same catalog DB</text>
+    <path d="M134,230 L134,320 L245,320 L245,336" stroke="#6b7280" stroke-width="1.5" fill="none"></path>
+    <polygon points="241,330 245,338 249,330" fill="#6b7280"></polygon>
+  </g>
+</svg>
 
 Everything so far has been about an image *you* build and *a human* decides to deploy.
 Now the catalog gets a second consumer, and the human leaves the loop entirely.
