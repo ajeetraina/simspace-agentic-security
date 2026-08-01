@@ -26,7 +26,7 @@
 | An agent built it | Whatever base it chose | Nothing |
 | Lab 1 | + vocabulary | What is in it, and which findings matter |
 | Lab 2 | Hardened base | All three questions, inherited from the base |
-| Lab 3 | + cosign, + a gate | That it stays true |
+| Lab 3 | + build attestations, + a gate | That it stays true |
 | Lab 4 | + hardened MCP server | The same, for your agent's tools |
 
 Nothing about the application changed. The source is identical. What changed is how much
@@ -88,5 +88,5 @@ Two images, same source. One you can prove things about.
 | MCP Catalog | <https://hub.docker.com/mcp> |
 | SLSA framework | <https://slsa.dev> |
 | OpenVEX | <https://openvex.dev> |
-| Sigstore and cosign | <https://docs.sigstore.dev/cosign/> |
+| Build attestations (SBOM & provenance) | <https://docs.docker.com/build/metadata/attestations/> |
 | Product Catalog sample | <https://github.com/dockersamples/catalog-service-node> |

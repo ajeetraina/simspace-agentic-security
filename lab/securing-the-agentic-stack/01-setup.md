@@ -34,33 +34,16 @@ Point Scout at your organisation:
 docker scout config organization $$org$$
 ```
 
-## 3. Check cosign
+## 3. Preflight
 
-You will sign an image in Lab 3 using [cosign](https://docs.sigstore.dev/cosign/), from
-the Sigstore project.
-
-```bash terminal-id=main
-cosign version
-```
-
-## 4. Preflight
-
-Run all four. Each should print a version.
-
-```bash terminal-id=main
-docker --version
-```
-
-```bash terminal-id=main
-docker scout version
-```
-
-```bash terminal-id=main
-cosign version
-```
+You will push to a Git repository in Lab 3. Confirm Git is available — it should print a
+version:
 
 ```bash terminal-id=main
 git --version
 ```
+
+Everything else — image build attestations (`--sbom`, `--provenance`) and Docker Scout —
+ships with the Docker Engine you just logged in to.
 
 You are ready. Continue to **An Agent Built This**.
