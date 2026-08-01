@@ -4,7 +4,7 @@ metadata:
   id: securing-the-agentic-stack
   title: "Securing the Agentic Stack"
   summary: >
-    From an image an AI agent built without supervision to a signed, attested,
+    From an image an AI agent built without supervision to an attested,
     policy-gated artifact - then the same guarantees for the tools the agent calls.
 
 # In-memory state. Scenarios read it in `when.state` and write it in `then.state`.
@@ -15,7 +15,6 @@ state:
     built: false
   registry:
     pushed: false
-    signed: false
     tampered: false
   mcp:
     built: false
@@ -36,38 +35,6 @@ scenarios:
   # ---------------------------------------------------------------------------
   # Section 0 - environment checks
   # ---------------------------------------------------------------------------
-  - id: docker-version-format
-    when:
-      command: [docker, version]
-    then:
-      output: ["Docker 27.4.0 ready"]
-
-  # `0: false` requires NO positional after `docker`, so this matches only bare
-  # `docker --version` and not e.g. `docker run ... node --version`.
-  - id: docker-dash-version
-    when:
-      command: [docker]
-      args: { --version: { any: true }, 0: false }
-    then:
-      output: ["Docker version 27.4.0, build fca702d"]
-
-  - id: docker-scout-version
-    when:
-      command: [docker, scout, version]
-    then:
-      output:
-        - "version: v1.15.0 (go1.23.2)"
-        - "git commit: 9c4f0b2"
-
-  - id: cosign-version
-    when:
-      command: [cosign, version]
-    then:
-      output:
-        - "GitVersion:    v2.4.1"
-        - "GitCommit:     6b9820a68e861c91d07b1d0414d150411b60111f"
-        - "Platform:      linux/amd64"
-
   - id: git-version
     when:
       command: [git]
@@ -261,7 +228,23 @@ scenarios:
       output:
         - { text: "[+] Building 61.3s (12/12) FINISHED", delay: build }
         - " => => naming to registry.dockerlabs.xyz/catalog-service:dhi (new digest sha256:b7c9d1...)"
-        - "A different image now sits on the same tag."
+        - "A different image now sits on the same tag - and it carries no attestations."
+
+  # Rebuild WITH attestations (--sbom/--provenance) re-binds SBOM + provenance to
+  # a fresh digest, clearing the tampered state so the rest of the lab works.
+  - id: build-registry-attested
+    when:
+      command: [docker, build]
+      args:
+        -t: { oneOf: [registry.dockerlabs.xyz/catalog-service:dhi] }
+        --sbom: { any: true }
+    then:
+      state: { registry.tampered: false }
+      output:
+        - { text: "[+] Building 32.0s (12/12) FINISHED", delay: build }
+        - " => exporting sbom attestation"
+        - " => exporting provenance attestation mode=max"
+        - " => => naming to registry.dockerlabs.xyz/catalog-service:dhi"
 
   - id: build-dhi
     when:
@@ -533,6 +516,36 @@ scenarios:
         - ""
         - "  Base dhi.io/python:3.13 also ships VEX + a Docker signature."
 
+  # The image you pushed in Lab 3, still carrying the build-time attestations.
+  - id: attest-list-registry-tampered
+    when:
+      command: [docker, scout, attest, list]
+      args: { 0: { oneOf: [registry.dockerlabs.xyz/catalog-service:dhi] } }
+      state: { registry.tampered: true }
+    then:
+      output:
+        - { text: "    ✓ Fetching attestations for registry.dockerlabs.xyz/catalog-service:dhi", delay: scan }
+        - "  digest  sha256:b7c9d1...  (the tag was moved to a new image)"
+        - ""
+        - "  No attestations found on this digest."
+        - "  The tag was rebuilt without --sbom/--provenance and re-pushed."
+      exit: 1
+
+  - id: attest-list-registry-ok
+    when:
+      command: [docker, scout, attest, list]
+      args: { 0: { oneOf: [registry.dockerlabs.xyz/catalog-service:dhi] } }
+    then:
+      output:
+        - { text: "    ✓ Fetching attestations for registry.dockerlabs.xyz/catalog-service:dhi", delay: scan }
+        - "  TYPE                                          PRESENT   ADDED"
+        - "  https://spdx.dev/Document                     yes       attached at build"
+        - "  https://slsa.dev/provenance/v0.2  (mode=max)  yes       attached at build"
+        - ""
+        - "  Bound to digest sha256:9e2b71c4a0f8. Move the tag and this binding breaks."
+        - "  These are attached, not cryptographically signed - to sign, add cosign"
+        - "  (optional): https://docs.docker.com/dhi/core-concepts/signatures/"
+
   - id: attest-list-node
     when:
       command: [docker, scout, attest, list]
@@ -544,7 +557,6 @@ scenarios:
         - "  https://spdx.dev/Document                     yes      Docker, Inc."
         - "  https://openvex.dev/ns/v0.2.0                 yes      Docker, Inc."
         - "  https://slsa.dev/provenance/v0.2  (L3)        yes      Docker, Inc."
-        - "  application/vnd.dev.cosign.simplesigning      yes      Docker, Inc."
 
   # ---------------------------------------------------------------------------
   # docker buildx imagetools inspect (provenance)
@@ -643,29 +655,8 @@ scenarios:
       output: ["No shell in this image."]
 
   # ---------------------------------------------------------------------------
-  # Section 5 - cosign sign / verify, tag / push
+  # Section 5 - tag / push to the local registry
   # ---------------------------------------------------------------------------
-  - id: cosign-generate
-    when:
-      command: [cosign, generate-key-pair]
-    then:
-      files:
-        - create: cosign.key
-          content: |
-            -----BEGIN ENCRYPTED SIGSTORE PRIVATE KEY-----
-            eyJrZGYiOnsibmFtZSI6InNjcnlwdCIsInBhcmFtcyI6eyJOIjozMjc2OH19fQ==
-            -----END ENCRYPTED SIGSTORE PRIVATE KEY-----
-        - create: cosign.pub
-          content: |
-            -----BEGIN PUBLIC KEY-----
-            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7b3f0c...catalog-demo-key...=
-            -----END PUBLIC KEY-----
-      output:
-        - "Enter password for private key:"
-        - "Enter password for private key again:"
-        - "Private key written to cosign.key"
-        - "Public key written to cosign.pub"
-
   - id: docker-tag
     when:
       command: [docker, tag]
@@ -680,37 +671,6 @@ scenarios:
       output:
         - { text: "The push refers to repository [registry.dockerlabs.xyz/catalog-service]", delay: short }
         - { text: "dhi: digest: sha256:a1b2c3d4... size: 1996", delay: pull }
-
-  - id: cosign-sign
-    when:
-      command: [cosign, sign]
-    then:
-      state: { registry.signed: true, registry.tampered: false }
-      output:
-        - "Pushing signature to: registry.dockerlabs.xyz/catalog-service"
-        - "tlog entry created with index: 148372"
-
-  - id: cosign-verify-fail
-    when:
-      command: [cosign, verify]
-      state: { registry.tampered: true }
-    then:
-      output:
-        - "Error: no matching signatures"
-        - ""
-        - "main.go:74 no matching signatures: the tag was moved to a new digest"
-      exit: 1
-
-  - id: cosign-verify-ok
-    when:
-      command: [cosign, verify]
-      state: { registry.signed: true }
-    then:
-      output:
-        - "Verification for registry.dockerlabs.xyz/catalog-service:dhi --"
-        - "The following checks were performed on each of these signatures:"
-        - "  - The cosign claims were validated"
-        - "  - The signatures were verified against the specified public key"
 
   # ---------------------------------------------------------------------------
   # Section 5 - git + simulated CI pipeline
@@ -741,8 +701,7 @@ scenarios:
         - "remote: Gitea Actions: secure-build triggered"
         - { text: "remote:   build             ✓ built catalog-service:${sha} (sbom + provenance)", delay: build }
         - { text: "remote:   policy gate        ✓ 3/3 policies passed", delay: scan }
-        - { text: "remote:   sign              ✓ cosign signed the digest", delay: short }
-        - { text: "remote:   push              ✓ pushed to registry", delay: short }
+        - { text: "remote:   push              ✓ pushed to registry (attestations bound to digest)", delay: short }
         - "remote: secure-build succeeded - open the Actions tab in Gitea to inspect it."
 
   # ---------------------------------------------------------------------------

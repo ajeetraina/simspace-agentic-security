@@ -55,13 +55,7 @@ where the measurement pays off, and every number you wrote down changes.
 
 ## Check your environment
 
-Confirm the workspace is working:
-
-```bash terminal-id=main
-docker version
-```
-
-Now look at what you are working with:
+Look at what you are working with:
 
 ```bash terminal-id=main
 ls
