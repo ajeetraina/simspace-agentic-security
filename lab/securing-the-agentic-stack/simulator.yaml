@@ -713,6 +713,39 @@ scenarios:
         - { text: "remote:   push              ✓ pushed to registry (attestations bound to digest)", delay: short }
         - "remote: secure-build succeeded - open the Actions tab in Gitea to inspect it."
 
+  # `gitea run view <workflow>` is a helper in this lab that renders the Gitea
+  # Actions run page as text - the same view the web UI shows in the browser.
+  - id: gitea-run-view
+    when:
+      command: [gitea, run, view]
+    then:
+      output:
+        - "secure-build  ·  run #12  ·  ✓ success  ·  38s"
+        - "  branch main   commit a9d0e42   pushed by moby   trigger: push"
+        - "  workflow: .gitea/workflows/secure-build.yaml"
+        - ""
+        - "  build  (ubuntu-latest)                                        ✓ 38s"
+        - "  ──────────────────────────────────────────────────────────────────"
+        - { text: "  ✓ Set up job                                                   2s", delay: short }
+        - "      act_runner v0.2.11 · image catthehacker/ubuntu:act-latest"
+        - { text: "  ✓ actions/checkout@v4                                          3s", delay: short }
+        - "      Cloning git.dockerlabs.xyz/moby/catalog-service @ a9d0e42"
+        - { text: "  ✓ Build with attestations                                     21s", delay: build }
+        - "      + docker build -t …/catalog-service:a9d0e42 --sbom=true --provenance=mode=max ."
+        - "      => exporting sbom attestation"
+        - "      => exporting provenance attestation mode=max"
+        - { text: "  ✓ Policy gate  (docker/scout-action@v1)                        9s", delay: scan }
+        - "      command: policy   exit-on: policy"
+        - "      ✓ no-critical-cves     PASSED"
+        - "      ✓ require-sbom         PASSED"
+        - "      ✓ require-provenance   PASSED"
+        - "      gate: 3/3 passed → step succeeds, pipeline continues"
+        - { text: "  ✓ Push                                                         3s", delay: short }
+        - "      pushed …/catalog-service:a9d0e42 (attestations bound to digest)"
+        - { text: "  ✓ Complete job                                                 0s", delay: short }
+        - ""
+        - "  Had the gate failed, the run would stop here in red and Push would never run."
+
   # ---------------------------------------------------------------------------
   # Section 6 - MCP: compose up, inspect, gateway
   # ---------------------------------------------------------------------------
