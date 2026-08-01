@@ -175,9 +175,10 @@ One fails. One passes. You now know what the pipeline will say before you push.
 ## Put it in the pipeline
 
 > [!NOTE]
-> The files in this workspace are committed to a Gitea repository at
-> `git.dockerlabs.xyz` (log in as `moby` / `moby1234`). Anything under
-> `.gitea/workflows/` runs automatically when you push.
+> This is a **simulated** CI environment — `git.dockerlabs.xyz` is a stand-in, not a live
+> server you log into. The workspace behaves as a Gitea repo whose `moby` account owns it:
+> anything under `.gitea/workflows/` "runs" automatically when you push, and you inspect
+> the run right here in the terminal with `gitea run view` (below) — no browser needed.
 
 **Gitea Actions** is Gitea's built-in CI — GitHub-Actions-compatible, so the workflow
 below is the *same* YAML you would commit to GitHub. Here is what happens the moment you
@@ -284,42 +285,33 @@ That expands every step with its log — the same view the browser shows:
     <rect x="1" y="1" width="718" height="32" rx="8" fill="#24292f"></rect>
     <rect x="1" y="17" width="718" height="16" fill="#24292f"></rect>
     <text x="16" y="22" fill="#ffffff" font-size="12">git.dockerlabs.xyz / moby / catalog-service — Actions</text>
-
     <text x="20" y="58" fill="#1a7f37" font-weight="700">✓</text>
     <text x="40" y="58" fill="#24292f" font-weight="700">secure-build #12</text>
     <text x="190" y="58" fill="#57606a" font-size="12">main · a9d0e42 · pushed by moby · trigger: push</text>
     <text x="700" y="58" fill="#57606a" font-size="12" text-anchor="end">38s</text>
     <line x1="16" y1="72" x2="704" y2="72" stroke="#d0d7de"></line>
-
     <text x="20" y="96" fill="#57606a" font-size="12" font-weight="700">build  ·  runs-on: ubuntu-latest</text>
-
     <text x="24" y="128" fill="#1a7f37" font-weight="700">✓</text>
     <text x="46" y="128" fill="#24292f">Set up job</text>
     <text x="700" y="128" fill="#57606a" font-size="12" text-anchor="end">2s</text>
-
     <text x="24" y="158" fill="#1a7f37" font-weight="700">✓</text>
     <text x="46" y="158" fill="#24292f">actions/checkout@v4</text>
     <text x="700" y="158" fill="#57606a" font-size="12" text-anchor="end">3s</text>
-
     <text x="24" y="188" fill="#1a7f37" font-weight="700">✓</text>
     <text x="46" y="188" fill="#24292f">Build with attestations</text>
     <text x="270" y="188" fill="#57606a" font-size="12">sbom + provenance</text>
     <text x="700" y="188" fill="#57606a" font-size="12" text-anchor="end">21s</text>
-
     <text x="24" y="218" fill="#1a7f37" font-weight="700">✓</text>
     <text x="46" y="218" fill="#24292f">Policy gate</text>
     <text x="270" y="218" fill="#1a7f37" font-size="12">3/3 policies passed — image allowed</text>
     <text x="700" y="218" fill="#57606a" font-size="12" text-anchor="end">9s</text>
-
     <text x="24" y="248" fill="#1a7f37" font-weight="700">✓</text>
     <text x="46" y="248" fill="#24292f">Push</text>
     <text x="270" y="248" fill="#57606a" font-size="12">attestations bound to digest</text>
     <text x="700" y="248" fill="#57606a" font-size="12" text-anchor="end">3s</text>
-
     <text x="24" y="278" fill="#1a7f37" font-weight="700">✓</text>
     <text x="46" y="278" fill="#24292f">Complete job</text>
     <text x="700" y="278" fill="#57606a" font-size="12" text-anchor="end">0s</text>
-
     <line x1="16" y1="296" x2="704" y2="296" stroke="#d0d7de"></line>
     <text x="20" y="313" fill="#1a7f37" font-size="12" font-weight="700">secure-build succeeded — the gate passed before the push.</text>
   </g>
