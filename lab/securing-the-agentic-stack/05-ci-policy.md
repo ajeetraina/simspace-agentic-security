@@ -66,8 +66,8 @@ Dockerfile that undoes it.
 Hardened base images arrive with signed attestations from Docker. Yours carries
 attestations too — you built `catalog-service:dhi` in Lab 2 with `--sbom` and
 `--provenance=mode=max` — attached at build time and bound to the image **digest**.
-(They are attached, not cryptographically signed; signing them is an optional cosign step
-we are not taking here.) Confirm they rode along, then push.
+(They are attached to the digest, not cryptographically signed — the digest binding is
+what the policy gate checks.) Confirm they rode along, then push.
 
 1. Tag and push to the local registry:
 
