@@ -35,6 +35,16 @@ scenarios:
   # ---------------------------------------------------------------------------
   # Section 0 - environment checks
   # ---------------------------------------------------------------------------
+  - id: docker-version
+    when:
+      command: [docker, version]
+    then:
+      output:
+        - "Client:"
+        - " Version:    29.6.2"
+        - "Server:"
+        - " Version:    29.6.2"
+
   - id: git-version
     when:
       command: [git]
@@ -543,8 +553,7 @@ scenarios:
         - "  https://slsa.dev/provenance/v0.2  (mode=max)  yes       attached at build"
         - ""
         - "  Bound to digest sha256:9e2b71c4a0f8. Move the tag and this binding breaks."
-        - "  These are attached, not cryptographically signed - to sign, add cosign"
-        - "  (optional): https://docs.docker.com/dhi/core-concepts/signatures/"
+        - "  Attached to the digest, not cryptographically signed - the binding is what matters here."
 
   - id: attest-list-node
     when:
