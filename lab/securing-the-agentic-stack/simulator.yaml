@@ -765,6 +765,54 @@ scenarios:
     then:
       output: ["true [ALL]"]
 
+  # DHI MCP catalog - Docker's pre-hardened MCP servers (docker/mcp-catalog-dhi).
+  - id: mcp-catalog-pull-dhi
+    when:
+      command: [docker, mcp, catalog, pull]
+    then:
+      output:
+        - { text: "Pulling catalog docker/mcp-catalog-dhi:latest ...", delay: pull }
+        - { text: "  ✓ pulled 11 hardened MCP servers", delay: scan }
+        - "  ✓ signatures verified (Docker, Inc.)"
+        - "Catalog 'docker/mcp-catalog-dhi' stored locally."
+        - "Next: docker mcp catalog server ls docker/mcp-catalog-dhi"
+
+  - id: mcp-catalog-server-ls-dhi
+    when:
+      command: [docker, mcp, catalog, server, ls]
+    then:
+      output:
+        - "SERVER       DESCRIPTION"
+        - "context7     Up-to-date code documentation for LLMs and AI code editors"
+        - "fetch        Fetches a URL from the internet, extracts contents as markdown"
+        - "filesystem   Local filesystem access with configurable allowed paths"
+        - "firecrawl    Web scraping and crawling with structured content extraction"
+        - "git          Git repository interaction and automation"
+        - "github       Tools for interacting with the GitHub API (files, repos, search)"
+        - "grafana      Grafana dashboards, datasources, metrics, logs, traces, alerting"
+        - "dockerhub    Docker Hub official MCP server"
+        - "memory       Knowledge graph-based persistent memory system"
+        - "mongodb      Query collections, discover schemas, operate on MongoDB and Atlas"
+        - "time         Time and timezone conversion capabilities"
+        - ""
+        - "11 servers from the Docker Hardened Images MCP Catalog - each labelled"
+        - "(Hardened) in Docker Desktop's MCP Toolkit, built on a DHI base with"
+        - "SBOM + provenance + signature."
+
+  # `--catalog` variant of the gateway run - must precede the generic one below.
+  - id: mcp-gateway-run-catalog
+    when:
+      command: [docker, mcp, gateway, run]
+      args: { --catalog: { any: true } }
+    then:
+      output:
+        - { text: "MCP Gateway starting (--verify-signatures)", delay: short }
+        - { text: "  loading catalog docker/mcp-catalog-dhi:latest", delay: short }
+        - { text: "  filesystem (Hardened)  → verifying provenance...  ✓ signed by Docker, Inc., SBOM present", delay: scan }
+        - "  read_only rootfs · cap_drop ALL · secrets mounted into target only"
+        - "  registered tools: read_file, list_directory, search_files"
+        - "Gateway ready. A hardened server you did not have to build - verified before it ran."
+
   - id: mcp-gateway-run
     when:
       command: [docker, mcp, gateway, run]

@@ -193,12 +193,49 @@ something once you have seen it say no.**
 
 ---
 
+## Don't hand-harden every server — pull the hardened catalog
+
+You hardened `catalog-mcp` because it is *your* code. But most tools an agent reaches for —
+filesystem, git, GitHub, a database client — are off-the-shelf. Docker publishes those
+already hardened, signed and attested as the **Docker Hardened Images MCP Catalog**
+(`docker/mcp-catalog-dhi`) — the same catalog you can browse under **MCP Toolkit** in
+Docker Desktop. Same guarantees as the image you just built, none of the Dockerfile work.
+
+1. Pull the hardened catalog from the registry:
+
+    ```bash terminal-id=main
+    docker mcp catalog pull docker/mcp-catalog-dhi:latest
+    ```
+
+2. List what it ships — hardened variants of the servers an agent commonly wants:
+
+    ```bash terminal-id=build
+    docker mcp catalog server ls docker/mcp-catalog-dhi
+    ```
+
+3. Run one through the Gateway. The signature check you just saw still applies — these
+   arrive signed, so it passes without you building anything:
+
+    ```bash terminal-id=main
+    docker mcp gateway run --catalog docker/mcp-catalog-dhi:latest --servers filesystem
+    ```
+
+> [!NOTE]
+> **Two DHI tools, one theme.** This *catalog* gives the agent hardened servers to **run**.
+> Docker also hosts a **DHI MCP server** at `dhi.io/mcp` the agent can **query** to pick
+> hardened base images — search by name, CVEs, attestations, or FIPS/STIG compliance. Both
+> put the same evidence one `docker mcp` command away.
+> See <https://docs.docker.com/dhi/tools/mcp/>.
+
+---
+
 ## Checkpoint
 
 - [ ] The catalog MCP server builds on a hardened base
 - [ ] It runs read-only, with all capabilities dropped
 - [ ] You have inspected its attestations
 - [ ] You have seen verification reject something
+- [ ] You have pulled a pre-hardened server from Docker's DHI MCP catalog
 
 ## What you should be thinking
 
