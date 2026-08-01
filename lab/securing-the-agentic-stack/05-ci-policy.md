@@ -1,6 +1,6 @@
-# Lab 3 — Attest It, Then Gate It
+# Lab 3 — Verify It, Then Gate It
 
-<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, current Attest &amp; Gate, Agentic MCP">
+<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, current Verify &amp; Gate, Agentic MCP">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
     <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="85" y="30" fill="#14532d">✓ Agent build</text>
@@ -12,14 +12,14 @@
     <text x="451" y="30" fill="#14532d">✓ Hardened base</text>
     <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
     <rect x="550" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
-    <text x="634" y="30" fill="#ffffff" font-weight="700">Attest &amp; Gate</text>
+    <text x="634" y="30" fill="#ffffff" font-weight="700">Verify &amp; Gate</text>
     <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
     <rect x="733" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
     <text x="817" y="30" fill="#5b6670">Agentic MCP</text>
   </g>
 </svg>
 
-**10 minutes · demo, with two hands-on steps**
+**10 minutes · demo, with hands-on steps**
 
 The pipeline you are about to build — the gate sits **before** the push, so an
 image that fails policy never reaches the registry:
@@ -53,8 +53,10 @@ image that fails policy never reaches the registry:
   </g>
 </svg>
 
-You have a hardened, attested image. Nothing yet stops the next person merging a
-Dockerfile that undoes it.
+You have a hardened image, built on a base Docker **signed**, carrying attestations you
+can verify. Nothing yet stops the next person merging a Dockerfile that undoes all of it —
+so you will do two things: **verify** the trust chain by hand once, then turn that check
+into a **gate** that runs on every push.
 
 > Verification you run once by hand is theatre. The value only compounds when the check
 > is a gate.
@@ -66,8 +68,7 @@ Dockerfile that undoes it.
 Hardened base images arrive with signed attestations from Docker. Yours carries
 attestations too — you built `catalog-service:dhi` in Lab 2 with `--sbom` and
 `--provenance=mode=max` — attached at build time and bound to the image **digest**.
-(They are attached to the digest, not cryptographically signed — the digest binding is
-what the policy gate checks.) Confirm they rode along, then push.
+Confirm they rode along, then push.
 
 1. Tag and push to the local registry:
 
@@ -87,6 +88,25 @@ what the policy gate checks.) Confirm they rode along, then push.
 
     An SBOM and SLSA provenance, both attached at build and bound to the digest you just
     pushed.
+
+---
+
+## Verify it
+
+Presence is not trust — anyone can *attach* an SBOM. What makes it trustworthy is the
+**signature** underneath it. Because you built on a Docker Hardened Image, the provenance
+chain traces back to a base Docker **signed**, and you can verify that signature —
+keyless, against Sigstore's transparency log. There is no key for you to manage; you
+inherit and verify a signature from a builder you trust.
+
+```bash terminal-id=build
+docker scout attest get catalog-service:dhi --predicate-type https://slsa.dev/provenance/v0.2 --verify
+```
+
+The `--verify` flag is the whole point. `✓ Signature verified` means the provenance was
+not forged and traces to a source commit you can open and read. **This is the image-signing
+half of a secure pipeline — not a key you rotate, but a signature you *check*.** In a
+moment you will make the pipeline check it for you, on every push.
 
 ---
 
@@ -112,12 +132,13 @@ This is the most useful ninety seconds in the workshop.
     ```
 
 > [!IMPORTANT]
-> **Tags are mutable. Digests are not. Attestations bind to a digest.**
+> **Tags are mutable. Digests are not. Attestations and signatures bind to a digest.**
 >
 > Any process that trusts a tag — a Dockerfile that says `FROM node:24`, a manifest that
 > says `image: catalog-service:latest` — is trusting that nobody moved it. The tag now
-> resolves to a new digest with no SBOM and no provenance: exactly the substitution an
-> attacker performs, and the missing attestations are what gives it away.
+> resolves to a new digest with no SBOM, no provenance, and nothing that would survive a
+> `--verify`: exactly the substitution an attacker performs, and the missing, unverifiable
+> attestations are what give it away.
 
 3. Rebuild **with** attestations so the rest of the lab works:
 
@@ -217,6 +238,7 @@ nobody running a verification command by hand.
 ## Checkpoint
 
 - [ ] You have confirmed the SBOM and provenance attestations bound to the image digest
+- [ ] You have verified the provenance signature (`--verify`) traces to a trusted builder
 - [ ] You have watched the attestations vanish when the tag was moved
 - [ ] You have evaluated the policy locally against both images
 - [ ] You have watched CI build, gate and push

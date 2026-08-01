@@ -1,6 +1,6 @@
 # Conclusion
 
-<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Sign &amp; Gate, done Agentic MCP">
+<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Verify &amp; Gate, done Agentic MCP">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
     <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="85" y="30" fill="#14532d">✓ Agent build</text>
@@ -12,7 +12,7 @@
     <text x="451" y="30" fill="#14532d">✓ Hardened base</text>
     <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
     <rect x="550" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
-    <text x="634" y="30" fill="#14532d">✓ Sign &amp; Gate</text>
+    <text x="634" y="30" fill="#14532d">✓ Verify &amp; Gate</text>
     <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
     <rect x="733" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="817" y="30" fill="#14532d">✓ Agentic MCP</text>

@@ -12,7 +12,7 @@
     <text x="450" y="30" fill="#5b6670">Hardened base</text>
     <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
     <rect x="549" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="633" y="30" fill="#5b6670">Sign &amp; Gate</text>
+    <text x="633" y="30" fill="#5b6670">Verify &amp; Gate</text>
     <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
     <rect x="732" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
     <text x="816" y="30" fill="#5b6670">Agentic MCP</text>
