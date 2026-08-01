@@ -186,7 +186,7 @@ sections:
     contentPath: 03-sbom-vex-slsa.md
   - title: "Lab 2 - Start From a Trusted Base"
     contentPath: 04-dhi-migration.md
-  - title: "Lab 3 - Sign It, Then Gate It"
+  - title: "Lab 3 - Verify It, Then Gate It"
     contentPath: 05-ci-policy.md
   - title: "Lab 4 - Securing the Agentic Stack"
     contentPath: 06-mcp-dhi.md
