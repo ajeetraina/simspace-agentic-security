@@ -1,4 +1,4 @@
-# Securing the Agentic Stack — a Simspace lab
+# Securing the Agentic Stack 
 
 An interactive, fully in-browser lab built on
 [Simspace](https://github.com/dockersamples/simspace). Everything in the terminal
