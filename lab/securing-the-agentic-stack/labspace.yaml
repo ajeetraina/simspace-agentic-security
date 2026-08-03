@@ -133,46 +133,6 @@ files:
         type: attestation
         attestation: slsa-provenance
         action: fail
-  mcp/requirements.txt: |
-    mcp==1.2.0
-    asyncpg==0.29.0
-  mcp/src/catalog_mcp.py: |
-    import os
-    import asyncpg
-    from mcp.server.fastmcp import FastMCP
-
-    # The process holds a database connection string. This is the thing an attacker
-    # wants, and the thing you are about to hand to an agent.
-    DATABASE_URL = os.environ["DATABASE_URL"]
-
-    mcp = FastMCP("catalog")
-
-    @mcp.tool()
-    async def list_products() -> list:
-        """List every product in the catalog."""
-        conn = await asyncpg.connect(DATABASE_URL)
-        rows = await conn.fetch("SELECT id, name, price FROM products ORDER BY id")
-        await conn.close()
-        return [dict(r) for r in rows]
-
-    @mcp.tool()
-    async def search_products(q: str) -> list:
-        """Search products by name."""
-        conn = await asyncpg.connect(DATABASE_URL)
-        rows = await conn.fetch("SELECT id, name, price FROM products WHERE name ILIKE $1", f"%{q}%")
-        await conn.close()
-        return [dict(r) for r in rows]
-
-    @mcp.tool()
-    async def get_product(id: int) -> dict:
-        """Get one product by id."""
-        conn = await asyncpg.connect(DATABASE_URL)
-        row = await conn.fetchrow("SELECT * FROM products WHERE id = $1", id)
-        await conn.close()
-        return dict(row) if row else {}
-
-    if __name__ == "__main__":
-        mcp.run()
 
 # Ordered instruction pages (markdown), rendered in the left-hand panel.
 sections:
@@ -188,12 +148,10 @@ sections:
     contentPath: 04-dhi-migration.md
   - title: "Lab 3 - Verify It, Then Gate It"
     contentPath: 05-ci-policy.md
-  - title: "Lab 4 - Harden the Tools the Agent Calls"
-    contentPath: 06-mcp-dhi.md
-  - title: "Lab 5 - The Agent's Build Sandbox"
-    contentPath: 07-agent-sandbox.md
+  - title: "Lab 4 - The Agent's Build Sandbox"
+    contentPath: 06-agent-sandbox.md
   - title: Conclusion
-    contentPath: 08-conclusion.md
+    contentPath: 07-conclusion.md
 
 # $$name$$ in markdown is replaced with these values. `org` is overridden by the
 # :variableDefinition prompt in Setup.

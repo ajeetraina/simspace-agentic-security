@@ -48,8 +48,7 @@ affects me?* → **VEX**
 | 1 | What is in it, and what matters? | SBOM, VEX and provenance you can read |
 | 2 | Can you start from something better? | **A hardened base — the pivot** |
 | 3 | How do you stop it regressing? | A verified signature and a gate that fails closed |
-| 4 | What about the tools the agent calls? | A hardened MCP server |
-| 5 | What if the agent started right? | A sandbox and the DHI MCP server |
+| 4 | What if the agent started right? | A sandbox and the DHI MCP server |
 
 **Lab 2 is the centre of gravity.** Lab 1 teaches you to measure an image. Lab 2 is
 where the measurement pays off, and every number you wrote down changes.

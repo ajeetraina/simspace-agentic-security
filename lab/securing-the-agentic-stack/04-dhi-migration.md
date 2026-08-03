@@ -1,6 +1,6 @@
 # Lab 2 — Start From a Trusted Base
 
-<svg viewBox="0 0 1086 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, current Hardened base, Verify &amp; Gate, Agentic MCP, Build Sandbox">
+<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, current Hardened base, Verify &amp; Gate, Build Sandbox">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
     <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="85" y="30" fill="#14532d">✓ Agent build</text>
@@ -15,10 +15,7 @@
     <text x="634" y="30" fill="#5b6670">Verify &amp; Gate</text>
     <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
     <rect x="733" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="817" y="30" fill="#5b6670">Agentic MCP</text>
-    <polygon points="904,22 912,26 904,30" fill="#9aa4b2"></polygon>
-    <rect x="916" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="1000" y="30" fill="#5b6670">Build Sandbox</text>
+    <text x="817" y="30" fill="#5b6670">Build Sandbox</text>
   </g>
 </svg>
 

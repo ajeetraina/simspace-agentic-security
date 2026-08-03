@@ -177,17 +177,13 @@ scenarios:
         - "│   │   └── pool.js"
         - "│   └── events"
         - "│       └── kafka.js"
-        - "├── frontend"
-        - "│   ├── Dockerfile"
-        - "│   ├── package.json"
-        - "│   └── src"
-        - "│       └── App.jsx"
-        - "└── mcp"
-        - "    ├── requirements.txt"
+        - "└── frontend"
+        - "    ├── Dockerfile"
+        - "    ├── package.json"
         - "    └── src"
-        - "        └── catalog_mcp.py"
+        - "        └── App.jsx"
         - ""
-        - "8 directories, 16 files"
+        - "6 directories, 14 files"
 
   - id: tree-src
     when:
@@ -208,17 +204,13 @@ scenarios:
         - "│   │   └── pool.js"
         - "│   └── events"
         - "│       └── kafka.js"
-        - "├── frontend"
-        - "│   ├── Dockerfile"
-        - "│   ├── package.json"
-        - "│   └── src"
-        - "│       └── App.jsx"
-        - "└── mcp"
-        - "    ├── requirements.txt"
+        - "└── frontend"
+        - "    ├── Dockerfile"
+        - "    ├── package.json"
         - "    └── src"
-        - "        └── catalog_mcp.py"
+        - "        └── App.jsx"
         - ""
-        - "8 directories, 15 files"
+        - "6 directories, 13 files"
 
   - id: npm-ls-count
     when:
@@ -886,6 +878,32 @@ scenarios:
     then:
       output:
         - "No MCP servers configured. Add one with: sbx mcp add <name> --url <url>"
+
+  # Run an agent (codex) inside the sandbox with the DHI MCP statically attached.
+  - id: sbx-run-codex
+    when:
+      command: [sbx, run, codex]
+    then:
+      output:
+        - { text: "Starting codex in the sandbox (static MCP: remotedhi)...", delay: short }
+        - "codex ready. Type /mcp to list tools, or enter a prompt."
+
+  # `/mcp` inside the codex session lists the tools the gateway exposes.
+  - id: mcp-slash
+    when:
+      command: ["/mcp"]
+    then:
+      output:
+        - "🔌  MCP Tools"
+        - ""
+        - "    • mcp-gateway"
+        - "      • Auth: Unsupported"
+        - "      • Tools: code-mode, mcp-config-set, mcp-exec,"
+        - "        remotedhi__dhi_get_image_cves, remotedhi__dhi_get_image_details,"
+        - "        remotedhi__dhi_get_image_packages, remotedhi__dhi_get_image_attestations,"
+        - "        remotedhi__dhi_get_repository, remotedhi__dhi_get_tag_definition,"
+        - "        remotedhi__dhi_list_repositories, remotedhi__dhi_list_mirrors,"
+        - "        remotedhi__dhi_create_mirror, remotedhi__dhi_remove_mirror"
 
   # ---------------------------------------------------------------------------
   # Generic docker run (kept last so specific runs above win)

@@ -1,6 +1,6 @@
-# Lab 5 — The Agent's Build Sandbox
+# Lab 4 — The Agent's Build Sandbox
 
-<svg viewBox="0 0 1086 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Verify &amp; Gate, done Agentic MCP, current Build Sandbox">
+<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Verify &amp; Gate, current Build Sandbox">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
     <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="85" y="30" fill="#14532d">✓ Agent build</text>
@@ -14,11 +14,8 @@
     <rect x="550" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="634" y="30" fill="#14532d">✓ Verify &amp; Gate</text>
     <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
-    <rect x="733" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
-    <text x="817" y="30" fill="#14532d">✓ Agentic MCP</text>
-    <polygon points="904,22 912,26 904,30" fill="#9aa4b2"></polygon>
-    <rect x="916" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
-    <text x="1000" y="30" fill="#ffffff" font-weight="700">Build Sandbox</text>
+    <rect x="733" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
+    <text x="817" y="30" fill="#ffffff" font-weight="700">Build Sandbox</text>
   </g>
 </svg>
 
@@ -190,6 +187,33 @@ sbx mcp ls
 Now the agent, boxed inside the sandbox, can call `dhi_get_image_cves` on a base image
 *before* it writes `FROM` — and the CVE report it gets back is the same signed evidence you
 measured by hand in Labs 1–3.
+
+---
+
+## Access the tools from the agent
+
+Drop the sandboxed agent into a session with the DHI MCP server statically attached:
+
+```bash terminal-id=main
+sbx run codex --static-mcp remotedhi
+```
+
+Inside the session, type `/mcp` to list the tools now reachable:
+
+```bash terminal-id=main
+/mcp
+```
+
+You'll see the gateway plus every DHI tool, each prefixed with the server name:
+
+- **read-only queries** — `remotedhi__dhi_get_image_cves`, `dhi_get_image_details`,
+  `dhi_get_image_packages`, `dhi_get_image_attestations`, `dhi_get_tag_definition`,
+  `dhi_get_repository`, `dhi_list_repositories`, `dhi_list_mirrors`
+- **mirror mutators** — `remotedhi__dhi_create_mirror`, `remotedhi__dhi_remove_mirror`
+
+The read-only `dhi_get_*` / `dhi_list_*` queries are what a good agent calls to check a base
+image before it writes `FROM`. The two mirror mutators are exactly what the scoped Cedar
+policy above keeps out of reach.
 
 ---
 
