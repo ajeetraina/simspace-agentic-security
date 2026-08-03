@@ -188,10 +188,12 @@ sections:
     contentPath: 04-dhi-migration.md
   - title: "Lab 3 - Verify It, Then Gate It"
     contentPath: 05-ci-policy.md
-  - title: "Lab 4 - Securing the Agentic Stack"
+  - title: "Lab 4 - Harden the Tools the Agent Calls"
     contentPath: 06-mcp-dhi.md
+  - title: "Lab 5 - The Agent's Build Sandbox"
+    contentPath: 07-agent-sandbox.md
   - title: Conclusion
-    contentPath: 07-conclusion.md
+    contentPath: 08-conclusion.md
 
 # $$name$$ in markdown is replaced with these values. `org` is overridden by the
 # :variableDefinition prompt in Setup.

@@ -1,6 +1,6 @@
 # Conclusion
 
-<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Verify &amp; Gate, done Agentic MCP">
+<svg viewBox="0 0 1086 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Verify &amp; Gate, done Agentic MCP, done Build Sandbox">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
     <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="85" y="30" fill="#14532d">✓ Agent build</text>
@@ -16,6 +16,9 @@
     <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
     <rect x="733" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="817" y="30" fill="#14532d">✓ Agentic MCP</text>
+    <polygon points="904,22 912,26 904,30" fill="#9aa4b2"></polygon>
+    <rect x="916" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
+    <text x="1000" y="30" fill="#14532d">✓ Build Sandbox</text>
   </g>
 </svg>
 
@@ -28,6 +31,7 @@
 | Lab 2 | Hardened base | All three questions, inherited from the base |
 | Lab 3 | + build attestations, + a gate | That it stays true |
 | Lab 4 | + hardened MCP server | The same, for your agent's tools |
+| Lab 5 | + a sandbox and the DHI MCP server | The agent starts from trusted inputs |
 
 Nothing about the application changed. The source is identical. What changed is how much
 of it you can account for.
@@ -57,6 +61,7 @@ that passes on the first attempt.
 3. **Start from a trusted base** — hardened images
 4. **Enforce at the pipeline** — build policies that fail closed
 5. **Isolate your agents** — MCP servers in hardened containers
+6. **Sandbox your agents** — run them in a microVM with only signed tools reachable
 
 ---
 

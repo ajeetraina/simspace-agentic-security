@@ -1,21 +1,24 @@
 # An Agent Built This
 
-<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress. Current stage: Agent build. Remaining: SBOM VEX SLSA, Hardened base, Sign and Gate, Agentic MCP.">
+<svg viewBox="0 0 1086 52" width="100%" role="img" aria-label="Supply-chain progress: current Agent build, SBOM · VEX · SLSA, Hardened base, Verify &amp; Gate, Agentic MCP, Build Sandbox">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
     <rect x="1" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
     <text x="85" y="30" fill="#ffffff" font-weight="700">Agent build</text>
     <polygon points="172,22 180,26 172,30" fill="#9aa4b2"></polygon>
-    <rect x="183" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="267" y="30" fill="#5b6670">SBOM · VEX · SLSA</text>
+    <rect x="184" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="268" y="30" fill="#5b6670">SBOM · VEX · SLSA</text>
     <polygon points="355,22 363,26 355,30" fill="#9aa4b2"></polygon>
-    <rect x="366" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="450" y="30" fill="#5b6670">Hardened base</text>
+    <rect x="367" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="451" y="30" fill="#5b6670">Hardened base</text>
     <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
-    <rect x="549" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="633" y="30" fill="#5b6670">Verify &amp; Gate</text>
+    <rect x="550" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="634" y="30" fill="#5b6670">Verify &amp; Gate</text>
     <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
-    <rect x="732" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="816" y="30" fill="#5b6670">Agentic MCP</text>
+    <rect x="733" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="817" y="30" fill="#5b6670">Agentic MCP</text>
+    <polygon points="904,22 912,26 904,30" fill="#9aa4b2"></polygon>
+    <rect x="916" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="1000" y="30" fill="#5b6670">Build Sandbox</text>
   </g>
 </svg>
 

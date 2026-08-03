@@ -1,6 +1,6 @@
-# Lab 4 — Securing the Agentic Stack
+# Lab 4 — Harden the Tools the Agent Calls
 
-<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Verify &amp; Gate, current Agentic MCP">
+<svg viewBox="0 0 1086 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Verify &amp; Gate, current Agentic MCP, Build Sandbox">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
     <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
     <text x="85" y="30" fill="#14532d">✓ Agent build</text>
@@ -16,6 +16,9 @@
     <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
     <rect x="733" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
     <text x="817" y="30" fill="#ffffff" font-weight="700">Agentic MCP</text>
+    <polygon points="904,22 912,26 904,30" fill="#9aa4b2"></polygon>
+    <rect x="916" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
+    <text x="1000" y="30" fill="#5b6670">Build Sandbox</text>
   </g>
 </svg>
 
@@ -44,7 +47,7 @@ and sandboxed around the same database:
     <rect x="40" y="150" width="400" height="150" rx="10" fill="#eafaf0" stroke="#1a7f37"></rect>
     <text x="56" y="172" font-size="10" fill="#14532d" font-weight="700">catalog-mcp:dhi · read_only · cap_drop ALL · no-new-privileges</text>
     <rect x="64" y="196" width="140" height="34" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
-    <text x="134" y="217" text-anchor="middle" fill="#24292f">catalog-mcp</text>
+    <text x="134" y="217" text-anchor="middle" fill="#24292f">MCP server</text>
     <rect x="250" y="184" width="150" height="26" rx="5" fill="#ffffff" stroke="#8c959f"></rect>
     <text x="325" y="201" text-anchor="middle" fill="#24292f">list_products</text>
     <rect x="250" y="218" width="150" height="26" rx="5" fill="#ffffff" stroke="#8c959f"></rect>
@@ -52,9 +55,11 @@ and sandboxed around the same database:
     <rect x="250" y="252" width="150" height="26" rx="5" fill="#ffffff" stroke="#8c959f"></rect>
     <text x="325" y="269" text-anchor="middle" fill="#24292f">get_product</text>
     <g stroke="#6b7280" stroke-width="1.5" fill="none">
-      <path d="M204,208 L228,208 L228,197 L248,197"></path>
-      <path d="M204,213 L228,213 L228,231 L248,231"></path>
-      <path d="M204,218 L228,218 L228,265 L248,265"></path>
+      <path d="M204,213 L228,213"></path>
+      <path d="M228,197 L228,265"></path>
+      <path d="M228,197 L248,197"></path>
+      <path d="M228,231 L248,231"></path>
+      <path d="M228,265 L248,265"></path>
     </g>
     <g fill="#6b7280">
       <polygon points="242,193 250,197 242,201"></polygon>
@@ -220,12 +225,9 @@ Docker Desktop. Same guarantees as the image you just built, none of the Dockerf
     docker mcp gateway run --catalog docker/mcp-catalog-dhi:latest --servers filesystem
     ```
 
-> [!NOTE]
-> **Two DHI tools, one theme.** This *catalog* gives the agent hardened servers to **run**.
-> Docker also hosts a **DHI MCP server** at `dhi.io/mcp` the agent can **query** to pick
-> hardened base images — search by name, CVEs, attestations, or FIPS/STIG compliance. Both
-> put the same evidence one `docker mcp` command away.
-> See <https://docs.docker.com/dhi/tools/mcp/>.
+These are the tools the agent reaches for *while it runs*. Next, Lab 5 turns to the
+environment the agent *builds in* — a sandbox, and a different DHI tool it queries before
+it writes a Dockerfile.
 
 ---
 

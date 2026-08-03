@@ -19,6 +19,8 @@ state:
   mcp:
     built: false
     running: false
+  sandbox:
+    mcpAdded: false
 
 settings:
   pace:
@@ -823,6 +825,67 @@ scenarios:
         - "  mounting secrets into target container only"
         - "  registered tools: list_products, search_products, get_product"
         - "Gateway ready. An unsigned or tampered server image would be refused here."
+
+  # ---------------------------------------------------------------------------
+  # Section 7 - the agent's build sandbox (sbx microVM + remote DHI MCP server)
+  # ---------------------------------------------------------------------------
+  - id: sbx-daemon-start
+    when:
+      command: [sbx, daemon, start]
+    then:
+      output:
+        - { text: "Starting sbx daemon...", delay: short }
+        - "  microVM booted: own daemon, own network, host mounted read-only."
+        - "sbx daemon running (background)."
+
+  - id: sbx-daemon-stop
+    when:
+      command: [sbx, daemon, stop]
+    then:
+      output: ["sbx daemon stopped."]
+
+  # Register the remote DHI MCP server by URL. Positional 0 = name, --url = URL.
+  - id: sbx-mcp-add
+    when:
+      command: [sbx, mcp, add]
+      args: { 0: { any: true }, --url: { any: true } }
+    then:
+      state: { sandbox.mcpAdded: true }
+      output:
+        - "Added MCP server '{{ args.0 }}' (remote) -> {{ args.url }}"
+        - "  transport: streamable-http"
+        - "  its tools are available to agents in the sandbox, governed by your MCP policy."
+
+  - id: sbx-mcp-inspect
+    when:
+      command: [sbx, mcp, inspect]
+      args: { 0: { any: true } }
+    then:
+      output:
+        - "Name:      {{ args.0 }}"
+        - "Type:      remote"
+        - "URL:       https://dhi.io/mcp"
+        - "Transport: streamable-http"
+
+  # `sbx mcp ls` after the server was added.
+  - id: sbx-mcp-ls-added
+    when:
+      command: [sbx, mcp, ls]
+      state: { sandbox.mcpAdded: true }
+    then:
+      output:
+        - "NAME        TYPE     URL"
+        - "remotedhi   remote   https://dhi.io/mcp"
+        - ""
+        - "1 MCP server configured."
+
+  # `sbx mcp ls` before anything was added.
+  - id: sbx-mcp-ls-empty
+    when:
+      command: [sbx, mcp, ls]
+    then:
+      output:
+        - "No MCP servers configured. Add one with: sbx mcp add <name> --url <url>"
 
   # ---------------------------------------------------------------------------
   # Generic docker run (kept last so specific runs above win)
