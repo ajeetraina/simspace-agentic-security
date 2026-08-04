@@ -155,8 +155,26 @@ This is the most useful ninety seconds in the workshop.
 ## Write the policy
 
 You watched the default policy fail in Lab 1. That was an *evaluation*. Now make it a
-*gate*. Open :filelink[docker-scout-policy.yaml]{path="docker-scout-policy.yaml"} — three
-rules, one per question from the spine.
+*gate*. Save this `docker-scout-policy.yaml` — three rules, one per question from the spine:
+
+```yaml save-as=docker-scout-policy.yaml
+version: "1"
+policies:
+  - name: no-critical-cves
+    type: vulnerability
+    severity: critical
+    action: fail
+
+  - name: require-sbom
+    type: attestation
+    attestation: sbom
+    action: fail
+
+  - name: require-provenance
+    type: attestation
+    attestation: slsa-provenance
+    action: fail
+```
 
 Evaluate both images and compare:
 

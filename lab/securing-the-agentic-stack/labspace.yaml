@@ -24,12 +24,19 @@ files:
     # catalog-service-node
 
     Product Catalog service: a REST API over a PostgreSQL product database, wired to
-    Kafka (events), LocalStack (S3 uploads) and WireMock (an upstream pricing API).
+    Kafka (events), LocalStack (S3 uploads) and WireMock (an upstream pricing API),
+    with a small React frontend.
 
-    Local stack:  docker compose up
-    API:          http://localhost:3050/api/products
+    Layout:
+      backend    src/            Express API (Node.js)
+      frontend   frontend/       React SPA (Vite)
+      database   db/schema.sql   PostgreSQL schema + seed data
 
-    You did not containerise this. An agent did. See the workshop.
+    Run locally:  npm install && npm start   (needs Postgres, Kafka, LocalStack, WireMock)
+    API:          http://localhost:3000/api/products
+
+    There is no Dockerfile and no compose file yet. In the workshop you hand this to an
+    agent and watch it containerise the whole thing.
   package.json: |
     {
       "name": "catalog-service-node",
@@ -55,25 +62,37 @@ files:
         "vitest": "^1.6.0"
       }
     }
+  package-lock.json: |
+    {
+      "name": "catalog-service-node",
+      "version": "1.0.0",
+      "lockfileVersion": 3,
+      "requires": true,
+      "packages": {}
+    }
   src/index.js: |
     const express = require("express");
-    const { Pool } = require("pg");
-    const { Kafka } = require("kafkajs");
-    const axios = require("axios");
-
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    const kafka = new Kafka({ brokers: [process.env.KAFKA_BROKER || "kafka:9092"] });
-    const upstream = process.env.CATALOG_UPSTREAM || "http://wiremock:8080";
+    const products = require("./routes/products");
 
     const app = express();
     app.use(express.json());
+    app.use("/api/products", products);
 
-    app.get("/api/products", async (_req, res) => {
+    app.listen(3000, () => console.log("catalog-service listening on :3000"));
+  src/routes/products.js: |
+    const { Router } = require("express");
+    const { pool } = require("../db/pool");
+    const axios = require("axios");
+
+    const upstream = process.env.CATALOG_UPSTREAM || "http://wiremock:8080";
+    const router = Router();
+
+    router.get("/", async (_req, res) => {
       const { rows } = await pool.query("SELECT * FROM products ORDER BY id");
       res.json(rows);
     });
 
-    app.get("/api/products/:id", async (req, res) => {
+    router.get("/:id", async (req, res) => {
       const { rows } = await pool.query("SELECT * FROM products WHERE id = $1", [req.params.id]);
       if (!rows.length) return res.status(404).json({ error: "not found" });
       // upstream pricing comes from WireMock in dev
@@ -81,58 +100,64 @@ files:
       res.json({ ...rows[0], price });
     });
 
-    app.listen(3000, () => console.log("catalog-service listening on :3000"));
-  compose.yaml: |
-    services:
-      frontend:
-        build: ./frontend
-        ports: ["3000:3000"]
-        depends_on: [backend]
+    module.exports = router;
+  src/db/pool.js: |
+    const { Pool } = require("pg");
 
-      backend:
-        build: .
-        ports: ["3050:3000"]
-        environment:
-          DATABASE_URL: postgres://postgres:postgres@postgres:5432/catalog
-          KAFKA_BROKER: kafka:9092
-          AWS_ENDPOINT: http://localstack:4566
-          CATALOG_UPSTREAM: http://wiremock:8080
-        depends_on: [postgres, kafka, localstack, wiremock]
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-      postgres:
-        image: postgres:16
-        environment:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: catalog
+    module.exports = { pool };
+  src/events/kafka.js: |
+    const { Kafka } = require("kafkajs");
 
-      kafka:
-        image: confluentinc/cp-kafka:7.6.0
+    const kafka = new Kafka({ brokers: [process.env.KAFKA_BROKER || "kafka:9092"] });
 
-      localstack:
-        image: localstack/localstack:3
-        environment:
-          SERVICES: s3
+    module.exports = { producer: kafka.producer() };
+  db/schema.sql: |
+    CREATE TABLE IF NOT EXISTS products (
+      id    SERIAL PRIMARY KEY,
+      name  TEXT NOT NULL,
+      sku   TEXT UNIQUE NOT NULL,
+      price NUMERIC(10, 2) NOT NULL DEFAULT 0
+    );
 
-      wiremock:
-        image: wiremock/wiremock:3.5.4
-        command: ["--global-response-templating"]
-  docker-scout-policy.yaml: |
-    version: "1"
-    policies:
-      - name: no-critical-cves
-        type: vulnerability
-        severity: critical
-        action: fail
+    INSERT INTO products (name, sku, price) VALUES
+      ('Widget', 'WGT-001', 9.99),
+      ('Gadget', 'GDG-002', 19.99)
+    ON CONFLICT (sku) DO NOTHING;
+  frontend/package.json: |
+    {
+      "name": "catalog-frontend",
+      "version": "1.0.0",
+      "private": true,
+      "scripts": { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+      "dependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+      },
+      "devDependencies": {
+        "vite": "^5.2.0"
+      }
+    }
+  frontend/src/App.jsx: |
+    import { useEffect, useState } from "react";
 
-      - name: require-sbom
-        type: attestation
-        attestation: sbom
-        action: fail
-
-      - name: require-provenance
-        type: attestation
-        attestation: slsa-provenance
-        action: fail
+    export default function App() {
+      const [products, setProducts] = useState([]);
+      useEffect(() => {
+        fetch("/api/products").then((r) => r.json()).then(setProducts);
+      }, []);
+      return (
+        <main>
+          <h1>Product Catalog</h1>
+          <ul>
+            {products.map((p) => (
+              <li key={p.id}>{p.name} — ${p.price}</li>
+            ))}
+          </ul>
+        </main>
+      );
+    }
 
 # Ordered instruction pages (markdown), rendered in the left-hand panel.
 sections:

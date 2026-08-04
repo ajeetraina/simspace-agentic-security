@@ -1,12 +1,13 @@
 # Securing the Agentic Stack
 
-Something built the application in this workspace, and it was not you.
+The application in this workspace is going to be built by an AI agent, not by you.
 
-An AI agent was handed a Node.js project - a product **catalog** with a frontend, a
-backend, and a compose stack wiring in **Kafka**, **LocalStack** and **WireMock** - and
-one instruction: *containerise this for production*. A minute later it had chosen a base
-image, resolved several hundred packages, written a Dockerfile, and built successfully.
-Nothing failed. Nothing warned.
+It is a Node.js **catalog** service - a frontend, a backend API, and a Postgres
+database, talking to **Kafka**, **LocalStack** and **WireMock**. Right now it is just
+source: no Dockerfile, no image. In a moment you will hand it to an agent with one
+instruction - *containerise this for production* - and in about a minute it will choose a
+base image, resolve several hundred packages, write a Dockerfile, and build successfully.
+Nothing will fail. Nothing will warn.
 
 Over the next ninety minutes you will find out what it actually shipped, and turn it
 into something you can prove things about.
@@ -61,8 +62,9 @@ Look at what you are working with:
 ls
 ```
 
-That is the Product Catalog service: a REST API over a PostgreSQL product database,
-with Kafka, LocalStack (S3) and WireMock wired in through :filelink[compose.yaml]{path="compose.yaml"}.
-Open :filelink[package.json]{path="package.json"} to see what it depends on.
+That is the Product Catalog service: a `frontend/` (React), a `src/` backend (a REST API
+over a PostgreSQL product database, talking to Kafka, LocalStack (S3) and WireMock), and
+the database schema in `db/`. There is no Dockerfile and no compose file yet - the agent
+writes those next. Open :filelink[package.json]{path="package.json"} to see what it depends on.
 
 Continue to **Setup**.
