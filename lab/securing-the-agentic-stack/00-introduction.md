@@ -59,7 +59,7 @@ where the measurement pays off, and every number you wrote down changes.
 Look at what you are working with:
 
 ```bash terminal-id=main
-ls
+tree
 ```
 
 That is the Product Catalog service: a `frontend/` (React), a `src/` backend (a REST API
