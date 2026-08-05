@@ -68,7 +68,12 @@ claude -p "Containerise this Node.js app (frontend, backend, LocalStack, Kafka, 
 ```
 
 It succeeded. No errors, no warnings, no questions. The terminal prints a summary of
-what it built. See the project it worked from — and the `Dockerfile` it added:
+what it built. 
+
+<img width="909" height="429" alt="image" src="https://github.com/user-attachments/assets/9cbe04c0-9ff7-4dbd-9b71-c23476e95dfa" />
+
+
+See the project it worked from and the `Dockerfile` it added:
 
 ```bash terminal-id=main
 tree
