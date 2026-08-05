@@ -1,5 +1,8 @@
 # Securing the Agentic Stack
 
+<img width="769" height="418" alt="image" src="https://github.com/user-attachments/assets/facffcfa-6c9c-4f9e-9e20-2d043825d861" />
+
+
 The application in this workspace is going to be built by an AI agent, not by you.
 
 It is a Node.js **catalog** service - a frontend, a backend API, and a Postgres
