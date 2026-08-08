@@ -5,6 +5,15 @@ description: >
   what it shipped into a signed, attested, policy-gated artifact, then extend the same
   guarantees to the tools the agent calls.
 
+# Landing-page card. Only shown when this repo has two or more labs (here: the
+# slides deck is the sibling). `order: 2` puts the hands-on lab after the deck.
+# labs.json is GENERATED from this block - never edit labs.json by hand.
+catalog:
+  icon: shield_lock
+  order: 2
+  tags: ["agentic security", "supply chain", "sbom", "dhi", "signing"]
+  estimatedMinutes: 90
+
 # Command behaviour lives in simulator.yaml (relative to this file).
 simulator: simulator.yaml
 

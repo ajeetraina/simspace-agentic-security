@@ -1,0 +1,43 @@
+# The "Securing the Agentic Stack" workshop deck (the WAD MasterCopy PDF under
+# abstract/slides/), presented in Simspace as full-bleed slides. Every page is a
+# full-bleed image so the branding/content matches the master exactly. The sibling
+# `securing-the-agentic-stack` lab's simulator is wired in, so scripted terminal
+# demos can be spliced into the deck if desired (see spec/slidedeck.md in
+# dockersamples/simspace).
+kind: slides
+title: "Securing the Agentic Stack - Slides"
+description: "The workshop deck: SBOM/VEX/SLSA, Docker Hardened Images, signing and CI policy gates for the agentic supply chain. Watch the talk, then do the lab."
+
+# Landing-page card. `order: 1` puts the deck ahead of the lab, so it reads as
+# "watch the workshop, then do the lab". labs.json is GENERATED from this block -
+# never edit labs.json by hand.
+catalog:
+  icon: slideshow
+  order: 1
+  tags: ["agentic security", "supply chain", "slides", "start here"]
+  estimatedMinutes: 45
+
+version: "2.0.0"
+
+# Dark is the deck's default surface - it matches the deck's deep-blue Docker
+# slides, so any native live-demo slides sit seamlessly among the image slides.
+theme: dark
+
+# Reuse the SIBLING LAB's simulator so any spliced-in demos run the exact scripted
+# commands learners run in the lab - the two can't drift apart. State is NOT
+# shared: this deck gets its own fresh machine (spec/slidedeck.md 7.2).
+simulator: ../securing-the-agentic-stack/simulator.yaml
+
+# One demo terminal. The lab's scenarios aren't terminal-scoped, so any id fires
+# them; `demo` is the conventional deck id referenced by `::terminal{id=demo}`.
+terminals:
+  - id: demo
+    title: Demo
+    icon: terminal
+
+# `slides:` is the deck alias for `sections:`. One chapter holds the whole deck;
+# slides within it are split on lines of exactly `---`. Each page is a full-bleed
+# <img>; live-demo slides can be interleaved at the hands-on sections later.
+slides:
+  - title: Workshop
+    contentPath: deck.md
