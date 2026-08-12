@@ -60,15 +60,6 @@ that passes on the first attempt.
 
 ---
 
-## Do this Monday
-
-Pick your highest-volume base image. Swap one non-critical service to the hardened
-equivalent, rebuild, and compare. That single measurement will tell you more about your
-exposure than a week of reading. Then store the SBOM as a build artifact, and add one
-policy gate that fails closed on signature verification.
-
----
-
 ## One last check
 
 ```bash terminal-id=build
@@ -83,6 +74,7 @@ Two images, same source. One you can prove things about.
 
 | | |
 |---|---|
+| Docker Sandboxes | <https://docs.docker.com/ai/sandboxes/> |
 | Docker Hardened Images | <https://docs.docker.com/dhi/> |
 | Docker Scout | <https://docs.docker.com/scout/> |
 | MCP Catalog | <https://hub.docker.com/mcp> |

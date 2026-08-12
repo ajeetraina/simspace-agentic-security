@@ -26,7 +26,7 @@ earlier. You give the agent a **sandbox** — its own microVM, off your host —
 **DHI MCP server** into it, so the agent can ask *"what is the hardened base for Node, and
 what CVEs does it carry?"* before it writes a single line of Dockerfile.
 
-<svg viewBox="0 0 640 284" width="100%" role="img" aria-label="The sbx sandbox boundary. A prompt to containerise the app drives the agent; the agent calls the DHI MCP server, which exposes signed tools only, and chooses FROM dhi.io/node before writing the Dockerfile. The sandbox is a microVM with its own daemon and network and a read-only host. The resulting image has zero critical, high, medium and low CVEs, 211 packages, an attached SBOM, is signed and runs non-root.">
+<svg viewBox="0 0 640 284" width="100%" role="img" aria-label="The sbx sandbox boundary. A prompt to containerise the app drives the agent; the agent calls the DHI MCP server, which exposes signed tools only, and chooses FROM dhi.io/node before writing the Dockerfile. The sandbox is a microVM with its own daemon and network and a read-only host. The resulting image has 0 critical, 0 high, 1 medium and 4 low CVEs, 78 packages, an attached SBOM, is signed and runs non-root.">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12">
     <rect x="8" y="8" width="624" height="196" rx="14" fill="#eef4ff" stroke="#2563eb" stroke-dasharray="6 5"></rect>
     <text x="28" y="34" fill="#1e3a8a" font-weight="700" font-size="13">Sandbox boundary — sbx microVM</text>
@@ -52,13 +52,13 @@ what CVEs does it carry?"* before it writes a single line of Dockerfile.
     <line x1="320" y1="204" x2="320" y2="220" stroke="#6b7280" stroke-width="1.5"></line>
     <polygon points="316,220 320,228 324,220" fill="#6b7280"></polygon>
     <rect x="8" y="228" width="624" height="48" rx="10" fill="#dbeafe" stroke="#2563eb"></rect>
-    <text x="320" y="250" text-anchor="middle" fill="#1e3a8a" font-weight="700" font-size="14">0C · 0H · 0M · 0L CVEs</text>
-    <text x="320" y="267" text-anchor="middle" fill="#3b5bdb" font-size="11">211 packages · SBOM attached · signed · non-root</text>
+    <text x="320" y="250" text-anchor="middle" fill="#1e3a8a" font-weight="700" font-size="14">0C · 0H · 1M · 4L CVEs</text>
+    <text x="320" y="267" text-anchor="middle" fill="#3b5bdb" font-size="11">78 packages · SBOM attached · signed · non-root</text>
   </g>
 </svg>
 
 In **Section 2** the same agent, on your host, reached for `node:20` with no guidance and
-built an image carrying **122 low, 25 medium, 26 high and 2 critical** CVEs — 806 packages,
+built an image carrying **93 low, 41 medium, 8 high and 0 critical** CVEs — 431 packages,
 no SBOM, running as root. Nothing failed. Nothing warned. This lab is the environment that
 run should have happened in: the agent boxed in, and pointed at trusted tools.
 
@@ -73,7 +73,7 @@ The prompt does not change. The environment around the agent does.
 | **Boundary** | Host daemon, host credentials, no boundary | microVM: own daemon, own network, host read-only |
 | **Base image** | `FROM node:20`, chosen with no guidance | `FROM dhi.io/node`, queried before writing |
 | **Tools** | Open registries, no allowlist | DHI MCP server, signed tools, policy-gated |
-| **Result** | 2C · 26H · 25M · 122L · 806 pkgs · root | 0C · 0H · 0M · 0L · 211 pkgs · signed · non-root |
+| **Result** | 0C · 8H · 41M · 93L · 431 pkgs · root | 0C · 0H · 1M · 4L · 78 pkgs · signed · non-root |
 
 You did not make the agent slower or less capable. You changed what it can reach.
 
@@ -108,6 +108,12 @@ Nothing is wired in yet. Confirm the sandbox has no MCP servers:
 ```bash terminal-id=build
 sbx mcp ls
 ```
+
+> [!NOTE]
+> You are wiring this sandbox up by hand, one command at a time. The whole environment —
+> daemon, MCP servers, and policy — can also be declared once in a **sandbox environment
+> file** and recreated on demand, which is how you'd keep it reproducible across a team or a
+> CI job. See [Docker Sandbox environments](https://docs.docker.com/ai/sandboxes/sandbox-environments/).
 
 ---
 
@@ -217,6 +223,39 @@ policy above keeps out of reach.
 
 ---
 
+## Now let the agent build it
+
+The server is wired in — so close the loop. Hand the sandboxed agent the **same containerise
+prompt from Section 2**, the one that shipped 2 critical CVEs on your host. Nothing about the
+prompt changes; only the environment around the agent does.
+
+```bash terminal-id=main
+sbx run codex --static-mcp remotedhi -p "Containerise catalog-service for production. Choose a hardened base image, keep the final image shell-free, and attach an SBOM."
+```
+
+Read the transcript top to bottom. Before it writes a single `FROM`, the agent calls
+`remotedhi__dhi_get_image_cves` and `dhi_get_tag_definition` against Docker's hardened
+catalog, sees that `dhi.io/node:24-debian13` carries zero CVEs and ships its own
+attestations, and *only then* writes a multi-stage Dockerfile — the `-dev` variant to build,
+the distroless runtime to ship.
+
+Now measure what it produced, with the exact commands you ran by hand in Lab 2:
+
+```bash terminal-id=build
+docker scout quickview catalog-service:dhi --org $$org$$
+```
+
+```bash terminal-id=build
+docker scout compare --to catalog-service:baseline catalog-service:dhi --org $$org$$
+```
+
+Same base, same multi-stage shape, same numbers. **In Lab 2 you rewrote the Dockerfile
+yourself to reach this image. Here the agent reached it on its own** — unattended, inside a
+box it could not escape, from signed catalog data it could not forge. The fast path it took
+by itself *is* the hardened one.
+
+---
+
 ## Checkpoint
 
 - [ ] The `sbx` daemon is running — an agent here works inside a microVM, not on your host
@@ -224,6 +263,8 @@ policy above keeps out of reach.
 - [ ] The DHI MCP server is registered as a remote server by URL
 - [ ] `sbx mcp inspect` shows it as `remote` over `streamable-http`
 - [ ] `sbx mcp ls` lists `remotedhi`
+- [ ] The sandboxed agent queried the DHI catalog *before* choosing a base
+- [ ] The image it built matches the `catalog-service:dhi` you made by hand in Lab 2
 
 ## What you should be thinking
 

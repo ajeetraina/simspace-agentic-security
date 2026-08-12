@@ -929,6 +929,86 @@ scenarios:
       output:
         - "No MCP servers configured. Add one with: sbx mcp add <name> --url <url>"
 
+  # The payoff: hand the sandboxed agent the SAME containerise prompt from
+  # Section 2. This time it queries the DHI MCP catalog before writing `FROM`
+  # and rebuilds the exact hardened image you produced by hand in Lab 2.
+  # More specific than sbx-run-codex (requires -p), so it must precede it.
+  - id: sbx-agent-dhi-build
+    when:
+      command: [sbx, run, codex]
+      args: { -p: { any: true } }
+    then:
+      state: { dhi.built: true }
+      files:
+        - create: Dockerfile
+          content: |
+            ###########################################################
+            # Stage: base - DHI dev variant, has shell and npm
+            ###########################################################
+            FROM dhi.io/node:24-debian13-dev AS base
+
+            WORKDIR /usr/local/app
+            COPY package.json package-lock.json ./
+
+            ###########################################################
+            # Stage: production-dependencies
+            ###########################################################
+            FROM base AS production-dependencies
+            ENV NODE_ENV=production
+            RUN npm ci --production --ignore-scripts && npm cache clean --force
+
+            ###########################################################
+            # Stage: final - DHI runtime variant, distroless
+            ###########################################################
+            FROM dhi.io/node:24-debian13 AS final
+            ENV NODE_ENV=production
+            WORKDIR /usr/local/app
+
+            COPY --from=production-dependencies /usr/local/app/node_modules ./node_modules
+            COPY ./src ./src
+
+            EXPOSE 3000
+            CMD ["node", "src/index.js"]
+      output:
+        - "● Reading the project... Node.js service, same source as Section 2."
+        - ""
+        - "● I have the DHI MCP server. Before I choose a base, I'll ask the catalog."
+        - { text: "  → remotedhi__dhi_list_repositories { query: \"node\" }", delay: short }
+        - { text: "    ✓ dhi.io/node — hardened Node.js on debian13 (distroless runtime + -dev build variant)", delay: short }
+        - { text: "  → remotedhi__dhi_get_tag_definition { repo: \"node\", tag: \"24-debian13\" }", delay: short }
+        - { text: "    ✓ runtime: no shell, no npm, non-root · -dev variant carries the toolchain", delay: short }
+        - { text: "  → remotedhi__dhi_get_image_cves { image: \"dhi.io/node:24-debian13\" }", delay: scan }
+        - { text: "    ✓ 0 critical · 0 high · 0 medium · 0 low", delay: short }
+        - { text: "  → remotedhi__dhi_get_image_attestations { image: \"dhi.io/node:24-debian13\" }", delay: short }
+        - { text: "    ✓ SBOM + SLSA provenance + VEX, signed by Docker, Inc.", delay: short }
+        - ""
+        - "● The catalog answered before I wrote a line. I'll build on the -dev variant and copy"
+        - "  only node_modules into the distroless runtime — a multi-stage build."
+        - "● Writing Dockerfile (multi-stage, hardened bases)..."
+        - { text: "  [+] Building 0.3s FROM dhi.io/node:24-debian13-dev", delay: pull }
+        - { text: "  [+] Building 7.6s (7/12) RUN npm ci --production --ignore-scripts", delay: build }
+        - { text: "  [+] Building 9.0s FROM dhi.io/node:24-debian13 (distroless)", delay: build }
+        - { text: "  [+] Building 30.8s (12/12) exporting to image", delay: build }
+        - "  => exporting sbom attestation"
+        - "  => exporting provenance attestation mode=max"
+        - "  => naming to catalog-service:dhi"
+        - ""
+        - "● Done — built catalog-service:dhi entirely inside the sandbox."
+        - ""
+        - { text: "  ┌── what the sandboxed agent built ──────────────────", delay: short }
+        - "  │"
+        - "  │   image      catalog-service:dhi   (248MB, 78 packages)"
+        - "  │   base       dhi.io/node:24-debian13  (hardened, distroless)"
+        - "  │   CVEs       0C · 0H · 1M · 4L"
+        - "  │   runs as    non-root · no shell · no npm"
+        - "  │   evidence   SBOM [x]   provenance [x]   signature [x]"
+        - "  │"
+        - "  │   The same artifact you built by hand in Lab 2 — chosen by"
+        - "  │   the agent, from signed catalog data, before it wrote FROM."
+        - { text: "  └─────────────────────────────────────────────────────", delay: short }
+        - ""
+        - "Measure it with the same commands you used in Lab 2 - it lands on the same numbers."
+
   # Run an agent (codex) inside the sandbox with the DHI MCP statically attached.
   - id: sbx-run-codex
     when:
