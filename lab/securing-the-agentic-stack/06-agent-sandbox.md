@@ -111,9 +111,11 @@ sbx mcp ls
 
 > [!NOTE]
 > You are wiring this sandbox up by hand, one command at a time. The whole environment —
-> daemon, MCP servers, and policy — can also be declared once in a **sandbox environment
+> agent, MCP servers, and policy — can also be declared once in a **sandbox environment
 > file** and recreated on demand, which is how you'd keep it reproducible across a team or a
-> CI job. See [Docker Sandbox environments](https://docs.docker.com/ai/sandboxes/sandbox-environments/).
+> CI job. You'll assemble that file at the end of this lab, in
+> [One file, the whole sandbox](#one-file-the-whole-sandbox). Full field reference:
+> [Docker Sandbox environments](https://docs.docker.com/ai/sandboxes/sandbox-environments/).
 
 ---
 
@@ -253,6 +255,71 @@ Same base, same multi-stage shape, same numbers. **In Lab 2 you rewrote the Dock
 yourself to reach this image. Here the agent reached it on its own** — unattended, inside a
 box it could not escape, from signed catalog data it could not forge. The fast path it took
 by itself *is* the hardened one.
+
+---
+
+## One file, the whole sandbox
+
+You wired this box up one command at a time — start the daemon, add the MCP server, point it
+at a policy, run the agent. That is fine to learn on, but it lives in your shell history and
+nobody else can reproduce it. A **sandbox environment file** declares the same thing once —
+the agent, the DHI MCP server, and the governing policy — so a teammate or a CI job recreates
+the identical box from a file committed to the repo.
+
+Save it at the repo root as `.sbxenv.yaml`:
+
+```yaml save-as=.sbxenv.yaml
+schemaVersion: "1"
+name: catalog-sandbox
+agent: codex
+
+workspace:
+  path: catalog-service
+  clone: true
+
+# Governance profile that carries the Cedar policy below —
+# the scoped, read-only DHI rules, not the wide-open one.
+sandboxOptions:
+  profile: dhi-readonly
+
+mcp:
+  servers:
+    - name: remotedhi
+      url: https://dhi.io/mcp
+```
+
+The env file has no field for inline Cedar — governance is referenced by profile name. The
+`dhi-readonly` profile carries the scoped policy from the warning earlier: register and the
+built-in primitives are allowed, but `invokeTool` is permitted **only** for the read-only
+`dhi_get_*` / `dhi_list_*` queries, so the two mirror mutators stay out of reach.
+
+```cedar save-as=dhi-readonly.cedar
+permit (principal, action == MCP::Action::"register", resource);
+permit (principal, action == MCP::Action::"invokePrimordial", resource);
+
+permit (principal, action == MCP::Action::"invokeTool", resource)
+when {
+  resource.server == "remotedhi" &&
+  ["dhi_get_image_cves","dhi_get_image_details","dhi_get_image_packages",
+   "dhi_get_image_attestations","dhi_get_tag_definition","dhi_get_repository",
+   "dhi_list_repositories","dhi_list_mirrors"].contains(resource.tool)
+};
+```
+
+Now the three commands you ran by hand collapse into one. `sbx env run` creates the sandbox
+if it doesn't exist, registers `remotedhi`, applies the profile, and attaches you to the
+`codex` session — reading `.sbxenv.yaml` from the working directory:
+
+```bash terminal-id=main
+sbx env run
+```
+
+Same boundary, same signed tools, same policy — except now it is a file in the repo, not a
+sequence you have to remember. Tear it down just as declaratively when you're done:
+
+```bash terminal-id=build
+sbx env rm
+```
 
 ---
 

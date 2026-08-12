@@ -1018,6 +1018,32 @@ scenarios:
         - { text: "Starting codex in the sandbox (static MCP: remotedhi)...", delay: short }
         - "codex ready. Type /mcp to list tools, or enter a prompt."
 
+  # Declarative path: `.sbxenv.yaml` wires the agent, the DHI MCP server, and the
+  # governance profile in one file. `sbx env run` reconciles all of it, then attaches.
+  - id: sbx-env-run
+    when:
+      command: [sbx, env, run]
+    then:
+      state: { sandbox.mcpAdded: true }
+      output:
+        - { text: "Reading .sbxenv.yaml (schemaVersion 1)...", delay: short }
+        - "  sandbox 'catalog-sandbox' — agent codex, workspace catalog-service (clone)"
+        - { text: "  microVM booted: own daemon, own network, host mounted read-only.", delay: short }
+        - { text: "  registering MCP server 'remotedhi' (remote) -> https://dhi.io/mcp", delay: short }
+        - "  applying governance profile 'dhi-readonly' (invokeTool scoped to read-only DHI tools)"
+        - "codex ready. Type /mcp to list tools, or enter a prompt."
+
+  # Tear the declared sandbox down, including its scoped credentials.
+  - id: sbx-env-rm
+    when:
+      command: [sbx, env, rm]
+    then:
+      state: { sandbox.mcpAdded: false }
+      output:
+        - "Removing sandbox 'catalog-sandbox' and its scoped credentials..."
+        - "  global bindings preserved (pass --prune-bindings to remove them)."
+        - "sandbox removed."
+
   # `/mcp` inside the codex session lists the tools the gateway exposes.
   - id: mcp-slash
     when:
