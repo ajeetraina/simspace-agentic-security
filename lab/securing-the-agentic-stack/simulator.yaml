@@ -16,6 +16,10 @@ state:
   registry:
     pushed: false
     tampered: false
+    # Truthy when the tag on the registry carries signed SBOM + provenance. The
+    # CI `secure-build` workflow gates on this (verify-attestations step). Set by
+    # the hardened builds; cleared by the tamper rebuild. See `workflows:` below.
+    attested: false
   mcp:
     built: false
     running: false
@@ -32,6 +36,63 @@ defaults:
   unmatched:
     stderr: ["command not found - this command isn't part of the lab."]
     exit: 1
+
+# ---------------------------------------------------------------------------
+# CI workflow catalog - rendered in the CI Pipeline tab (labspace `features.ci`).
+# A `git push` scenario fires a run via `then.ci` with NO scripted conclusion, so
+# the outcome is derived from state: the `verify-attestations` step `requires`
+# registry.attested. Push a tampered (unsigned) tag and the run goes red at that
+# step; rebuild with attestations and hit Re-run and the same pipeline goes green.
+# ---------------------------------------------------------------------------
+workflows:
+  - id: secure-build
+    name: "secure-build"
+    on: push
+    steps:
+      - id: setup
+        name: "Set up job"
+        logs:
+          - "act_runner v0.2.11 · image catthehacker/ubuntu:act-latest"
+
+      - id: checkout
+        name: "actions/checkout@v4"
+        logs:
+          - "Cloning git.dockerlabs.xyz/moby/catalog-service @ a9d0e42"
+
+      # The by-hand `docker scout attest ... --verify` from earlier in Lab 3,
+      # now a gate. A tag rebuilt without --sbom/--provenance carries nothing to
+      # verify, so this step fails and everything after it is skipped.
+      - id: verify-attestations
+        name: "Verify attestations (docker/scout-action@v1)"
+        requires: registry.attested
+        logs:
+          - "$ docker scout attest get …/catalog-service:dhi \\"
+          - "    --predicate-type https://slsa.dev/provenance/v0.2 --verify"
+          - "  ✓ SBOM (CycloneDX) present"
+          - "  ✓ SLSA provenance present"
+          - "  ✓ Signature verified - traces to trusted builder (Sigstore)"
+        failure:
+          error: "No signed attestations on this digest - the tag was rebuilt without --sbom/--provenance. Blocked before push."
+          logs:
+            - "$ docker scout attest get …/catalog-service:dhi \\"
+            - "    --predicate-type https://slsa.dev/provenance/v0.2 --verify"
+            - "  ✗ No attestations found on this digest"
+            - "  ✗ Nothing to verify - signature check cannot run"
+            - "Error: Process completed with exit code 1."
+
+      - id: policy-gate
+        name: "Policy gate"
+        logs:
+          - "command: policy   exit-on: policy"
+          - "  ✓ no-critical-cves     PASSED"
+          - "  ✓ require-sbom         PASSED"
+          - "  ✓ require-provenance   PASSED"
+          - "  gate: 3/3 passed → image allowed"
+
+      - id: push
+        name: "Push"
+        logs:
+          - "pushed …/catalog-service:dhi (attestations bound to digest)"
 
 scenarios:
   # ---------------------------------------------------------------------------
@@ -278,7 +339,7 @@ scenarios:
         -t: { oneOf: [registry.dockerlabs.xyz/catalog-service:dhi] }
         --no-cache: { any: true }
     then:
-      state: { registry.tampered: true }
+      state: { registry.tampered: true, registry.attested: false }
       output:
         - { text: "[+] Building 61.3s (12/12) FINISHED", delay: build }
         - " => => naming to registry.dockerlabs.xyz/catalog-service:dhi (new digest sha256:b7c9d1...)"
@@ -293,7 +354,7 @@ scenarios:
         -t: { oneOf: [registry.dockerlabs.xyz/catalog-service:dhi] }
         --sbom: { any: true }
     then:
-      state: { registry.tampered: false }
+      state: { registry.tampered: false, registry.attested: true }
       output:
         - { text: "[+] Building 32.0s (12/12) FINISHED", delay: build }
         - " => exporting sbom attestation"
@@ -306,7 +367,7 @@ scenarios:
       args:
         -t: { oneOf: [catalog-service:dhi] }
     then:
-      state: { dhi.built: true }
+      state: { dhi.built: true, registry.attested: true }
       output:
         - { text: "[+] Building 0.3s FROM dhi.io/node:24-debian13-dev", delay: pull }
         - { text: "[+] Building 7.4s (7/12) RUN npm ci --production --ignore-scripts", delay: build }
@@ -742,6 +803,10 @@ scenarios:
         - "[main 7f3a2c1] Add secure build pipeline"
         - " 1 file changed, 42 insertions(+)"
 
+  # git push fires a CI run in the CI Pipeline tab. NO scripted conclusion - the
+  # outcome is derived from state (workflows.secure-build `verify-attestations`
+  # requires registry.attested). Push while the tag is tampered -> red run; fix
+  # the artifact and hit Re-run -> the same pipeline goes green.
   - id: git-push
     when:
       command: [git, push]
@@ -752,43 +817,44 @@ scenarios:
         - "   7f3a2c1..a9d0e42  main -> main"
         - ""
         - "remote: Gitea Actions: secure-build triggered"
-        - { text: "remote:   build             ✓ built catalog-service:${sha} (sbom + provenance)", delay: build }
-        - { text: "remote:   policy gate        ✓ 3/3 policies passed", delay: scan }
-        - { text: "remote:   push              ✓ pushed to registry (attestations bound to digest)", delay: short }
-        - "remote: secure-build succeeded - open the Actions tab in Gitea to inspect it."
+        - "remote:   open the CI Pipeline tab (top right) to watch the run"
+      ci:
+        workflow: secure-build
+        commit: "Add secure build pipeline"
 
-  # `gitea run view <workflow>` is a helper in this lab that renders the Gitea
-  # Actions run page as text - the same view the web UI shows in the browser.
-  - id: gitea-run-view
+  # ---------------------------------------------------------------------------
+  # Section 2 - run the app the agent wired up, then curl the API
+  # ---------------------------------------------------------------------------
+  # Plain `docker compose up` in Section 2 (the full app stack). Gated on
+  # mcp.built:false so it wins BEFORE compose-up-mcp until Lab 6 builds the MCP
+  # server; the MCP compose (Lab 6) falls through to compose-up-mcp below.
+  - id: compose-up-app
     when:
-      command: [gitea, run, view]
+      command: [docker, compose]
+      args: { 0: { oneOf: [up] } }
+      state: { mcp.built: false }
     then:
       output:
-        - "secure-build  ·  run #12  ·  ✓ success  ·  38s"
-        - "  branch main   commit a9d0e42   pushed by moby   trigger: push"
-        - "  workflow: .gitea/workflows/secure-build.yaml"
-        - ""
-        - "  build  (ubuntu-latest)                                        ✓ 38s"
-        - "  ──────────────────────────────────────────────────────────────────"
-        - { text: "  ✓ Set up job                                                   2s", delay: short }
-        - "      act_runner v0.2.11 · image catthehacker/ubuntu:act-latest"
-        - { text: "  ✓ actions/checkout@v4                                          3s", delay: short }
-        - "      Cloning git.dockerlabs.xyz/moby/catalog-service @ a9d0e42"
-        - { text: "  ✓ Build with attestations                                     21s", delay: build }
-        - "      + docker build -t …/catalog-service:a9d0e42 --sbom=true --provenance=mode=max ."
-        - "      => exporting sbom attestation"
-        - "      => exporting provenance attestation mode=max"
-        - { text: "  ✓ Policy gate  (docker/scout-action@v1)                        9s", delay: scan }
-        - "      command: policy   exit-on: policy"
-        - "      ✓ no-critical-cves     PASSED"
-        - "      ✓ require-sbom         PASSED"
-        - "      ✓ require-provenance   PASSED"
-        - "      gate: 3/3 passed → step succeeds, pipeline continues"
-        - { text: "  ✓ Push                                                         3s", delay: short }
-        - "      pushed …/catalog-service:a9d0e42 (attestations bound to digest)"
-        - { text: "  ✓ Complete job                                                 0s", delay: short }
-        - ""
-        - "  Had the gate failed, the run would stop here in red and Push would never run."
+        - { text: " ✔ Network catalog-service_default  Created", delay: short }
+        - { text: " ✔ Container catalog-postgres        Started", delay: pull }
+        - { text: " ✔ Container catalog-kafka           Started", delay: pull }
+        - { text: " ✔ Container catalog-localstack      Started", delay: pull }
+        - { text: " ✔ Container catalog-wiremock        Started", delay: short }
+        - { text: " ✔ Container catalog-backend         Started", delay: build }
+        - { text: " ✔ Container catalog-frontend        Started", delay: short }
+        - "catalog-service listening on :3000"
+
+  - id: curl-products
+    when:
+      command: [curl]
+      args:
+        0: { oneOf: ["http://localhost:3000/api/products"] }
+    then:
+      output:
+        - "["
+        - "  {\"id\":1,\"name\":\"Widget\",\"sku\":\"WGT-001\",\"price\":\"9.99\"},"
+        - "  {\"id\":2,\"name\":\"Gadget\",\"sku\":\"GDG-002\",\"price\":\"19.99\"}"
+        - "]"
 
   # ---------------------------------------------------------------------------
   # Section 6 - MCP: compose up, inspect, gateway

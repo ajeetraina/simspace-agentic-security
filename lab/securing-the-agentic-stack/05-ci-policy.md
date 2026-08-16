@@ -140,15 +140,9 @@ This is the most useful ninety seconds in the workshop.
 > `--verify`: exactly the substitution an attacker performs, and the missing, unverifiable
 > attestations are what give it away.
 
-3. Rebuild **with** attestations so the rest of the lab works:
-
-    ```bash terminal-id=build
-    docker build -t registry.dockerlabs.xyz/catalog-service:dhi --sbom=true --provenance=mode=max .
-    ```
-
-    ```bash terminal-id=build
-    docker push registry.dockerlabs.xyz/catalog-service:dhi
-    ```
+**Leave the tag like this.** The registry now holds an unsigned image where a verified one
+used to be — a check you ran by hand caught it. In a moment you'll turn that same check into
+a gate and watch your pipeline catch the *identical* substitution automatically, then fix it.
 
 ---
 
@@ -195,8 +189,8 @@ One fails. One passes. You now know what the pipeline will say before you push.
 > [!NOTE]
 > This is a **simulated** CI environment — `git.dockerlabs.xyz` is a stand-in, not a live
 > server you log into. The workspace behaves as a Gitea repo whose `moby` account owns it:
-> anything under `.gitea/workflows/` "runs" automatically when you push, and you inspect
-> the run right here in the terminal with `gitea run view` (below) — no browser needed.
+> anything under `.gitea/workflows/` "runs" automatically when you push, and the run
+> renders in the **CI Pipeline** tab at the top right — no browser needed.
 
 **Gitea Actions** is Gitea's built-in CI — GitHub-Actions-compatible, so the workflow
 below is the *same* YAML you would commit to GitHub. Here is what happens the moment you
@@ -230,9 +224,10 @@ push:
   </g>
 </svg>
 
-1. Create the workflow. The build attaches the SBOM and provenance attestations, and
-   **the gate sits before the push** — an image that fails policy never reaches the
-   registry:
+1. Create the workflow. It **verifies the signed attestations** already bound to the
+   pushed digest, then runs the **policy gate** — and only a run that clears both
+   **promotes** the image. The gate sits before the push, so a non-compliant image never
+   reaches the registry:
 
     ```yaml save-as=.gitea/workflows/secure-build.yaml
     name: secure-build
@@ -240,7 +235,7 @@ push:
     on: [push]
 
     env:
-      IMAGE: ${{ secrets.DOCKER_REGISTRY }}/catalog-service:${{ github.sha }}
+      IMAGE: ${{ secrets.DOCKER_REGISTRY }}/catalog-service:dhi
 
     jobs:
       build:
@@ -248,11 +243,15 @@ push:
         steps:
           - uses: actions/checkout@v4
 
-          - name: Build with attestations
-            run: |
-              docker build -t "$IMAGE" \
-                --sbom=true \
-                --provenance=mode=max .
+          # The by-hand `--verify` from earlier, now a gate. A tag rebuilt
+          # without --sbom/--provenance has nothing to verify — this step fails.
+          - name: Verify attestations
+            uses: docker/scout-action@v1
+            with:
+              command: attestation
+              image: ${{ env.IMAGE }}
+              predicate-type: https://slsa.dev/provenance/v0.2
+              # signature must trace to a trusted builder (keyless, Sigstore)
 
           # The gate sits BEFORE the push.
           - name: Policy gate
@@ -267,7 +266,8 @@ push:
             run: docker push "$IMAGE"
     ```
 
-2. Commit and push — watch the run stream back:
+2. Commit and push. The tag on the registry is **still the tampered, unsigned image** you
+   left a moment ago — so watch this run go red:
 
     ```bash terminal-id=main
     git add .gitea/workflows/secure-build.yaml
@@ -281,63 +281,38 @@ push:
     git push
     ```
 
-The pipeline builds with attestations, evaluates the policy gate, then pushes — with
-nobody running a verification command by hand.
+Switch to the **CI Pipeline** tab. The run stops at **Verify attestations** — the digest
+carries nothing to verify — and `Policy gate` and `Push` are skipped. The unsigned image
+never reaches the registry. The `--verify` you ran once by hand is now enforced on every
+push.
 
 ---
 
-## See the run in Gitea
+## Fix it, then re-run
 
-In a real setup you would open the **Actions** tab in the Gitea web UI. Here, render that
-same run page in the terminal:
+The pipeline caught the substitution. Now fix the artifact — rebuild **with** attestations,
+so a signed image sits on the tag again:
 
-```bash terminal-id=main
-gitea run view secure-build
+```bash terminal-id=build
+docker build -t registry.dockerlabs.xyz/catalog-service:dhi --sbom=true --provenance=mode=max .
 ```
 
-That expands every step with its log — the same view the browser shows:
+```bash terminal-id=build
+docker push registry.dockerlabs.xyz/catalog-service:dhi
+```
 
-<svg viewBox="0 0 720 324" width="100%" role="img" aria-label="Gitea Actions run page for secure-build run number 12 on branch main, commit a9d0e42, succeeded in 38 seconds. Job build on ubuntu-latest. Steps: Set up job 2s, actions/checkout@v4 3s, Build with attestations (sbom + provenance) 21s, Policy gate 9s with 3 of 3 policies passed, Push 3s attestations bound to digest, Complete job. secure-build succeeded because the gate passed before the push.">
-  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
-    <rect x="1" y="1" width="718" height="322" rx="8" fill="#ffffff" stroke="#d0d7de"></rect>
-    <rect x="1" y="1" width="718" height="32" rx="8" fill="#24292f"></rect>
-    <rect x="1" y="17" width="718" height="16" fill="#24292f"></rect>
-    <text x="16" y="22" fill="#ffffff" font-size="12">git.dockerlabs.xyz / moby / catalog-service — Actions</text>
-    <text x="20" y="58" fill="#1a7f37" font-weight="700">✓</text>
-    <text x="40" y="58" fill="#24292f" font-weight="700">secure-build #12</text>
-    <text x="190" y="58" fill="#57606a" font-size="12">main · a9d0e42 · pushed by moby · trigger: push</text>
-    <text x="700" y="58" fill="#57606a" font-size="12" text-anchor="end">38s</text>
-    <line x1="16" y1="72" x2="704" y2="72" stroke="#d0d7de"></line>
-    <text x="20" y="96" fill="#57606a" font-size="12" font-weight="700">build  ·  runs-on: ubuntu-latest</text>
-    <text x="24" y="128" fill="#1a7f37" font-weight="700">✓</text>
-    <text x="46" y="128" fill="#24292f">Set up job</text>
-    <text x="700" y="128" fill="#57606a" font-size="12" text-anchor="end">2s</text>
-    <text x="24" y="158" fill="#1a7f37" font-weight="700">✓</text>
-    <text x="46" y="158" fill="#24292f">actions/checkout@v4</text>
-    <text x="700" y="158" fill="#57606a" font-size="12" text-anchor="end">3s</text>
-    <text x="24" y="188" fill="#1a7f37" font-weight="700">✓</text>
-    <text x="46" y="188" fill="#24292f">Build with attestations</text>
-    <text x="270" y="188" fill="#57606a" font-size="12">sbom + provenance</text>
-    <text x="700" y="188" fill="#57606a" font-size="12" text-anchor="end">21s</text>
-    <text x="24" y="218" fill="#1a7f37" font-weight="700">✓</text>
-    <text x="46" y="218" fill="#24292f">Policy gate</text>
-    <text x="270" y="218" fill="#1a7f37" font-size="12">3/3 policies passed — image allowed</text>
-    <text x="700" y="218" fill="#57606a" font-size="12" text-anchor="end">9s</text>
-    <text x="24" y="248" fill="#1a7f37" font-weight="700">✓</text>
-    <text x="46" y="248" fill="#24292f">Push</text>
-    <text x="270" y="248" fill="#57606a" font-size="12">attestations bound to digest</text>
-    <text x="700" y="248" fill="#57606a" font-size="12" text-anchor="end">3s</text>
-    <text x="24" y="278" fill="#1a7f37" font-weight="700">✓</text>
-    <text x="46" y="278" fill="#24292f">Complete job</text>
-    <text x="700" y="278" fill="#57606a" font-size="12" text-anchor="end">0s</text>
-    <line x1="16" y1="296" x2="704" y2="296" stroke="#d0d7de"></line>
-    <text x="20" y="313" fill="#1a7f37" font-size="12" font-weight="700">secure-build succeeded — the gate passed before the push.</text>
-  </g>
-</svg>
+Back in the **CI Pipeline** tab, press **Re-run jobs** on the failed run. No new commit —
+the *same* pipeline re-evaluates against the fixed tag, and this time every step is green:
+
+- **Verify attestations** → SBOM + provenance present, signature verified ✓
+- **Policy gate** → 3 / 3 policies satisfied ✓
+- **Push** → image promoted to the registry ✓
 
 > [!TIP]
-> **The gate sits before Push.** Had the policy step failed, the run would stop there in
-> red and `Push` would never execute — a non-compliant image never reaches the registry.
+> **Fix the state, re-run, green.** Re-run pushed nothing by hand — it re-evaluated the
+> pipeline against the current state, and because a signed image now sits on the tag, the
+> gate passed and the pipeline promoted it. That is the whole point of a gate: the same
+> check runs on every push and every re-run, and nobody has to remember to run it.
 
 ---
 
@@ -347,7 +322,8 @@ That expands every step with its log — the same view the browser shows:
 - [ ] You have verified the provenance signature (`--verify`) traces to a trusted builder
 - [ ] You have watched the attestations vanish when the tag was moved
 - [ ] You have evaluated the policy locally against both images
-- [ ] You have watched CI build, gate and push
+- [ ] You have watched the pipeline go **red** on the tampered tag in the CI Pipeline tab
+- [ ] You have fixed the artifact and used **Re-run** to watch the same pipeline go green
 
 ## Four patterns that survive contact with a real team
 

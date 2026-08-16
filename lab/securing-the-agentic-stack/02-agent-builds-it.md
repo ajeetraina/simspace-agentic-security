@@ -85,6 +85,26 @@ Read what it wrote:
 cat Dockerfile
 ```
 
+## See it actually run
+
+A Dockerfile you can read is one thing; a service answering requests is another. Bring the
+whole stack up the way the agent wired it in `compose.yaml`:
+
+```bash terminal-id=main
+docker compose up -d
+```
+
+Then hit the API it exposes:
+
+```bash terminal-id=main
+curl http://localhost:3000/api/products
+```
+
+Two products come back — the catalog is live. **This works.** No crash, no warning, nothing
+that would make you stop and look. That is exactly why the three questions below matter: the
+image is the artifact every later lab inspects, hardens, signs and gates — and nothing about
+it *behaving correctly* tells you what it is built from.
+
 ## Freeze here. Three questions.
 
 ### What base image did it pick, and who decided that?

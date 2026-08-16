@@ -26,6 +26,14 @@ terminals:
     title: Build
     icon: deployed_code
 
+# Engine-backed CI tab in the right-hand pane. A `git push` scenario fires a run
+# via `then.ci` (simulator.yaml); the tab renders it GitHub-Actions style, with a
+# Re-run button. See simulator.yaml `workflows:` for the pipeline definition.
+features:
+  ci:
+    title: CI Pipeline
+    icon: rocket_launch
+
 # Seed the virtual filesystem. Built-in `ls`/`cat` reflect these immediately; the
 # agent (and later save-as blocks) add more files on top.
 files:
