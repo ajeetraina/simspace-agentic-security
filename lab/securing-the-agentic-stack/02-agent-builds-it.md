@@ -67,6 +67,16 @@ Dockerfile, resolves the dependency tree, and builds:
 claude -p "Containerise this Node.js app (frontend, backend, LocalStack, Kafka, WireMock) for production. Add a Dockerfile and build the image as catalog-service:baseline."
 ```
 
+> [!NOTE]
+> **On your own laptop this pauses for approval.** `claude -p` runs headless, but Claude
+> Code still asks before it writes files or runs `docker build` — you'll see permission
+> prompts, not a silent run. Approve them to continue, or pre-grant so it runs unattended:
+> add `--dangerously-skip-permissions` (simplest), or scope it with
+> `--allowedTools "Write" "Edit" "Bash(docker build:*)" "Bash(docker images:*)"`.
+> That choice — approve every step, or hand a model full write-and-shell access to your
+> host — is exactly the risk **Lab 4** removes by running the agent in a sandbox. Here in
+> the simulator it just runs.
+
 It succeeded. No errors, no warnings, no questions. The terminal prints a summary of
 what it built. 
 
