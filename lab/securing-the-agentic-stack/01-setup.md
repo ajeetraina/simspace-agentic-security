@@ -46,4 +46,16 @@ git --version
 Everything else — image build attestations (`--sbom`, `--provenance`) and Docker Scout —
 ships with the Docker Engine you just logged in to.
 
+## 4. Clone the project
+
+Pull down the app you are about to harden — a Node.js catalog service (frontend, backend,
+Postgres, Kafka, LocalStack, WireMock) that ships with **no Dockerfile yet**:
+
+```bash terminal-id=main
+git clone https://github.com/ajeetraina/product-catalog-demo-showcase
+```
+
+That project is now in your workspace. In the next section you hand it — untouched, no
+Dockerfile and no guidance — to an agent and watch it containerise the whole thing.
+
 You are ready. Continue to **An Agent Built This**.

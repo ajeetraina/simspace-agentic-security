@@ -31,6 +31,7 @@ settings:
     pull: 700 # simulated layer download
     build: 900 # simulated build step
     scan: 1200 # simulated Scout analysis
+    clone: 800 # simulated git clone transfer
 
 defaults:
   unmatched:
@@ -141,6 +142,22 @@ scenarios:
       args: { 0: { oneOf: [organization] }, 1: { any: true } }
     then:
       output: ["Set organization to {{ args.1 }}"]
+
+  # Clone the project into the workspace. Cosmetic - the app files are already
+  # seeded at the workspace root (labspace.yaml `files:`), which is what the
+  # built-in ls/cat/tree reflect; this step just makes the "fetch it first" flow
+  # match a real laptop before the agent containerises it in Section 2.
+  - id: git-clone
+    when:
+      command: [git, clone]
+    then:
+      output:
+        - "Cloning into 'product-catalog-demo-showcase'..."
+        - { text: "remote: Enumerating objects: 142, done.", delay: short }
+        - "remote: Counting objects: 100% (142/142), done."
+        - "remote: Compressing objects: 100% (94/94), done."
+        - { text: "Receiving objects: 100% (142/142), 48.71 KiB | 4.87 MiB/s, done.", delay: clone }
+        - "Resolving deltas: 100% (38/38), done."
 
   # ---------------------------------------------------------------------------
   # Section 2 - the agent containerises the app (one-shot prompt)
