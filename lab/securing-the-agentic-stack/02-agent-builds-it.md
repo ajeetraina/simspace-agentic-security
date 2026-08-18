@@ -22,7 +22,7 @@
 You are going to give an AI agent one instruction and watch it containerise the whole
 service - with no mention of base images, versions, security, or best practice.
 
-Here is the stack it has to reason about — a backend API fronted by a UI, talking to
+Here is the stack it has to reason about - a backend API fronted by a UI, talking to
 PostgreSQL, Kafka, LocalStack (S3) and WireMock:
 
 <svg viewBox="0 0 620 300" width="100%" role="img" aria-label="Architecture: the catalog-service:baseline image contains Frontend and Backend API; Backend API talks to PostgreSQL, Kafka, LocalStack S3 and WireMock.">
@@ -67,16 +67,6 @@ Dockerfile, resolves the dependency tree, and builds:
 claude -p "Containerise this Node.js app (frontend, backend, LocalStack, Kafka, WireMock) for production. Add a Dockerfile and build the image as catalog-service:baseline."
 ```
 
-> [!NOTE]
-> **On your own laptop this pauses for approval.** `claude -p` runs headless, but Claude
-> Code still asks before it writes files or runs `docker build` — you'll see permission
-> prompts, not a silent run. Approve them to continue, or pre-grant so it runs unattended:
-> add `--dangerously-skip-permissions` (simplest), or scope it with
-> `--allowedTools "Write" "Edit" "Bash(docker build:*)" "Bash(docker images:*)"`.
-> That choice — approve every step, or hand a model full write-and-shell access to your
-> host — is exactly the risk **Lab 4** removes by running the agent in a sandbox. Here in
-> the simulator it just runs.
-
 It succeeded. No errors, no warnings, no questions. The terminal prints a summary of
 what it built. 
 
@@ -110,9 +100,9 @@ Then hit the API it exposes:
 curl http://localhost:3000/api/products
 ```
 
-Two products come back — the catalog is live. **This works.** No crash, no warning, nothing
+Two products come back - the catalog is live. **This works.** No crash, no warning, nothing
 that would make you stop and look. That is exactly why the three questions below matter: the
-image is the artifact every later lab inspects, hardens, signs and gates — and nothing about
+image is the artifact every later lab inspects, hardens, signs and gates - and nothing about
 it *behaving correctly* tells you what it is built from.
 
 ## Freeze here. Three questions.
@@ -130,7 +120,7 @@ npm ls --all --parseable 2>/dev/null | wc -l
 ```
 
 Every one is a package, with a version, with a vulnerability history. You reviewed none
-of them. Neither did the agent — resolving a dependency and evaluating it are different
+of them. Neither did the agent - resolving a dependency and evaluating it are different
 activities, and it only did the first.
 
 ### Can you prove where any of it came from?
