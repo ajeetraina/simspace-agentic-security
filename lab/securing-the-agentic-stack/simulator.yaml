@@ -378,7 +378,7 @@ scenarios:
         - " => exporting provenance attestation mode=max"
         - " => => naming to registry.dockerlabs.xyz/catalog-service:dhi"
 
-  # Dockerfile linter — the "validate" step of Lab 2's edit -> Save -> validate
+  # Dockerfile linter - the "validate" step of Lab 2's edit -> Save -> validate
   # loop. Deterministic like every command in this lab: it models a clean pass on
   # the multi-stage hardened Dockerfile the learner writes via the save-as block.
   - id: hadolint-dockerfile
@@ -388,10 +388,10 @@ scenarios:
       output:
         - { text: "Linting Dockerfile...", delay: short }
         - { text: "Dockerfile: no issues detected", delay: short }
-        - "  ✓ multi-stage build — builder stage separated from runtime"
+        - "  ✓ multi-stage build - builder stage separated from runtime"
         - "  ✓ pinned base images (node:24-debian13-dev, node:24-debian13)"
-        - "  ✓ npm ci --ignore-scripts — no install-time lifecycle scripts"
-        - "  ✓ non-root distroless runtime — no shell in the final image"
+        - "  ✓ npm ci --ignore-scripts - no install-time lifecycle scripts"
+        - "  ✓ non-root distroless runtime - no shell in the final image"
 
   - id: build-dhi
     when:
@@ -1072,7 +1072,7 @@ scenarios:
         - ""
         - "● I have the DHI MCP server. Before I choose a base, I'll ask the catalog."
         - { text: "  → remotedhi__dhi_list_repositories { query: \"node\" }", delay: short }
-        - { text: "    ✓ dhi.io/node — hardened Node.js on debian13 (distroless runtime + -dev build variant)", delay: short }
+        - { text: "    ✓ dhi.io/node - hardened Node.js on debian13 (distroless runtime + -dev build variant)", delay: short }
         - { text: "  → remotedhi__dhi_get_tag_definition { repo: \"node\", tag: \"24-debian13\" }", delay: short }
         - { text: "    ✓ runtime: no shell, no npm, non-root · -dev variant carries the toolchain", delay: short }
         - { text: "  → remotedhi__dhi_get_image_cves { image: \"dhi.io/node:24-debian13\" }", delay: scan }
@@ -1081,7 +1081,7 @@ scenarios:
         - { text: "    ✓ SBOM + SLSA provenance + VEX, signed by Docker, Inc.", delay: short }
         - ""
         - "● The catalog answered before I wrote a line. I'll build on the -dev variant and copy"
-        - "  only node_modules into the distroless runtime — a multi-stage build."
+        - "  only node_modules into the distroless runtime - a multi-stage build."
         - "● Writing Dockerfile (multi-stage, hardened bases)..."
         - { text: "  [+] Building 0.3s FROM dhi.io/node:24-debian13-dev", delay: pull }
         - { text: "  [+] Building 7.6s (7/12) RUN npm ci --production --ignore-scripts", delay: build }
@@ -1091,7 +1091,7 @@ scenarios:
         - "  => exporting provenance attestation mode=max"
         - "  => naming to catalog-service:dhi"
         - ""
-        - "● Done — built catalog-service:dhi entirely inside the sandbox."
+        - "● Done - built catalog-service:dhi entirely inside the sandbox."
         - ""
         - { text: "  ┌── what the sandboxed agent built ──────────────────", delay: short }
         - "  │"
@@ -1101,7 +1101,7 @@ scenarios:
         - "  │   runs as    non-root · no shell · no npm"
         - "  │   evidence   SBOM [x]   provenance [x]   signature [x]"
         - "  │"
-        - "  │   The same artifact you built by hand in Lab 2 — chosen by"
+        - "  │   The same artifact you built by hand in Lab 2 - chosen by"
         - "  │   the agent, from signed catalog data, before it wrote FROM."
         - { text: "  └─────────────────────────────────────────────────────", delay: short }
         - ""
@@ -1125,7 +1125,7 @@ scenarios:
       state: { sandbox.mcpAdded: true }
       output:
         - { text: "Reading .sbxenv.yaml (schemaVersion 1)...", delay: short }
-        - "  sandbox 'catalog-sandbox' — agent codex, workspace catalog-service (clone)"
+        - "  sandbox 'catalog-sandbox' - agent codex, workspace catalog-service (clone)"
         - { text: "  microVM booted: own daemon, own network, host mounted read-only.", delay: short }
         - { text: "  registering MCP server 'remotedhi' (remote) -> https://dhi.io/mcp", delay: short }
         - "  applying governance profile 'dhi-readonly' (invokeTool scoped to read-only DHI tools)"

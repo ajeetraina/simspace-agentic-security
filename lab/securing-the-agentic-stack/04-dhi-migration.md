@@ -1,4 +1,4 @@
-# Lab 2 — Start From a Trusted Base
+# Lab 2 - Start From a Trusted Base
 
 <svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, current Hardened base, Verify &amp; Gate, Build Sandbox">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
@@ -21,7 +21,7 @@
 
 **16 minutes · hands-on**
 
-The migration in one picture — a builder stage with a shell and npm produces
+The migration in one picture - a builder stage with a shell and npm produces
 `node_modules`, and only that output is copied into a distroless runtime:
 
 <svg viewBox="0 0 700 200" width="100%" role="img" aria-label="Multi-stage build: a builder stage on node:24-debian13-dev runs npm ci, then only node_modules is copied into a distroless final stage on node:24-debian13 (248MB, no shell, no npm, no curl).">
@@ -60,8 +60,8 @@ Docker Hardened Images come in two flavours, and you need both:
 
 | Variant | Tag | What it has |
 |---------|-----|-------------|
-| Dev | `$$dhiPrefix$$node:24-debian13-dev` | A shell and npm — for building |
-| Runtime | `$$dhiPrefix$$node:24-debian13` | Distroless — no shell, no package manager |
+| Dev | `$$dhiPrefix$$node:24-debian13-dev` | A shell and npm - for building |
+| Runtime | `$$dhiPrefix$$node:24-debian13` | Distroless - no shell, no package manager |
 
 Because the runtime variant has no shell, you cannot run `npm install` in it. That
 forces a multi-stage build: the dev image installs dependencies, the runtime image
@@ -71,12 +71,12 @@ receives only the output. An image with no shell is one an attacker cannot drop 
 
 ## Migrate
 
-You're going to change one file — the Dockerfile — and prove the change landed
+You're going to change one file - the Dockerfile - and prove the change landed
 before you build. This is the **view → edit → Save → confirm → validate** loop
 you'll reuse whenever a lab hands the learner code to change.
 
 1. **View what the agent shipped.** Back in Lab 2 the agent wrote a Dockerfile.
-   Open :filelink[Dockerfile]{path="Dockerfile"} to see it — a single stage on
+   Open :filelink[Dockerfile]{path="Dockerfile"} to see it - a single stage on
    `node:20`, with a shell and npm baked into the runtime. That's what you're
    replacing.
 
@@ -85,7 +85,7 @@ you'll reuse whenever a lab hands the learner code to change.
 
     ```dockerfile save-as=Dockerfile
     ###########################################################
-    # Stage: base — DHI dev variant, has shell and npm
+    # Stage: base - DHI dev variant, has shell and npm
     ###########################################################
     FROM $$dhiPrefix$$node:24-debian13-dev AS base
 
@@ -100,7 +100,7 @@ you'll reuse whenever a lab hands the learner code to change.
     RUN npm ci --production --ignore-scripts && npm cache clean --force
 
     ###########################################################
-    # Stage: final — DHI runtime variant, distroless
+    # Stage: final - DHI runtime variant, distroless
     ###########################################################
     FROM $$dhiPrefix$$node:24-debian13 AS final
     ENV NODE_ENV=production
@@ -114,14 +114,14 @@ you'll reuse whenever a lab hands the learner code to change.
     ```
 
 3. **Confirm your edit landed.** `cat` reflects the workspace filesystem, so this
-   prints exactly what you just saved — the agent's `node:20` single-stage file
+   prints exactly what you just saved - the agent's `node:20` single-stage file
    should now be the multi-stage hardened build:
 
     ```bash terminal-id=build
     cat Dockerfile
     ```
 
-4. **Validate, then build.** Lint the Dockerfile first — a fast check before the
+4. **Validate, then build.** Lint the Dockerfile first - a fast check before the
    slower build:
 
     ```bash terminal-id=build
@@ -208,7 +208,7 @@ Everything you learned now returns a different answer.
 docker scout attest list $$dhiPrefix$$node:24-debian13
 ```
 
-An SBOM, a VEX document, SLSA provenance and a signature — all shipped with the base
+An SBOM, a VEX document, SLSA provenance and a signature - all shipped with the base
 image, all verifiable, none of which you had to produce. Compare that with the agent's
 image, which shipped nothing but itself.
 

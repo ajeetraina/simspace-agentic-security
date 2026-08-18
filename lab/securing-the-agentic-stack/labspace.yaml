@@ -169,7 +169,7 @@ files:
           <h1>Product Catalog</h1>
           <ul>
             {products.map((p) => (
-              <li key={p.id}>{p.name} — ${p.price}</li>
+              <li key={p.id}>{p.name} - ${p.price}</li>
             ))}
           </ul>
         </main>

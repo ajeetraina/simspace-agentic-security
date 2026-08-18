@@ -48,9 +48,9 @@ affects me?* → **VEX**
 
 | Lab | Question | What the catalog gains |
 |-----|----------|------------------------|
-| — | What did the agent do? | A measurement |
+| - | What did the agent do? | A measurement |
 | 1 | What is in it, and what matters? | SBOM, VEX and provenance you can read |
-| 2 | Can you start from something better? | **A hardened base — the pivot** |
+| 2 | Can you start from something better? | **A hardened base - the pivot** |
 | 3 | How do you stop it regressing? | A verified signature and a gate that fails closed |
 | 4 | What if the agent started right? | A sandbox and the DHI MCP server |
 

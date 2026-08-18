@@ -1,4 +1,4 @@
-# Lab 1 — What Is In It? SBOM, VEX, SLSA
+# Lab 1 - What Is In It? SBOM, VEX, SLSA
 
 <svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, current SBOM · VEX · SLSA, Hardened base, Verify &amp; Gate, Build Sandbox">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
@@ -26,7 +26,7 @@ vocabulary, and you apply all of it to the image the agent built.
 
 ---
 
-## SBOM — what is in it
+## SBOM - what is in it
 
 A Software Bill of Materials is an inventory: every package, version, licence and
 supplier in the image.
@@ -51,7 +51,7 @@ supplier in the image.
 
     Most of these you did not choose, did not install, and cannot name.
 
-4. Now ask a question only an SBOM can answer — the one you get at 2am when a new CVE
+4. Now ask a question only an SBOM can answer - the one you get at 2am when a new CVE
    drops:
 
     ```bash terminal-id=build
@@ -60,13 +60,13 @@ supplier in the image.
 
 > [!IMPORTANT]
 > **Attested or indexed?** Docker Scout will index an image and construct an SBOM if it
-> does not ship one. That is a reconstruction — an educated guess from the filesystem.
+> does not ship one. That is a reconstruction - an educated guess from the filesystem.
 > An SBOM *attestation* is a signed statement from whoever built the image: *this is what
 > I put in it*. One is evidence. The other is inference.
 
 ---
 
-## VEX — which findings matter
+## VEX - which findings matter
 
 1. Look at the unfiltered list:
 
@@ -103,16 +103,16 @@ exploitability data, because nobody produced any. A hardened image does:
 
 ---
 
-## SLSA — where did it come from
+## SLSA - where did it come from
 
 SLSA defines build integrity levels. Remember what Level 3 buys you.
 
 | Level | Meaning |
 |-------|---------|
 | L0 | No guarantees |
-| L1 | Provenance exists — build metadata documented |
+| L1 | Provenance exists - build metadata documented |
 | L2 | Hosted build with signed provenance |
-| **L3** | **Hardened, non-falsifiable provenance — hardened images ship this** |
+| **L3** | **Hardened, non-falsifiable provenance - hardened images ship this** |
 
 1. Read your own provenance first. The agent's build recorded some:
 
@@ -126,17 +126,17 @@ SLSA defines build integrity levels. Remember what Level 3 buys you.
     docker scout attest get $$dhiPrefix$$node:24-debian13 --predicate-type https://slsa.dev/provenance/v0.2 --verify
     ```
 
-You can trace it to a source repository and commit — go and read the code that produced
+You can trace it to a source repository and commit - go and read the code that produced
 the image you are about to run in production.
 
 ---
 
-## Signatures — can you verify it
+## Signatures - can you verify it
 
 An attestation is only worth the signature on it. Notice the `--verify` flag you just
 used: that is the difference between a claim and evidence.
 
-Run the VEX fetch again *without* `--verify` and compare — both return a document, only
+Run the VEX fetch again *without* `--verify` and compare - both return a document, only
 one proves who wrote it:
 
 ```bash terminal-id=build
@@ -163,7 +163,7 @@ Generate a CycloneDX SBOM and compare the structure with SPDX:
 docker scout sbom --format cyclonedx --output baseline.cdx.json catalog-service:baseline
 ```
 
-Search the SBOM for copyleft licences — most teams have never looked:
+Search the SBOM for copyleft licences - most teams have never looked:
 
 ```bash terminal-id=build
 jq -r '.packages[] | "\(.licenseConcluded)"' baseline.spdx.json | sort | uniq -c | sort -rn

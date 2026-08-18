@@ -36,7 +36,7 @@ of it you can account for.
 
 ## Run the agent again
 
-Same agent. Same prompt. One difference: this time it has rails — a hardened base pinned
+Same agent. Same prompt. One difference: this time it has rails - a hardened base pinned
 in its instructions and the Lab 3 policy gate live in the pipeline. It produces something
 that passes on the first attempt.
 
@@ -52,11 +52,11 @@ that passes on the first attempt.
 
 ## Your security framework
 
-1. **Know what is in your images** — SBOM and VEX
-2. **Verify where they came from** — SLSA provenance and signatures
-3. **Start from a trusted base** — hardened images
-4. **Enforce at the pipeline** — build policies that fail closed
-5. **Sandbox your agents** — run them in a microVM, governed by policy, with only signed tools reachable
+1. **Know what is in your images** - SBOM and VEX
+2. **Verify where they came from** - SLSA provenance and signatures
+3. **Start from a trusted base** - hardened images
+4. **Enforce at the pipeline** - build policies that fail closed
+5. **Sandbox your agents** - run them in a microVM, governed by policy, with only signed tools reachable
 
 ---
 

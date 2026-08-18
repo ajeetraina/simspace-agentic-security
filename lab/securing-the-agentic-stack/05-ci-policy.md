@@ -1,4 +1,4 @@
-# Lab 3 — Verify It, Then Gate It
+# Lab 3 - Verify It, Then Gate It
 
 <svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, current Verify &amp; Gate, Build Sandbox">
   <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
@@ -21,7 +21,7 @@
 
 **10 minutes · demo, with hands-on steps**
 
-The pipeline you are about to build — the gate sits **before** the push, so an
+The pipeline you are about to build - the gate sits **before** the push, so an
 image that fails policy never reaches the registry:
 
 <svg viewBox="0 0 720 150" width="100%" role="img" aria-label="CI pipeline: git push, then build with SBOM and provenance attestations, then a policy gate. On pass: push the attested image to the registry. On fail: blocked, never pushed.">
@@ -35,7 +35,7 @@ image that fails policy never reaches the registry:
     <rect x="512" y="14" width="200" height="34" rx="6" fill="#ffffff" stroke="#8c959f"></rect>
     <text x="612" y="35" text-anchor="middle" fill="#24292f">push attested image → registry</text>
     <rect x="512" y="94" width="200" height="34" rx="6" fill="#fdecea" stroke="#b91c1c"></rect>
-    <text x="612" y="115" text-anchor="middle" fill="#b91c1c" font-weight="700">blocked — never pushed</text>
+    <text x="612" y="115" text-anchor="middle" fill="#b91c1c" font-weight="700">blocked - never pushed</text>
     <g stroke="#6b7280" stroke-width="1.5" fill="none">
       <line x1="104" y1="71" x2="126" y2="71"></line>
       <line x1="304" y1="71" x2="326" y2="71"></line>
@@ -54,7 +54,7 @@ image that fails policy never reaches the registry:
 </svg>
 
 You have a hardened image, built on a base Docker **signed**, carrying attestations you
-can verify. Nothing yet stops the next person merging a Dockerfile that undoes all of it —
+can verify. Nothing yet stops the next person merging a Dockerfile that undoes all of it -
 so you will do two things: **verify** the trust chain by hand once, then turn that check
 into a **gate** that runs on every push.
 
@@ -66,8 +66,8 @@ into a **gate** that runs on every push.
 ## Attest it
 
 Hardened base images arrive with signed attestations from Docker. Yours carries
-attestations too — you built `catalog-service:dhi` in Lab 2 with `--sbom` and
-`--provenance=mode=max` — attached at build time and bound to the image **digest**.
+attestations too - you built `catalog-service:dhi` in Lab 2 with `--sbom` and
+`--provenance=mode=max` - attached at build time and bound to the image **digest**.
 Confirm they rode along, then push.
 
 1. Tag and push to the local registry:
@@ -93,9 +93,9 @@ Confirm they rode along, then push.
 
 ## Verify it
 
-Presence is not trust — anyone can *attach* an SBOM. What makes it trustworthy is the
+Presence is not trust - anyone can *attach* an SBOM. What makes it trustworthy is the
 **signature** underneath it. Because you built on a Docker Hardened Image, the provenance
-chain traces back to a base Docker **signed**, and you can verify that signature —
+chain traces back to a base Docker **signed**, and you can verify that signature -
 keyless, against Sigstore's transparency log. There is no key for you to manage; you
 inherit and verify a signature from a builder you trust.
 
@@ -105,7 +105,7 @@ docker scout attest get catalog-service:dhi --predicate-type https://slsa.dev/pr
 
 The `--verify` flag is the whole point. `✓ Signature verified` means the provenance was
 not forged and traces to a source commit you can open and read. **This is the image-signing
-half of a secure pipeline — not a key you rotate, but a signature you *check*.** In a
+half of a secure pipeline - not a key you rotate, but a signature you *check*.** In a
 moment you will make the pipeline check it for you, on every push.
 
 ---
@@ -114,7 +114,7 @@ moment you will make the pipeline check it for you, on every push.
 
 This is the most useful ninety seconds in the workshop.
 
-1. Rebuild with a trivial change — a **plain build, no attestations** — and push to the
+1. Rebuild with a trivial change - a **plain build, no attestations** - and push to the
    **same tag**:
 
     ```bash terminal-id=build
@@ -125,7 +125,7 @@ This is the most useful ninety seconds in the workshop.
     docker push registry.dockerlabs.xyz/catalog-service:dhi
     ```
 
-2. Ask for the attestations again — they are gone:
+2. Ask for the attestations again - they are gone:
 
     ```bash terminal-id=build
     docker scout attest list registry.dockerlabs.xyz/catalog-service:dhi
@@ -134,14 +134,14 @@ This is the most useful ninety seconds in the workshop.
 > [!IMPORTANT]
 > **Tags are mutable. Digests are not. Attestations and signatures bind to a digest.**
 >
-> Any process that trusts a tag — a Dockerfile that says `FROM node:24`, a manifest that
-> says `image: catalog-service:latest` — is trusting that nobody moved it. The tag now
+> Any process that trusts a tag - a Dockerfile that says `FROM node:24`, a manifest that
+> says `image: catalog-service:latest` - is trusting that nobody moved it. The tag now
 > resolves to a new digest with no SBOM, no provenance, and nothing that would survive a
 > `--verify`: exactly the substitution an attacker performs, and the missing, unverifiable
 > attestations are what give it away.
 
 **Leave the tag like this.** The registry now holds an unsigned image where a verified one
-used to be — a check you ran by hand caught it. In a moment you'll turn that same check into
+used to be - a check you ran by hand caught it. In a moment you'll turn that same check into
 a gate and watch your pipeline catch the *identical* substitution automatically, then fix it.
 
 ---
@@ -149,7 +149,7 @@ a gate and watch your pipeline catch the *identical* substitution automatically,
 ## Write the policy
 
 You watched the default policy fail in Lab 1. That was an *evaluation*. Now make it a
-*gate*. Save this `docker-scout-policy.yaml` — three rules, one per question from the spine:
+*gate*. Save this `docker-scout-policy.yaml` - three rules, one per question from the spine:
 
 ```yaml save-as=docker-scout-policy.yaml
 version: "1"
@@ -187,12 +187,12 @@ One fails. One passes. You now know what the pipeline will say before you push.
 ## Put it in the pipeline
 
 > [!NOTE]
-> This is a **simulated** CI environment — `git.dockerlabs.xyz` is a stand-in, not a live
+> This is a **simulated** CI environment - `git.dockerlabs.xyz` is a stand-in, not a live
 > server you log into. The workspace behaves as a Gitea repo whose `moby` account owns it:
 > anything under `.gitea/workflows/` "runs" automatically when you push, and the run
-> renders in the **CI Pipeline** tab at the top right — no browser needed.
+> renders in the **CI Pipeline** tab at the top right - no browser needed.
 
-**Gitea Actions** is Gitea's built-in CI — GitHub-Actions-compatible, so the workflow
+**Gitea Actions** is Gitea's built-in CI - GitHub-Actions-compatible, so the workflow
 below is the *same* YAML you would commit to GitHub. Here is what happens the moment you
 push:
 
@@ -225,7 +225,7 @@ push:
 </svg>
 
 1. Create the workflow. It **verifies the signed attestations** already bound to the
-   pushed digest, then runs the **policy gate** — and only a run that clears both
+   pushed digest, then runs the **policy gate** - and only a run that clears both
    **promotes** the image. The gate sits before the push, so a non-compliant image never
    reaches the registry:
 
@@ -244,7 +244,7 @@ push:
           - uses: actions/checkout@v4
 
           # The by-hand `--verify` from earlier, now a gate. A tag rebuilt
-          # without --sbom/--provenance has nothing to verify — this step fails.
+          # without --sbom/--provenance has nothing to verify - this step fails.
           - name: Verify attestations
             uses: docker/scout-action@v1
             with:
@@ -267,7 +267,7 @@ push:
     ```
 
 2. Commit and push. The tag on the registry is **still the tampered, unsigned image** you
-   left a moment ago — so watch this run go red:
+   left a moment ago - so watch this run go red:
 
     ```bash terminal-id=main
     git add .gitea/workflows/secure-build.yaml
@@ -281,8 +281,8 @@ push:
     git push
     ```
 
-Switch to the **CI Pipeline** tab. The run stops at **Verify attestations** — the digest
-carries nothing to verify — and `Policy gate` and `Push` are skipped. The unsigned image
+Switch to the **CI Pipeline** tab. The run stops at **Verify attestations** - the digest
+carries nothing to verify - and `Policy gate` and `Push` are skipped. The unsigned image
 never reaches the registry. The `--verify` you ran once by hand is now enforced on every
 push.
 
@@ -290,7 +290,7 @@ push.
 
 ## Fix it, then re-run
 
-The pipeline caught the substitution. Now fix the artifact — rebuild **with** attestations,
+The pipeline caught the substitution. Now fix the artifact - rebuild **with** attestations,
 so a signed image sits on the tag again:
 
 ```bash terminal-id=build
@@ -301,7 +301,7 @@ docker build -t registry.dockerlabs.xyz/catalog-service:dhi --sbom=true --proven
 docker push registry.dockerlabs.xyz/catalog-service:dhi
 ```
 
-Back in the **CI Pipeline** tab, press **Re-run jobs** on the failed run. No new commit —
+Back in the **CI Pipeline** tab, press **Re-run jobs** on the failed run. No new commit -
 the *same* pipeline re-evaluates against the fixed tag, and this time every step is green:
 
 - **Verify attestations** → SBOM + provenance present, signature verified ✓
@@ -309,7 +309,7 @@ the *same* pipeline re-evaluates against the fixed tag, and this time every step
 - **Push** → image promoted to the registry ✓
 
 > [!TIP]
-> **Fix the state, re-run, green.** Re-run pushed nothing by hand — it re-evaluated the
+> **Fix the state, re-run, green.** Re-run pushed nothing by hand - it re-evaluated the
 > pipeline against the current state, and because a signed image now sits on the tag, the
 > gate passed and the pipeline promoted it. That is the whole point of a gate: the same
 > check runs on every push and every re-run, and nobody has to remember to run it.
