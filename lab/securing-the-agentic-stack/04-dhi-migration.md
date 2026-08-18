@@ -71,7 +71,17 @@ receives only the output. An image with no shell is one an attacker cannot drop 
 
 ## Migrate
 
-1. Replace the Dockerfile with a multi-stage build on hardened bases:
+You're going to change one file — the Dockerfile — and prove the change landed
+before you build. This is the **view → edit → Save → confirm → validate** loop
+you'll reuse whenever a lab hands the learner code to change.
+
+1. **View what the agent shipped.** Back in Lab 2 the agent wrote a Dockerfile.
+   Open :filelink[Dockerfile]{path="Dockerfile"} to see it — a single stage on
+   `node:20`, with a shell and npm baked into the runtime. That's what you're
+   replacing.
+
+2. **Edit and Save.** The block below is a multi-stage build on hardened bases.
+   Tweak it if you like, then click **Save** to write it into the workspace:
 
     ```dockerfile save-as=Dockerfile
     ###########################################################
@@ -103,7 +113,20 @@ receives only the output. An image with no shell is one an attacker cannot drop 
     CMD ["node", "src/index.js"]
     ```
 
-2. Build it:
+3. **Confirm your edit landed.** `cat` reflects the workspace filesystem, so this
+   prints exactly what you just saved — the agent's `node:20` single-stage file
+   should now be the multi-stage hardened build:
+
+    ```bash terminal-id=build
+    cat Dockerfile
+    ```
+
+4. **Validate, then build.** Lint the Dockerfile first — a fast check before the
+   slower build:
+
+    ```bash terminal-id=build
+    hadolint Dockerfile
+    ```
 
     ```bash terminal-id=build
     docker build -t catalog-service:dhi --sbom=true --provenance=mode=max .

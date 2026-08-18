@@ -378,6 +378,21 @@ scenarios:
         - " => exporting provenance attestation mode=max"
         - " => => naming to registry.dockerlabs.xyz/catalog-service:dhi"
 
+  # Dockerfile linter — the "validate" step of Lab 2's edit -> Save -> validate
+  # loop. Deterministic like every command in this lab: it models a clean pass on
+  # the multi-stage hardened Dockerfile the learner writes via the save-as block.
+  - id: hadolint-dockerfile
+    when:
+      command: [hadolint]
+    then:
+      output:
+        - { text: "Linting Dockerfile...", delay: short }
+        - { text: "Dockerfile: no issues detected", delay: short }
+        - "  ✓ multi-stage build — builder stage separated from runtime"
+        - "  ✓ pinned base images (node:24-debian13-dev, node:24-debian13)"
+        - "  ✓ npm ci --ignore-scripts — no install-time lifecycle scripts"
+        - "  ✓ non-root distroless runtime — no shell in the final image"
+
   - id: build-dhi
     when:
       command: [docker, build]
