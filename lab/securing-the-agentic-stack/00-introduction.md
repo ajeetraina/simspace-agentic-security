@@ -57,17 +57,11 @@ affects me?* → **VEX**
 **Lab 2 is the centre of gravity.** Lab 1 teaches you to measure an image. Lab 2 is
 where the measurement pays off, and every number you wrote down changes.
 
-## Check your environment
+## What you are working with
 
-Look at what you are working with:
-
-```bash terminal-id=main
-tree
-```
-
-That is the Product Catalog service: a `frontend/` (React), a `src/` backend (a REST API
-over a PostgreSQL product database, talking to Kafka, LocalStack (S3) and WireMock), and
-the database schema in `db/`. There is no Dockerfile and no compose file yet - the agent
-writes those next. Open :filelink[package.json]{path="package.json"} to see what it depends on.
+You will be working with the Product Catalog service: a `frontend/` (React), a `src/`
+backend (a REST API over a PostgreSQL product database, talking to Kafka, LocalStack (S3)
+and WireMock), and the database schema in `db/`. There is no Dockerfile and no compose
+file yet - the agent writes those next.
 
 Continue to **Setup**.
