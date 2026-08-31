@@ -11,6 +11,18 @@ Nothing failed. Nothing warned.
 Over the next ninety minutes you will find out what it actually shipped, and turn it
 into something you can prove things about.
 
+## What we mean by the stack
+
+First, the phrase itself: "the stack" here is not the agent's reasoning, its prompts, or
+its guardrails. It is your **container foundation** - the images your software is built
+*on* and *from*. What agentic workflows changed is who decides. A system now makes three
+calls about that foundation autonomously: it **pulls dependencies** into the image
+(Lab 1), **builds the environment** from a base image it picked (Lab 2), and **invokes
+tools** at runtime (Lab 4). Each is a point where trust used to pass through a human and
+no longer does.
+
+> Secure all three, then gate them on every push (Lab 3). That is the whole session.
+
 ## What changed
 
 The software supply chain did not change. The review step did.
