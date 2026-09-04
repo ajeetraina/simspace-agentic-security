@@ -144,9 +144,33 @@ Note: Your turn. Head into the workshop - **agentic.dockerworkshop.com** - and r
 
 <!-- chrome: false -->
 
-<img src="assets/slide-framework.webp" alt="Every agent-driven change answers four questions: Evidence (what is in it, where from), Baseline (did it start trustworthy), Gate (is it allowed to pass), Boundary (what could it reach)" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-framework-1.webp" alt="Four questions, spotlight 1 of 4 - Evidence: what is in this, and where did it come from? SBOM, VEX, SLSA provenance" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: No matter how the agent produced a change, governing it comes down to **four questions** - and these are the four layers the road you are about to see is built from. **One, Evidence:** what is actually in this artifact, and where did it come from? That is **SBOM, VEX, and SLSA provenance**. **Two, Baseline:** did it start from something trustworthy? That is a **Docker Hardened Image** instead of whatever the agent grabbed. **Three, Gate:** is it allowed to pass? That is **build policies, image signing, and admission** - the check in the middle of the pipeline. **Four, Boundary:** what could it reach while it worked? That is the **sandbox runtime** - network, filesystem, and credentials. Evidence and baseline make governance possible; gate and boundary make it real. Hold these four, because the next slide draws them as a single road from development to production.
+Note: No matter how the agent produced a change, governing it comes down to **four questions**. **One - Evidence:** what is actually in this artifact, and where did it come from? That is **SBOM, VEX, and SLSA provenance** - the audit trail that lets you answer "who approved that build?"
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-framework-2.webp" alt="Four questions, spotlight 2 of 4 - Baseline: did it start from something trustworthy? Docker Hardened Images" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: **Two - Baseline:** did it start from something trustworthy? That is a **Docker Hardened Image** instead of whatever the agent grabbed off the internet. Evidence tells you what you have; baseline makes sure you began from a good place.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-framework-3.webp" alt="Four questions, spotlight 3 of 4 - Gate: is it allowed to pass? Build policies, image signing, admission" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: **Three - Gate:** is it allowed to pass? That is **build policies, image signing, and admission** - the check in the middle of the pipeline that fails closed, so nothing crosses into production unless it's provable.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-framework-4.webp" alt="Four questions, spotlight 4 of 4 - Boundary: what could it reach while it worked? Sandbox runtime - network, filesystem, credentials" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: **Four - Boundary:** what could it reach while it worked? That is the **sandbox runtime** - network, filesystem, and credentials. Evidence and baseline make governance possible; gate and boundary make it real. Hold these four, because the next slide draws them as a single road from development to production.
 
 ---
 
