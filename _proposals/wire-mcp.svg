@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#FFFFFF"/>
+<text x="95" y="96" font-size="42" font-weight="800" fill="#0B1533">Wire the DHI MCP Server into the Sandbox</text>
+<text x="95" y="176" font-size="16" font-weight="800" fill="#0B1533" letter-spacing="0.6">1. SET UP THE SANDBOX</text>
+<rect x="95" y="190" width="675" height="336" rx="12" fill="#0B1220"/>
+<text x="121" y="230" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#7FE0A0"># One-time host setup</text>
+<text x="121" y="254" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">brew install docker/tap/sbx</text>
+<text x="121" y="278" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">export SBX_MCP_URL=https://gateway.docker.com</text>
+<text x="121" y="326" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#7FE0A0"># Start the sandbox daemon</text>
+<text x="121" y="350" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">sbx daemon stop &amp;&amp; sbx daemon start -d</text>
+<text x="121" y="398" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#7FE0A0"># Nothing wired in yet</text>
+<text x="121" y="422" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">sbx mcp --help</text>
+<text x="121" y="446" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">sbx mcp ls</text>
+<rect x="95" y="540" width="675" height="228" rx="12" fill="#0B1220"/>
+<text x="121" y="580" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#7FE0A0"># Register the DHI MCP server by URL</text>
+<text x="121" y="604" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">sbx mcp add remotedhi --url https://dhi.io/mcp</text>
+<text x="121" y="628" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">sbx mcp inspect remotedhi</text>
+<text x="121" y="652" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">Name:      remotedhi</text>
+<text x="121" y="676" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">Type:      remote</text>
+<text x="121" y="700" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">URL:       https://dhi.io/mcp</text>
+<text x="121" y="724" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">Transport: streamable-http</text>
+<text x="830" y="176" font-size="16" font-weight="800" fill="#0B1533" letter-spacing="0.6">2. QUERY IT FROM THE AGENT</text>
+<rect x="830" y="190" width="675" height="252" rx="12" fill="#0B1220"/>
+<text x="856" y="230" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">cd ~/workdemo</text>
+<text x="856" y="254" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">sbx run codex --static-mcp remotedhi</text>
+<text x="856" y="302" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">> /mcp</text>
+<text x="856" y="326" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">MCP Tools - mcp-gateway (Auth: Unsupported)</text>
+<text x="856" y="350" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">Tools: code-mode, mcp-exec,</text>
+<text x="856" y="374" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">remotedhi__dhi_get_image_cves,</text>
+<text x="856" y="398" font-size="15.5" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">remotedhi__dhi_get_image_details, + 8 more</text>
+<rect x="830" y="456" width="675" height="300" rx="12" fill="#E7EFFE"/>
+<text x="856" y="496" font-size="18" font-weight="800" fill="#2563EB">10 tools now available to the agent</text>
+<text x="856" y="526" font-size="15" fill="#33415A">code-mode, mcp-exec, dhi_get_image_cves,</text>
+<text x="856" y="549" font-size="15" fill="#33415A">dhi_get_image_details, + 6 more read-only queries.</text>
+<text x="856" y="572" font-size="15" fill="#33415A">Mutating tools (dhi_create_mirror, dhi_remove_mirror)</text>
+<text x="856" y="595" font-size="15" fill="#33415A">are the ones to scope with policy - next slide.</text>
+<rect x="856" y="644" width="623" height="74" rx="8" fill="#0B1220"/>
+<text x="878" y="674" font-size="15" font-family="Courier New, monospace" fill="#FFFFFF">$ sbx mcp ls</text>
+<text x="878" y="700" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#FFFFFF">remotedhi   remote   streamable-http</text>
+</svg>
