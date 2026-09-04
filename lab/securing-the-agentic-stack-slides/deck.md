@@ -26,7 +26,15 @@ Note: Here's the shape of our time together. We open with **why supply chain sec
 
 <img src="assets/slide-04.webp" alt="Slide 4" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: And here's how the workshop is actually structured - four hands-on labs, all running inside a Simspace simulator so nobody has to fight local setup. **Lab 1 - Prerequisite & Setup (about 2 minutes)** is just getting into the Simspace. **Lab 2 - Secure Software Supply Chain (15-20 minutes)** covers why this matters now, how agents expand your attack surface, the building blocks - SBOM, VEX, and SLSA - and standard image versus Docker Hardened Images. **Lab 3 - Securing your CI Pipeline (45 minutes)** is the biggest block, going deep on Docker Scout build policies and CI policy enforcement, because CI is our gate. And **Lab 4 - Securing the Agentic Stack (30 minutes)** brings it home: an overview of the agentic supply chain, MCP servers running on DHI, and building your own security framework. Each lab turns one segment of that development-to-production road green. But before we touch a keyboard, let me show you why we're all in this room - with something that actually happened.
+Note: And here's how the workshop is actually structured - four hands-on labs, all running inside a Simspace simulator so nobody has to fight local setup. **Lab 1 - Prerequisite & Setup (about 2 minutes)** is just getting into the Simspace. **Lab 2 - Secure Software Supply Chain (15-20 minutes)** covers why this matters now, how agents expand your attack surface, the building blocks - SBOM, VEX, and SLSA - and standard image versus Docker Hardened Images. **Lab 3 - Securing your CI Pipeline (45 minutes)** is the biggest block, going deep on Docker Scout build policies and CI policy enforcement, because CI is our gate. And **Lab 4 - Securing the Agentic Stack (30 minutes)** brings it home: an overview of the agentic supply chain, MCP servers running on DHI, and building your own security framework. Each lab turns one segment of that development-to-production road green. And here's where you'll actually do them.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-access.webp" alt="Accessing the Workshop - https://agentic.dockerworkshop.com" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Everything today lives at one URL: **agentic.dockerworkshop.com**. That's your hands-on environment - the Simspace simulator with all four labs, open all day, nothing to install. Bookmark it now, because you'll be typing into it shortly. But before we touch a keyboard, let me show you why we're all in this room - with something that actually happened.
 
 ---
 
