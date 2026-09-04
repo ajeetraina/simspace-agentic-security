@@ -8,9 +8,9 @@ Note: Welcome, everyone. Today we're talking about **Securing the Agentic Stack*
 
 <!-- chrome: false -->
 
-<img src="assets/slide-02.webp" alt="Slide 2" width="1600" height="900" loading="eager" fetchpriority="low" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-02.webp" alt="Meet your instructor: Ajeet Singh Raina, Developer Advocate, co-author of Operational AI with Docker" width="1600" height="900" loading="eager" fetchpriority="low" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Quick hello before we dive in - I'm **Ajeet Singh Raina**, Developer Advocate, and you can find me at **@ajeetsraina** if you want to keep the conversation going after this. My whole job is meeting developers where they are, so please treat this as hands-on and interrupt me with questions. Let's look at where we're headed.
+Note: Quick hello before we dive in - I'm **Ajeet Singh Raina**, Developer Advocate at Docker. Twenty-plus years across system integration testing, consulting, and developer relations; I'm a former Docker Captain and I run the 17,000-member Docker Bengaluru meetup. I also co-authored **Operational AI with Docker** (Packt) with Harsh Manvar, on deploying, scaling, and operating agentic AI services with Docker and Kubernetes - which is exactly the world this workshop lives in. My whole job is meeting developers where they are, so please treat this as hands-on and interrupt me with questions. Let's look at where we're headed.
 
 ---
 
