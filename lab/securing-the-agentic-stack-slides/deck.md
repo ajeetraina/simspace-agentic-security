@@ -418,7 +418,15 @@ Note: This is the **complete `secure-build.yaml` workflow, ready to copy**. It t
 
 <img src="assets/slide-41.webp" alt="Slide 41" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Here's why all the earlier hardening pays off at the gate. **With a DHI base** on the left: no critical or high CVEs, SBOM and provenance present, non-root by default, up-to-date base - the **gate passes and the image is pushed**. **With a standard base** on the right: CVEs found, no SBOM, running as root - the **gate fails, and push never runs**. Same pipeline, same policies, opposite outcomes - the only variable is the base image the agent built on. This is the concrete cash-out of Labs 1 and 2: the hardened base isn't just nice-to-have hygiene, it's what lets you cleanly clear a fail-closed gate instead of getting blocked at the boundary. That's Lab 3 done - let's mark it on the journey map.
+Note: Here's why all the earlier hardening pays off at the gate. **With a DHI base** on the left: no critical or high CVEs, SBOM and provenance present, non-root by default, up-to-date base - the **gate passes and the image is pushed**. **With a standard base** on the right: CVEs found, no SBOM, running as root - the **gate fails, and push never runs**. Same pipeline, same policies, opposite outcomes - the only variable is the base image the agent built on. This is the concrete cash-out of Labs 1 and 2: the hardened base isn't just nice-to-have hygiene, it's what lets you cleanly clear a fail-closed gate instead of getting blocked at the boundary. Before we mark it done on the road, it's your turn.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-try-lab3.webp" alt="Try it - Verify it. Gate it.: your turn to write a Docker Scout policy and make CI fail closed on the ungoverned image" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Your turn - the **Verify it, Gate it** hands-on. In the workshop, attach and verify the attestations, then write the `docker-scout-policy.yaml` and run it against both images: watch the ungoverned `:baseline` fail the gate and the hardened `:dhi` pass. Then wire that same policy into the CI workflow so the pipeline fails closed on every push - no human eyeballing required. Once the gate holds, come back and we'll mark SIGN, GATE and DEPLOY green.
 
 ---
 
@@ -562,7 +570,15 @@ Note: Now we connect the two halves - **wire the DHI MCP server into the sandbox
 
 <img src="assets/slide-51.webp" alt="Slide 51" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Last technical slide, and it's the one that separates a demo from production - **govern the tools first, with a Cedar access policy**. On the left is the lab default: a quick unblock that permits every principal, every action - register, invokeTool, invokePrimordial - against every resource. It gets the lab moving, but as the note says, that's governance turned off; don't ship it as your exemplar, and never hand the gateway's built-in primordials a wide-open pass. On the right is the production-scoped version: anyone may register, but `invokeTool` is permitted only when the server is `remotedhi` **and** the tool is one of the named read-only queries - `dhi_get_image_cves`, `dhi_get_image_packages`, `dhi_list_repositories`, and so on. Scoped by design: `dhi_create_mirror`, `dhi_remove_mirror`, and wide-open primordials are deliberately left out - query the catalog, don't mutate it. One gotcha worth flagging - the real action name is `invokeTool`, not `invoke`. That completes the road: development to production, CI failing closed, and the agent sandboxed and governed on both ends. Let's wrap up.
+Note: Last technical slide, and it's the one that separates a demo from production - **govern the tools first, with a Cedar access policy**. On the left is the lab default: a quick unblock that permits every principal, every action - register, invokeTool, invokePrimordial - against every resource. It gets the lab moving, but as the note says, that's governance turned off; don't ship it as your exemplar, and never hand the gateway's built-in primordials a wide-open pass. On the right is the production-scoped version: anyone may register, but `invokeTool` is permitted only when the server is `remotedhi` **and** the tool is one of the named read-only queries - `dhi_get_image_cves`, `dhi_get_image_packages`, `dhi_list_repositories`, and so on. Scoped by design: `dhi_create_mirror`, `dhi_remove_mirror`, and wide-open primordials are deliberately left out - query the catalog, don't mutate it. One gotcha worth flagging - the real action name is `invokeTool`, not `invoke`. That completes the technical road: development to production, CI failing closed, and the agent sandboxed and governed on both ends. Before we close the road out, it's your turn.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-try-lab4.webp" alt="Try it - Securing the Agentic Stack: your turn to run the agent in a sandbox and wire MCP servers through the governed gateway" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Your turn - the **Securing the Agentic Stack** hands-on. In the workshop, run the agent inside an `sbx` sandbox so it can't touch your host, wire the DHI MCP server in through the gateway, and apply a Cedar policy that permits only the tools you named - then watch a disallowed tool call get denied and audited. That closes the loop: the agent that builds runs in a box, and the tools it reaches for are governed. Once it's boxed and governed, come back and we'll light up the final checkpoint.
 
 ---
 
