@@ -1,5 +1,5 @@
-Animated build placed immediately after the Agenda slide (slide-03), before the
-workshop-structure slide. Deck is image-per-slide (no reveal fragments), so the
+Animated build placed immediately after the Workshop Labs slide (slide-04), before
+the "why it matters" slide. Deck is image-per-slide (no reveal fragments), so the
 animation is 5 growing frames (slide-incident-1..5) + the full recap
 (slide-incident), revealed one row at a time, newest spotlighted:
 
@@ -8,4 +8,4 @@ animation is 5 growing frames (slide-incident-1..5) + the full recap
 3. **Reviewer** - Who reviewed it? **CI did** - all checks green. That is the only review this change ever got.
 4. **Deployed** - And it shipped - straight to **production, 3:12 AM.** Twenty-five minutes from an agent's commit to running in prod.
 5. **Reviewed by a human? No** - And here's the row that matters. Nobody was awake, nobody signed off - and it's running in prod right now.
-6. **Who approved that build?** - So sit with the question. Every item on that agenda is really about being able to answer it - provably. Now, here's how we're going to get there.
+6. **Who approved that build?** - So sit with the question. Everything we're about to do is really about being able to answer it - provably. Now let's ground ourselves in why this is suddenly so much harder.
