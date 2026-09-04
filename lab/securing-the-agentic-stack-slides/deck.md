@@ -130,7 +130,15 @@ Note: So this is the app we'll be securing all the way down that dev-to-prod roa
 
 <img src="assets/slide-09.webp" alt="The ungoverned agent: agent running straight on your host with no boundary, FROM node:20 chosen with no guidance, 6 high CVEs" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: This is our ungoverned baseline - the **ungoverned agent** running straight on your host, and it's exactly how a lot of teams are running today. Look at the container: the agent is sitting right on **your host**, with the host daemon, host credentials, and no boundary at all. We hand it a simple **prompt** - "containerize this app" - and because it has **full permissions** and can reach **open registries with no allowlist**, it just grabs whatever it wants. What it picks is `FROM node:20`, chosen with **no guidance**. And the result, down at the bottom, is the number we're going to keep coming back to: **0 critical, 6 high, 30 medium, 54 low CVEs** - built from **431 packages**, with **no SBOM, no attestation, running as root**. That is our start line. So how do we actually govern a change like this? No matter how the agent produced it, it comes down to four questions.
+Note: This is our ungoverned baseline - the **ungoverned agent** running straight on your host, and it's exactly how a lot of teams are running today. Look at the container: the agent is sitting right on **your host**, with the host daemon, host credentials, and no boundary at all. We hand it a simple **prompt** - "containerize this app" - and because it has **full permissions** and can reach **open registries with no allowlist**, it just grabs whatever it wants. What it picks is `FROM node:20`, chosen with **no guidance**. And the result, down at the bottom, is the number we're going to keep coming back to: **0 critical, 6 high, 30 medium, 54 low CVEs** - built from **431 packages**, with **no SBOM, no attestation, running as root**. That is our start line. Before we talk about how to fix it, I want you to feel it yourself - so let's try.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-lets-try.webp" alt="Let's try - Agent containerising the Product Catalog application" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Your turn. Head into the workshop - **agentic.dockerworkshop.com** - and run the first hands-on: **let an agent containerize the Product Catalog application.** Give it the same simple prompt, with no guardrails, and watch what it does. It'll reach for `node:20` and hand you back exactly this ungoverned baseline - hundreds of packages, high CVEs, no SBOM, running as root. Take a few minutes, break it yourself, and once you've seen it happen on your own screen, come back - and we'll talk about how to govern it.
 
 ---
 
