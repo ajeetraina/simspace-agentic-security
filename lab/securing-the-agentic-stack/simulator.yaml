@@ -575,7 +575,17 @@ scenarios:
         - create: baseline.spdx.json
           content: |
             { "spdxVersion": "SPDX-2.3", "name": "catalog-service:baseline",
+              "_note": "sample truncated for display - 431 packages total (jq '.packages | length' returns 431)",
               "packages": [
+                {"name": "@aws-sdk/client-s3", "versionInfo": "3.658.1", "licenseConcluded": "Apache-2.0"},
+                {"name": "@smithy/protocol-http", "versionInfo": "4.1.0", "licenseConcluded": "Apache-2.0"},
+                {"name": "abbrev", "versionInfo": "2.0.0", "licenseConcluded": "ISC"},
+                {"name": "accepts", "versionInfo": "1.3.8", "licenseConcluded": "MIT"},
+                {"name": "acorn", "versionInfo": "8.12.0", "licenseConcluded": "MIT"},
+                {"name": "ansi-regex", "versionInfo": "6.0.1", "licenseConcluded": "MIT"},
+                {"name": "axios", "versionInfo": "1.7.2", "licenseConcluded": "MIT"},
+                {"name": "body-parser", "versionInfo": "1.20.2", "licenseConcluded": "MIT"},
+                {"name": "braces", "versionInfo": "3.0.3", "licenseConcluded": "MIT"},
                 {"name": "express", "versionInfo": "4.19.2", "licenseConcluded": "MIT"},
                 {"name": "openssl", "versionInfo": "3.0.13", "licenseConcluded": "Apache-2.0"},
                 {"name": "zlib", "versionInfo": "1.2.13", "licenseConcluded": "Zlib"}
@@ -606,7 +616,14 @@ scenarios:
         - create: dhi.spdx.json
           content: |
             { "spdxVersion": "SPDX-2.3", "name": "catalog-service:dhi",
-              "packages": [{"name": "express", "versionInfo": "4.19.2", "licenseConcluded": "MIT"}] }
+              "_note": "sample truncated for display - 78 packages total (jq '.packages | length' returns 78)",
+              "packages": [
+                {"name": "express", "versionInfo": "4.19.2", "licenseConcluded": "MIT"},
+                {"name": "openssl", "versionInfo": "3.0.13", "licenseConcluded": "Apache-2.0"},
+                {"name": "zlib", "versionInfo": "1.2.13", "licenseConcluded": "Zlib"},
+                {"name": "ca-certificates", "versionInfo": "2024.02", "licenseConcluded": "MPL-2.0"},
+                {"name": "tzdata", "versionInfo": "2024a", "licenseConcluded": "ICU"}
+              ] }
       output:
         - { text: "    ✓ Indexed 78 packages", delay: scan }
         - "    ✓ Wrote SBOM (SPDX 2.3) to dhi.spdx.json"
