@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#0B1533"/>
+<text x="95" y="128" font-size="46" font-weight="800" fill="#FFFFFF">Your security framework - try these steps</text>
+<rect x="95" y="214" width="1410" height="92" rx="12" fill="#17213E"/>
+<rect x="95" y="214" width="6" height="92" rx="3" fill="#4F7CFF"/>
+<text x="140" y="268.0" font-size="30" font-weight="800" fill="#4F7CFF">1</text>
+<text x="205" y="268.0" font-size="23" font-weight="700" fill="#FFFFFF">Know what is in your images</text>
+<text x="780" y="268.0" font-size="21" fill="#A6B6D9">SBOM + VEX</text>
+<rect x="95" y="324" width="1410" height="92" rx="12" fill="#17213E"/>
+<rect x="95" y="324" width="6" height="92" rx="3" fill="#4F7CFF"/>
+<text x="140" y="378.0" font-size="30" font-weight="800" fill="#4F7CFF">2</text>
+<text x="205" y="378.0" font-size="23" font-weight="700" fill="#FFFFFF">Verify where they came from</text>
+<text x="780" y="378.0" font-size="21" fill="#A6B6D9">SLSA provenance + image signing</text>
+<rect x="95" y="434" width="1410" height="92" rx="12" fill="#17213E"/>
+<rect x="95" y="434" width="6" height="92" rx="3" fill="#4F7CFF"/>
+<text x="140" y="488.0" font-size="30" font-weight="800" fill="#4F7CFF">3</text>
+<text x="205" y="488.0" font-size="23" font-weight="700" fill="#FFFFFF">Start from a trusted base</text>
+<text x="780" y="488.0" font-size="21" fill="#A6B6D9">Docker Hardened Images</text>
+<rect x="95" y="544" width="1410" height="92" rx="12" fill="#17213E"/>
+<rect x="95" y="544" width="6" height="92" rx="3" fill="#4F7CFF"/>
+<text x="140" y="598.0" font-size="30" font-weight="800" fill="#4F7CFF">4</text>
+<text x="205" y="598.0" font-size="23" font-weight="700" fill="#FFFFFF">Enforce at the pipeline</text>
+<text x="780" y="598.0" font-size="21" fill="#A6B6D9">Docker Scout build policies</text>
+<rect x="95" y="654" width="1410" height="92" rx="12" fill="#17213E"/>
+<rect x="95" y="654" width="6" height="92" rx="3" fill="#4F7CFF"/>
+<text x="140" y="708.0" font-size="30" font-weight="800" fill="#4F7CFF">5</text>
+<text x="205" y="708.0" font-size="23" font-weight="700" fill="#FFFFFF">Isolate your agents</text>
+<text x="780" y="708.0" font-size="21" fill="#A6B6D9">MCP servers in hardened containers</text>
+</svg>
