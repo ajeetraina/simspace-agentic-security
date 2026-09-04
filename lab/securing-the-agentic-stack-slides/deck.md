@@ -114,15 +114,7 @@ Note: Here's the world we grew up in - **the traditional workflow**. A human wri
 
 <img src="assets/slide-07.webp" alt="The Agentic Workflow: the same inner and outer loops with an AI agent at every stage" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius - the same failure mode as that 2:47 AM commit, now at every stage. Let me ground it in a real app: the one we're going to secure all the way to production.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-08.webp" alt="Slide 8" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: So this is the app we'll be securing all the way down that dev-to-prod road. It's a **Product Catalog** service, and it's deliberately realistic rather than a toy. In the middle you've got the **catalog-service** application, and it's not living alone: it writes product data to **PostgreSQL**, pushes product images to **AWS S3**, and publishes product updates through **Kafka**. Reaching outside its own boundary, it talks to an **Inventory service** and other downstream services. The point I want you to take away is that this is a real supply chain of moving parts - every one of those boxes is something we eventually have to trust and prove. Now let's watch what happens when we hand this off to an agent with no guardrails at all.
+Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius - the same failure mode as that 2:47 AM commit, now at every stage. Let me make it concrete - here's an agent turned loose on a build with no guardrails at all.
 
 ---
 
@@ -130,7 +122,15 @@ Note: So this is the app we'll be securing all the way down that dev-to-prod roa
 
 <img src="assets/slide-09.webp" alt="The ungoverned agent: agent running straight on your host with no boundary, FROM node:20 chosen with no guidance, 6 high CVEs" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: This is our ungoverned baseline - the **ungoverned agent** running straight on your host, and it's exactly how a lot of teams are running today. Look at the container: the agent is sitting right on **your host**, with the host daemon, host credentials, and no boundary at all. We hand it a simple **prompt** - "containerize this app" - and because it has **full permissions** and can reach **open registries with no allowlist**, it just grabs whatever it wants. What it picks is `FROM node:20`, chosen with **no guidance**. And the result, down at the bottom, is the number we're going to keep coming back to: **0 critical, 6 high, 30 medium, 54 low CVEs** - built from **431 packages**, with **no SBOM, no attestation, running as root**. That is our start line. Before we talk about how to fix it, I want you to feel it yourself - so let's try.
+Note: This is our ungoverned baseline - the **ungoverned agent** running straight on your host, and it's exactly how a lot of teams are running today. Look at the container: the agent is sitting right on **your host**, with the host daemon, host credentials, and no boundary at all. We hand it a simple **prompt** - "containerize this app" - and because it has **full permissions** and can reach **open registries with no allowlist**, it just grabs whatever it wants. What it picks is `FROM node:20`, chosen with **no guidance**. And the result, down at the bottom, is the number we're going to keep coming back to: **0 critical, 6 high, 30 medium, 54 low CVEs** - built from **431 packages**, with **no SBOM, no attestation, running as root**. That is our start line. And the app it mangled isn't a toy - let me show you the real service we're going to secure.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-08.webp" alt="Slide 8" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: So this is the app we'll be securing all the way down that dev-to-prod road. It's a **Product Catalog** service, and it's deliberately realistic rather than a toy. In the middle you've got the **catalog-service** application, and it's not living alone: it writes product data to **PostgreSQL**, pushes product images to **AWS S3**, and publishes product updates through **Kafka**. Reaching outside its own boundary, it talks to an **Inventory service** and other downstream services. The point I want you to take away is that this is a real supply chain of moving parts - every one of those boxes is something we eventually have to trust and prove. Before we talk about how to fix any of it, I want you to feel it yourself - so let's try.
 
 ---
 
@@ -138,7 +138,7 @@ Note: This is our ungoverned baseline - the **ungoverned agent** running straigh
 
 <img src="assets/slide-lets-try.webp" alt="Let's try - Agent containerising the Product Catalog application" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Your turn. Head into the workshop - **agentic.dockerworkshop.com** - and run the first hands-on: **let an agent containerize the Product Catalog application.** Give it the same simple prompt, with no guardrails, and watch what it does. It'll reach for `node:20` and hand you back exactly this ungoverned baseline - hundreds of packages, high CVEs, no SBOM, running as root. Take a few minutes, break it yourself, and once you've seen it happen on your own screen, come back - and we'll talk about how to govern it.
+Note: Your turn. Head into the workshop - **agentic.dockerworkshop.com** - and run the first hands-on: **let an agent containerize the Product Catalog application.** Give it the same simple prompt, with no guardrails, and watch what it does. It'll reach for `node:20` and hand you back the same ungoverned baseline you just saw - hundreds of packages, high CVEs, no SBOM, running as root. Take a few minutes, break it yourself, and once you've seen it happen on your own screen, come back - and we'll talk about how to govern it.
 
 ---
 
