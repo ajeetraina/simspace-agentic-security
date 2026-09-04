@@ -92,6 +92,18 @@ What it ships is that red strip: `node:20` picked blind, 431 packages, no SBOM, 
 root, on your host. It *works*. You can prove nothing about it. Over the next ninety minutes
 you close the gap between the red box and the road above - one stage at a time.
 
+## What we mean by the stack
+
+First, the phrase itself: "the stack" here is not the agent's reasoning, its prompts, or
+its guardrails. It is your **container foundation** - the images your software is built
+*on* and *from*. What agentic workflows changed is who decides. A system now makes three
+calls about that foundation autonomously: it **pulls dependencies** into the image
+(Lab 1), **builds the environment** from a base image it picked (Lab 2), and **invokes
+tools** at runtime (Lab 4). Each is a point where trust used to pass through a human and
+no longer does.
+
+> Secure all three, then gate them on every push (Lab 3). That is the whole session.
+
 ## What changed
 
 The software supply chain did not change. The review step did.
