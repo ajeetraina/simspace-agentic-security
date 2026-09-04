@@ -58,7 +58,31 @@ Note: Here's the world we grew up in - **the traditional workflow**. A human wri
 
 <img src="assets/slide-07.webp" alt="The Agentic Workflow: the same inner and outer loops with an AI agent at every stage" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius. So the question for the rest of this workshop is simple: how do we make this road provable, segment by segment? Before we look at the road itself, let's get the shape of the answer - the four questions every agent-driven change has to answer.
+Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius - and it is not hypothetical. Let me show you what it looks like when one of those agents ships to production at 2:47 in the morning.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident.webp" alt="02:47 AM a commit lands: author svc-build-agent, bumped a base image and regenerated the Dockerfile, approved by CI, deployed to production at 03:12 AM, reviewed by a human - No. Who approved that build?" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Here's the kind of thing that is already happening. At **2:47 in the morning**, a commit lands. The author isn't a person - it's **svc-build-agent**. The change **bumped a base image and regenerated the Dockerfile**. The reviewer? **CI - all checks green.** It was deployed to **production at 3:12 AM**. And the one row that matters: **was this reviewed by a human? No.** Nobody was awake, nobody signed off, and it's running in prod right now. So the honest question is the one on the slide: **who approved that build?** For the rest of this workshop we want to be able to answer that - provably. Let me show you the app this actually happens to.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-08.webp" alt="Slide 8" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: So this is the app we'll be securing all the way down that dev-to-prod road. It's a **Product Catalog** service, and it's deliberately realistic rather than a toy. In the middle you've got the **catalog-service** application, and it's not living alone: it writes product data to **PostgreSQL**, pushes product images to **AWS S3**, and publishes product updates through **Kafka**. Reaching outside its own boundary, it talks to an **Inventory service** and other downstream services. The point I want you to take away is that this is a real supply chain of moving parts - every one of those boxes is something we eventually have to trust and prove. Now let's watch what happens when we hand this off to an agent with no guardrails at all.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-09.webp" alt="The ungoverned agent: agent running straight on your host with no boundary, FROM node:20 chosen with no guidance, 6 high CVEs" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: This is our ungoverned baseline - the **ungoverned agent** running straight on your host, and it's exactly how a lot of teams are running today. Look at the container: the agent is sitting right on **your host**, with the host daemon, host credentials, and no boundary at all. We hand it a simple **prompt** - "containerize this app" - and because it has **full permissions** and can reach **open registries with no allowlist**, it just grabs whatever it wants. What it picks is `FROM node:20`, chosen with **no guidance**. And the result, down at the bottom, is the number we're going to keep coming back to: **0 critical, 6 high, 30 medium, 54 low CVEs** - built from **431 packages**, with **no SBOM, no attestation, running as root**. That is our start line. So how do we actually govern a change like this? No matter how the agent produced it, it comes down to four questions.
 
 ---
 
@@ -82,23 +106,7 @@ Note: This is the whole road we travel today - and it flows **left to right, dev
 
 Code moves along the road: developed, based on a trusted image, built with attestations, signed - then it has to pass the gate before it's deployed and invoked.
 
-Right now none of it is provable. The ungoverned baseline is `FROM node:20`, 431 packages, no SBOM, running as root: **0 of 4 stages green**. Each of the four labs turns one segment of this road green, and we come back to this same picture at each checkpoint. This is checkpoint 0 of 4 - the start line.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-08.webp" alt="Slide 8" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: So this is the app we'll be securing all the way down that dev-to-prod road. It's a **Product Catalog** service, and it's deliberately realistic rather than a toy. In the middle you've got the **catalog-service** application, and it's not living alone: it writes product data to **PostgreSQL**, pushes product images to **AWS S3**, and publishes product updates through **Kafka**. Reaching outside its own boundary, it talks to an **Inventory service** and other downstream services. The point I want you to take away is that this is a real supply chain of moving parts - every one of those boxes is something we eventually have to trust and prove. Now let's watch what happens when we hand this off to an agent with no guardrails at all.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-09.webp" alt="The ungoverned agent: agent running straight on your host with no boundary, FROM node:20 chosen with no guidance, 6 high CVEs" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: This is our ungoverned baseline - the **ungoverned agent** running straight on your host, and it's exactly how a lot of teams are running today. Look at the container: the agent is sitting right on **your host**, with the host daemon, host credentials, and no boundary at all. We hand it a simple **prompt** - "containerize this app" - and because it has **full permissions** and can reach **open registries with no allowlist**, it just grabs whatever it wants. What it picks is `FROM node:20`, chosen with **no guidance**. And the result, down at the bottom, is the number we're going to keep coming back to: **0 critical, 6 high, 30 medium, 54 low CVEs** - built from **431 packages**, with **no SBOM, no attestation, running as root**. That is our start line, and every stage of this workshop is about closing that gap. First, let's frame why this actually matters.
+Right now none of it is provable. The ungoverned baseline we just watched the agent ship is `FROM node:20`, 431 packages, no SBOM, running as root: **0 of 4 stages green**. Each of the four labs turns one segment of this road green, and we come back to this same picture at each checkpoint. This is checkpoint 0 of 4 - the start line.
 
 ---
 
