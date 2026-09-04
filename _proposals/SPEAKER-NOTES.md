@@ -178,6 +178,13 @@ And verifying SLSA provenance is a single command. On the right you run `docker 
 ## Slide 34 - slide-29
 `slide-29.webp`
 
+Security Technical Implementation Guide (STIG)
+What it is: A detailed checklist and rulebook created by the Defense Information Systems Agency (DISA) for the U.S. Department of Defense.
+Purpose: It explains how to "harden" software, hardware, operating systems, and networks to prevent cyberattacks.
+Who uses it: Military branches, government agencies, and many private companies that work as government contractors. 
+
+
+
 Last one: **STIG** - the Security Technical Implementation Guide, DISA's DoD hardening standard. There's an interesting wrinkle here: DISA hasn't yet published a container-specific STIG, so Docker builds custom profiles based on the GPOS SRG and the DoD Container Hardening Process Guide. DHI ships signed STIG scan attestations, which cuts down the false positives that plague normal container STIG scans - and the STIG variant does require a Docker subscription. The command pattern is exactly what you've seen: `docker scout attest get` with the STIG predicate and `--verify`, or `attest list` to see everything on an image. And that list is the payoff for this whole section - on one image you'll now see SBOM, OpenVEX, SLSA, FIPS, STIG, Scout health, and secrets scan, all signed. That's checkpoint one: the BUILD stage turns green, because for the first time we can actually see and trust what's inside the image. Let's mark that on the road.
 
 ## Slide 35 - The journey, checkpoint 1 of 4: Lab 1 done, the BUILD stage is now green - yo...
