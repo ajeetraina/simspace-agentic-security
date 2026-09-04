@@ -168,38 +168,6 @@ Right now none of it is provable. The ungoverned baseline we just watched the ag
 
 <!-- chrome: false -->
 
-<img src="assets/slide-12.webp" alt="Slide 12" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Before we start fixing anything, let's name the three problems that every security team already lives with - because our baseline image hits all three. First, **Integrity**: how do you actually know every component is exactly what it claims to be and hasn't been tampered with in transit? Right now, we can't answer that. Second, **Excessive Attack Surface**: general-purpose base images ship 500-plus packages, most of them unused by your app, and every single package is a potential CVE - that's where our 431 packages come from. Third, **Operational Overhead**: security teams get flooded with CVEs and developers end up spending more time patching than building, so the real work grinds to a halt. Hold onto these three, because SBOM, VEX, and SLSA map directly onto them. Now let's see why the AI age makes all of this sharper.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-13.webp" alt="Slide 13" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: And this is why the timing matters - these aren't hypothetical risks, they're headlines from the last few months. You've got the NPM ecosystem hit by **AI-enabled credential-stealing supply chain attacks**, The Register on **AI code suggestions sabotaging the software supply chain**, and BleepingComputer naming a whole new class of attack - **"slopsquatting"** - where AI hallucinates dependency names and attackers register them. Ars Technica, IBM, Trend Micro - everyone is landing on the same point. When an agent is the one pulling packages and picking base images, it will confidently reach for things that don't exist or shouldn't be trusted, and that becomes a golden opportunity for supply chain attacks. This is the exact behavior we just watched our ungoverned agent do. Let's put some hard numbers on how widespread this already is.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-14.webp" alt="Slide 14" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Here's the gap in numbers, straight from Docker's own **State of Agentic AI Report**. **60%** already have AI agents in production, and 94% call it a strategic priority - so this is not coming, it's here. But **40%** cite security as the number one challenge in scaling agentic AI, and nearly half can't even ensure their tools are secure. Look at the one in orange: **85%** know MCP, but most can't deploy it securely at scale, and security and config issues are what's blocking production. And **94%** are using containers for agent development or production, following cloud-native workflows. So containers are already the substrate - which means the container is exactly where we get to fix this. Let's zoom out to where things actually go wrong along the chain.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-15.webp" alt="Slide 15" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: One more set of numbers to make the scale concrete, this time from Sonatype's **State of the Software Supply Chain 2026**. **96%** of applications include open source components, and **70 to 90%** of the code in a typical application is open source - so the vast majority of what you ship, you didn't write. Now the scary side: **454,648** new malicious packages identified in 2025 alone, and over **1.2 million** open-source malware packages logged since 2019. That's the haystack your agent is pulling from every time it resolves a dependency. You cannot eyeball your way out of this - you need provenance and attestation to know what you actually pulled. Let's map exactly where in the chain these attacks land.
-
----
-
-<!-- chrome: false -->
-
 <img src="assets/slide-16.webp" alt="Slide 16" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: This is the mental model I want you to carry through the whole lab - it's adapted from the SLSA threat overview. A **Producer** flows left to right through three stages: **Source**, your code; **Build**, where the Dockerfile turns it into an image; and **Package**, the container image that ships. Feeding into the build are **Dependencies** - other people's code that we have to check. And notice where the **vulnerability scan** sits - that question mark right after the build, before the package goes out the door. Every one of these arrows is a place something can go wrong, and every one is a place we can add proof instead. Let's actually mark up all the ways this chain gets attacked.
@@ -235,14 +203,6 @@ Note: This is our section marker for Lab 1 - the three building blocks: **SBOM, 
 <img src="assets/slide-20.webp" alt="Slide 20" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: These are the three building blocks we'll lean on for the rest of this lab, so let's put names to them up front. **SBOM** is the software bill of materials - the full ingredient list of what's actually inside the image. **VEX** is the exploitability layer on top of that - which of the CVEs we find actually matter for this product. And **SLSA** is the provenance story - proof of how and where the artifact was built. Keep this left-to-right order in your head: SBOM tells you what's in the box, VEX tells you what to worry about, and SLSA tells you to trust where the box came from. We'll walk through each one in turn.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-21.webp" alt="Slide 21" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Before we go deep on any single term, here's the bigger picture of what a Docker Hardened Image actually carries. Everything we're about to cover is already baked in across five categories. On the top left is **security metadata and attestations** - SBOM in both CycloneDX and SPDX, SLSA provenance at Level 3, and image provenance down to source, commit, and build environment. Top right is **vulnerability and risk management**: near-zero critical and high CVEs with a seven-day SLA, VEX statements declaring what's non-exploitable, and end-to-end supply chain coverage. Underneath you get **verification and traceability** - every DHI signed with Cosign, digest pinning, and a read-only filesystem - plus **image structure** and **compliance** covering distroless, hardening, FIPS 140, STIG, and CIS. The point here is that these aren't features you bolt on later; they ship with the image. Now let's unpack each one, starting with SBOM.
 
 ---
 
