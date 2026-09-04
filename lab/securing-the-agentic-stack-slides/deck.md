@@ -410,15 +410,7 @@ Note: This is the **complete `secure-build.yaml` workflow, ready to copy**. It t
 
 <img src="assets/slide-41.webp" alt="Slide 41" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Here's why all the earlier hardening pays off at the gate. **With a DHI base** on the left: no critical or high CVEs, SBOM and provenance present, non-root by default, up-to-date base - the **gate passes and the image is pushed**. **With a standard base** on the right: CVEs found, no SBOM, running as root - the **gate fails, and push never runs**. Same pipeline, same policies, opposite outcomes - the only variable is the base image the agent built on. This is the concrete cash-out of Labs 1 and 2: the hardened base isn't just nice-to-have hygiene, it's what lets you cleanly clear a fail-closed gate instead of getting blocked at the boundary. Let's watch that exact contrast happen live.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-42.webp" alt="Slide 42" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: **Live demo, 3 of 4** - **CI policy enforcement in action**. We're going to watch a build fail, then pass, with a single Dockerfile change. **Round 1** builds `FROM node:22-slim` and runs `docker scout policy catalog-service:baseline`: two critical and 26 high CVEs, no SBOM or provenance, image runs as root - **policy FAILED, 3 of 7 not met, push skipped, image blocked**. **Round 2** changes just the base to `FROM dhi.io/node:24-debian13` and reruns against `catalog-service:dhi`: every one of the seven policies goes green - **policy PASSED, 7 of 7, image pushed to registry**. One line in the Dockerfile is the difference between blocked and promoted. That's the whole story of Lab 3 in two terminal runs - let's mark it done on the journey map.
+Note: Here's why all the earlier hardening pays off at the gate. **With a DHI base** on the left: no critical or high CVEs, SBOM and provenance present, non-root by default, up-to-date base - the **gate passes and the image is pushed**. **With a standard base** on the right: CVEs found, no SBOM, running as root - the **gate fails, and push never runs**. Same pipeline, same policies, opposite outcomes - the only variable is the base image the agent built on. This is the concrete cash-out of Labs 1 and 2: the hardened base isn't just nice-to-have hygiene, it's what lets you cleanly clear a fail-closed gate instead of getting blocked at the boundary. That's Lab 3 done - let's mark it on the journey map.
 
 ---
 
@@ -466,15 +458,71 @@ Note: This is the boundary itself - **Docker Sandboxes**, still experimental but
 
 <img src="assets/slide-sandbox-arch.webp" alt="Sandbox architecture: on the host machine, the agent container runs inside a microVM-based sandbox fed by workspace directories, network policies and secrets; outbound traffic flows through a network proxy to external systems" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Here's the architecture. Everything sits on your **host machine**, but the agent runs inside a **microVM-based sandbox** - a real isolation boundary, not just a container namespace. You feed it three things from outside the box: the **workspace directories** it's allowed to see, the **network policies** that govern what it can reach, and the **secrets** it needs. Outbound traffic doesn't go straight out - it flows through a **network proxy** that enforces those policies before anything reaches **external systems**. The agent gets exactly the access you granted and nothing more. That's the runtime boundary for Lab 4 - now let's look at the MCP servers that run inside it.
+Note: Here's the architecture. Everything sits on your **host machine**, but the agent runs inside a **microVM-based sandbox** - a real isolation boundary, not just a container namespace. You feed it three things from outside the box: the **workspace directories** it's allowed to see, the **network policies** that govern what it can reach, and the **secrets** it needs. Outbound traffic doesn't go straight out - it flows through a **network proxy** that enforces those policies before anything reaches **external systems**. The agent gets exactly the access you granted and nothing more. That's the runtime boundary for Lab 4 - here's what it looks like in day-to-day use.
 
 ---
 
 <!-- chrome: false -->
 
-<img src="assets/slide-46.webp" alt="Slide 46" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-sandbox-tui.webp" alt="The Sandbox TUI: Docker Sandboxes live view - sandboxes on the left (claude-docs running, claude-agent-demo stopped) and the per-sandbox network log on the right with allowed and blocked hosts" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: The reassuring part: **MCP servers belong in hardened containers**, and hardening one is exactly the same discipline as hardening any app. On the left you build on DHI - `FROM dhi.io/python:3.13`, copy in your code, and note the comment: no shell, no curl, no package manager in the final image. The compose service locks it down at runtime with `read_only: true`, `cap_drop: [ALL]`, and `no-new-privileges`. On the right you verify and run through the gateway - `docker mcp gateway run --verify-signatures` checks the signature before anything executes, `docker scout` confirms the attestations, and a `docker inspect` proves the read-only rootfs actually stuck. And the callout matters: **don't hand-harden every server**. For off-the-shelf tools - filesystem, git, GitHub - pull from Docker's pre-hardened MCP Catalog, already signed and attested, zero Dockerfile work. Now let's put the two paths side by side and see the numbers.
+Note: This is the Sandbox TUI - `sbx` gives you a live view of every sandbox on your machine. On the left, each sandbox with its status, workspace, and resource use - `claude-docs` running, `claude-agent-demo` stopped - with controls to stop, exec, or remove. On the right, the **network log** for the selected sandbox: every outbound connection the agent attempted, with a hit count and an allowed-or-blocked status. Notice `api.anthropic.com`, `api.github.com`, and `registry.npmjs.org` allowed, while `http-intake.logs.us5.datadoghq.com` is **blocked**. This is the boundary made observable - you can see exactly what the agent reached for and what the policy stopped.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-credentials.webp" alt="Managing credentials: always prefer stored secrets over env vars (keychain encrypts at rest), never set API keys inside the sandbox; sbx secret set/ls/rm; supported services anthropic, openai, github, google and more" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Credentials are the thing you least want an agent to leak, so two rules. **Always prefer stored secrets over environment variables** - the OS keychain encrypts them at rest. And **never set API keys manually inside the sandbox** - anything in there is readable by the agent. The CLI is small: `sbx secret set -g anthropic` stores a key for all sandboxes; scope it to one with `sbx secret set my-sandbox openai`. You can pipe a GitHub token straight in - `gh auth token | sbx secret set -g github` - so the agent can use the `gh` CLI without ever seeing the raw value. `sbx secret ls` and `rm` manage them, and the major providers are supported out of the box.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-protecting-mcp.webp" alt="Protecting MCP: tools are how agents act on the world - govern which servers exist and which tools an agent may actually call, at one gateway" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: That's the sandbox itself - the boundary the agent runs in. Now the other half of Lab 4: **protecting MCP**. Tools are how an agent acts on the world, so the question shifts from "what can it reach" to "which servers exist, and which tools is it actually allowed to call?" The answer is to govern all of that at **one gateway**.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-mcp-gateway.webp" alt="The agent talks to one gateway, never to servers directly: the sandboxed agent reaches an mcp-gateway via SBX_MCP_URL, and local-wiki, GitHub/Notion and DuckDuckGo are aggregated behind it; every tool call flows through one chokepoint" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Here's the shape of it. The agent inside the sandbox never talks to MCP servers directly - it talks to **one endpoint**, the **mcp-gateway**, through a single `SBX_MCP_URL`. Behind that gateway all your servers - local-wiki, GitHub, Notion, DuckDuckGo - are aggregated. The payoff is the line at the bottom: **every tool call flows through one chokepoint**. Tools are namespaced `mcp__mcp-gateway__<tool>`, and that single point is where policy and audit apply - one place to govern instead of N servers to chase.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-gateway-options.webp" alt="Point it at a real gateway: local gateway http://localhost:8811 (Compose or Desktop MCP Toolkit) or hosted control plane https://gateway.docker.com (MCP Gateway Enterprise); fail-closed by design - no policy means deny-all" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: The `sbx mcp` subtree stays hidden until you set `SBX_MCP_URL`, and only two values carry the full governed flow. A **local gateway** at `http://localhost:8811` - Compose or the Desktop MCP Toolkit, you run it and control what's registered, best for learning the mechanics. Or a **hosted control plane** at `gateway.docker.com` - MCP Gateway Enterprise, where org policy governs what's invocable with central audit, the real governance story. And the crucial default: it is **fail-closed by design** - no policy loaded means deny-all. Policy is authored in Docker Hub, fetched at `docker login`, and developers can't override it.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-hub-governance.webp" alt="Author once in Docker Hub, enforce around the sandbox and at the gateway: Docker Hub AI Governance syncs at docker login to the sbx daemon (network proxy + policy, filesystem policy, audit log) and the MCP Gateway checks policy on every call" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: This is the whole enforcement picture. You **author policy once in Docker Hub** - the AI Governance settings UI or the Governance API. It syncs to the host at `docker login`, takes precedence, and fails closed. On the developer laptop the agent runs in the microVM, and the **sbx daemon** enforces the network proxy, network policy, and filesystem policy - writing **every decision to an audit log** as JSONL. Tool calls leave via `SBX_MCP_URL` to the **MCP Gateway** - local 8811 or gateway.docker.com - which runs its own **policy check and audit on every call**. Same policy, enforced in two places: around the sandbox and at the gateway.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-mcp-lifecycle.webp" alt="The server lifecycle - five commands: sbx mcp add to register, sbx mcp ls/inspect to see the record, --static-mcp to attach to a sandbox, and /mcp inside the agent to verify" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Hands-on, the `sbx mcp` lifecycle is basically five commands. **add** registers a server - `sbx mcp add local-wiki --command docker --args "run,-i,--rm,mcp/wikipedia-mcp"` - and it takes a list, stdio, remote-OAuth, or a docker.io image. **ls / inspect** shows the record, registration only - it doesn't start anything. **--static-mcp** attaches it to a sandbox at launch - `sbx run claude --static-mcp local-wiki` - or `sbx mcp load` into a live one; note the flag is `--static-mcp`, not `--mcp`. And inside the agent, **/mcp** verifies it's wired up - you'll see `mcp-gateway connected, 24 tools`, one aggregated gateway, not your individual servers.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-cedar-policy.webp" alt="Default-deny allow-list over (server, tool), authored in Cedar: a permit policy allowing exactly get_me on github-official; everything else blocked, evaluated at the gateway on every invoke, same engine as network and filesystem policy" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: And here's what the policy actually looks like - a **default-deny allow-list over (server, tool) pairs, authored in Cedar**, the open-source authorization engine from AWS. Cedar answers "can principal X do action Y on resource Z in context C." This policy permits **exactly one tool - `get_me` on `github-official`** - and by default-deny, every other tool and every other server is **blocked**. It's evaluated **at the gateway on every invoke**, using the **same engine as your network and filesystem policy** - one surface, no bypass. The takeaway: author once, sync everywhere. A developer can `sbx mcp add` any server they like, but if org policy doesn't permit its tools, the calls are denied and audited.
 
 ---
 
@@ -490,15 +538,7 @@ Note: This is the whole talk in one frame - **two paths, same agent, same prompt
 
 <img src="assets/slide-48.webp" alt="Slide 48" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Here's the beautiful turn in the story: **the same agent that introduced the vulnerabilities can now query what's secure before it picks a base image**. Connecting it is one config - drop a `dhi` entry pointing at `https://dhi.io/mcp` into Claude Desktop, or a single `claude mcp add dhi --url https://dhi.io/mcp` in Claude Code. That gives the agent **10 tools**: `dhi_list_repositories` to search by name, FIPS, or STIG; `dhi_get_image_cves` with CVSS, EPSS, and fix versions; `dhi_get_image_packages` for the full SBOM; attestations, repository details, even `dhi_create_mirror`. So the agent can answer real questions - "find the Node.js hardened image with the fewest CVEs," "does this image have FIPS and STIG attestations." The line to land: the agent that triggered the vulnerabilities now has the tools to **never make that mistake again**, by querying DHI before every FROM line. Next, the boundary that keeps the agent itself contained - Docker Sandboxes.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-49.webp" alt="Slide 49" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: This is the agent's own blast-radius boundary - **Docker Sandboxes**. Remember the lab started with `claude -p` building the catalog service; run that same agent in a sandbox and it simply cannot touch your host. Install is two lines - `brew install docker/tap/sbx` and `sbx login` - then `sbx run --name my-sandbox claude` drops the agent into an isolated microVM. Add `--clone` and the host goes read-only: the agent works on its own branch and you `git fetch` and review its commits before anything merges. On the right is what's actually isolated: its **own Docker daemon** so it builds containers without host daemon access, its **own filesystem and network** behind a microVM boundary it can't escape, **network policies** - Open, Balanced, or Locked Down, blocking outbound by default - and clone mode keeping the host read-only. This is the "full permissions inside, zero reach outside" box from our end-state diagram. Next, wiring the DHI MCP server into that sandbox.
+Note: Here's the beautiful turn in the story: **the same agent that introduced the vulnerabilities can now query what's secure before it picks a base image**. Connecting it is one config - drop a `dhi` entry pointing at `https://dhi.io/mcp` into Claude Desktop, or a single `claude mcp add dhi --url https://dhi.io/mcp` in Claude Code. That gives the agent **10 tools**: `dhi_list_repositories` to search by name, FIPS, or STIG; `dhi_get_image_cves` with CVSS, EPSS, and fix versions; `dhi_get_image_packages` for the full SBOM; attestations, repository details, even `dhi_create_mirror`. So the agent can answer real questions - "find the Node.js hardened image with the fewest CVEs," "does this image have FIPS and STIG attestations." The line to land: the agent that triggered the vulnerabilities now has the tools to **never make that mistake again**, by querying DHI before every FROM line. Now let's wire that DHI MCP server into the sandbox.
 
 ---
 
@@ -515,14 +555,6 @@ Note: Now we connect the two halves - **wire the DHI MCP server into the sandbox
 <img src="assets/slide-51.webp" alt="Slide 51" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: Last technical slide, and it's the one that separates a demo from production - **govern the tools first, with a Cedar access policy**. On the left is the lab default: a quick unblock that permits every principal, every action - register, invokeTool, invokePrimordial - against every resource. It gets the lab moving, but as the note says, that's governance turned off; don't ship it as your exemplar, and never hand the gateway's built-in primordials a wide-open pass. On the right is the production-scoped version: anyone may register, but `invokeTool` is permitted only when the server is `remotedhi` **and** the tool is one of the named read-only queries - `dhi_get_image_cves`, `dhi_get_image_packages`, `dhi_list_repositories`, and so on. Scoped by design: `dhi_create_mirror`, `dhi_remove_mirror`, and wide-open primordials are deliberately left out - query the catalog, don't mutate it. One gotcha worth flagging - the real action name is `invokeTool`, not `invoke`. That completes the road: development to production, CI failing closed, and the agent sandboxed and governed on both ends. Let's wrap up.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-53.webp" alt="Slide 53" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: This is **live demo 4 of 4**, and it ties the whole road together in one flow: **MCP server on DHI, end to end** - from a Dockerfile all the way to a verified tool invocation. Watch the four moves along the bottom, because they mirror everything we have built. We **BUILD** with `docker buildx build --sbom=true`, so the SBOM is attached at build time, not bolted on later. We **SIGN** with `cosign sign`, binding that image to its digest. We **RUN** it with `docker compose up` under `read_only` and `cap_drop: ALL`, so the service that this agent becomes runs with least privilege. And we **VERIFY** with `docker scout attest list`, proving the attestations are really there. Same source, same agent, provable at every step - that is the payoff of Lab 4.
 
 ---
 
