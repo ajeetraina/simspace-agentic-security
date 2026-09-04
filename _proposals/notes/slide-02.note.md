@@ -1,0 +1,1 @@
+Quick hello before we dive in - I'm **Ajeet Singh Raina**, Developer Advocate, and you can find me at **@ajeetsraina** if you want to keep the conversation going after this. My whole job is meeting developers where they are, so please treat this as hands-on and interrupt me with questions. Let's look at where we're headed.

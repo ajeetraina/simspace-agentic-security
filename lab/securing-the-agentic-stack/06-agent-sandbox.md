@@ -1,25 +1,38 @@
 # Lab 4 - The Agent's Build Sandbox
 
-<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: done Agent build, done SBOM · VEX · SLSA, done Hardened base, done Verify &amp; Gate, current Build Sandbox">
-  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
-    <rect x="1" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
-    <text x="85" y="30" fill="#14532d">✓ Agent build</text>
-    <polygon points="172,22 180,26 172,30" fill="#9aa4b2"></polygon>
-    <rect x="184" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
-    <text x="268" y="30" fill="#14532d">✓ SBOM · VEX · SLSA</text>
-    <polygon points="355,22 363,26 355,30" fill="#9aa4b2"></polygon>
-    <rect x="367" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
-    <text x="451" y="30" fill="#14532d">✓ Hardened base</text>
-    <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
-    <rect x="550" y="11" width="168" height="30" rx="15" fill="#e6f4ea" stroke="#1a7f37"></rect>
-    <text x="634" y="30" fill="#14532d">✓ Verify &amp; Gate</text>
-    <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
-    <rect x="733" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
-    <text x="817" y="30" fill="#ffffff" font-weight="700">Build Sandbox</text>
-  </g>
-</svg>
+<svg viewBox="0 0 900 104" width="100%" role="img" aria-label="Progress spine: the development-to-production road. Stages DEVELOP, BASE, BUILD, SIGN sit in the development zone (an sbx sandbox); a CI GATE is the boundary; DEPLOY and INVOKE sit in the production zone (a read-only runtime box). Done stages are checked green, the current stage is marked.">
+<g font-family="ui-sans-serif, system-ui, sans-serif">
+<rect x="2" y="14" width="516" height="82" rx="10" fill="#dce4ff" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="6 4"/>
+<text x="10" y="28" font-size="10.5" font-weight="800" fill="#1e3a8a">DEVELOPMENT</text>
+<text x="120" y="28" font-size="9" fill="#3730a3">sbx microVM · host read-only</text>
+<rect x="618" y="14" width="280" height="82" rx="10" fill="#e6f4ea" stroke="#1a7f37" stroke-width="1.3" stroke-dasharray="6 4"/>
+<text x="626" y="28" font-size="10.5" font-weight="800" fill="#14532d">PRODUCTION</text>
+<text x="720" y="28" font-size="9" fill="#14532d">read_only · cap_drop ALL</text>
+<rect x="8" y="40" width="118" height="44" rx="9" fill="#0b1533" stroke="#2563eb" stroke-width="3"/><text x="67.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">DEVELOP</text><text x="67.0" y="34" text-anchor="middle" font-size="10" font-weight="800" fill="#2563eb">▶ you are here</text>
+<rect x="134" y="40" width="118" height="44" rx="9" fill="#0b1533" stroke="#1a7f37" stroke-width="2.5"/><text x="193.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">BASE</text><circle cx="239" cy="52" r="9" fill="#1a7f37"/><path d="M235,52 l3,3.5 l5.5,-6.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="260" y="40" width="118" height="44" rx="9" fill="#0b1533" stroke="#1a7f37" stroke-width="2.5"/><text x="319.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">BUILD</text><circle cx="365" cy="52" r="9" fill="#1a7f37"/><path d="M361,52 l3,3.5 l5.5,-6.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="386" y="40" width="118" height="44" rx="9" fill="#0b1533" stroke="#1a7f37" stroke-width="2.5"/><text x="445.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">SIGN</text><circle cx="491" cy="52" r="9" fill="#1a7f37"/><path d="M487,52 l3,3.5 l5.5,-6.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="536" y="32" width="70" height="60" rx="10" fill="#fff3e0" stroke="#1a7f37" stroke-width="2.5"/><text x="571.0" y="58" text-anchor="middle" font-size="12" font-weight="800" fill="#9a3412">GATE</text><text x="571.0" y="76" text-anchor="middle" font-size="8.5" fill="#9a3412">fail closed</text><circle cx="594" cy="44" r="9" fill="#1a7f37"/><path d="M590,44 l3,3.5 l5.5,-6.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="628" y="40" width="126" height="44" rx="9" fill="#0b1533" stroke="#1a7f37" stroke-width="2.5"/><text x="691.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">DEPLOY</text><circle cx="741" cy="52" r="9" fill="#1a7f37"/><path d="M737,52 l3,3.5 l5.5,-6.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="766" y="40" width="126" height="44" rx="9" fill="#0b1533" stroke="#2563eb" stroke-width="3"/><text x="829.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">INVOKE</text>
+<g stroke="#9aa6c2" stroke-width="1.6" fill="#9aa6c2">
+<line x1="126" y1="62" x2="134" y2="62"/><polygon points="134,59 139,62 134,65"/>
+<line x1="252" y1="62" x2="260" y2="62"/><polygon points="260,59 265,62 260,65"/>
+<line x1="378" y1="62" x2="386" y2="62"/><polygon points="386,59 391,62 386,65"/>
+<line x1="504" y1="62" x2="536" y2="62"/><polygon points="536,59 541,62 536,65"/>
+<line x1="606" y1="62" x2="628" y2="62"/><polygon points="628,59 633,62 628,65"/>
+</g>
+</g></svg>
 
 **10 minutes · hands-on**
+
+> **Where you are on the road:** all the way back at the **left edge - development**. Labs
+> 1-3 fixed the artifact *after* the agent shipped it. This lab moves the fix to the moment
+> of authoring, so the red box never happens. It is also the workshop's real punchline: a
+> sandbox appears at **both ends** of the road. The agent that *builds* the image runs in a
+> box it cannot escape (the sbx microVM here); the service it *becomes* runs in a box too
+> (the `read_only`, `cap_drop ALL` runtime you saw at the production edge). Same discipline -
+> least privilege - at authoring time and at runtime.
 
 Every lab so far cleaned up something the agent already shipped. This one moves the fix
 earlier. You give the agent a **sandbox** - its own microVM, off your host - and wire the
