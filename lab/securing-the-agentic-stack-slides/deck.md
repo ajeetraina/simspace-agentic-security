@@ -1,8 +1,32 @@
 <!-- chrome: false -->
 
-<img src="assets/slide-incident-1.webp" alt="02:47 AM, a commit lands. Author: svc-build-agent" width="1600" height="900" loading="eager" fetchpriority="high" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-01.webp" alt="Slide 1" width="1600" height="900" loading="eager" fetchpriority="high" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Before I introduce myself or this talk, look at this. At **2:47 in the morning**, a commit lands - and the author isn't a person. It's an agent: **svc-build-agent**.
+Note: Welcome, everyone. Today we're talking about **Securing the Agentic Stack** - Docker Hardened Images and supply chain security. The reason those two things share a title is that the software supply chain has changed underneath us: it's not just humans pulling and building containers anymore, it's AI agents. Over the next stretch we'll walk a road from development to production and make every segment of it provable. Let's get into it.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-02.webp" alt="Meet your instructor: Ajeet Singh Raina, Developer Advocate, co-author of Operational AI with Docker" width="1600" height="900" loading="eager" fetchpriority="low" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Quick hello before we dive in - I'm **Ajeet Singh Raina**, Developer Advocate at Docker. Twenty-plus years across system integration testing, consulting, and developer relations; I'm a former Docker Captain and I run the 17,000-member Docker Bengaluru meetup. I also co-authored **Operational AI with Docker** (Packt) with Harsh Manvar, on deploying, scaling, and operating agentic AI services with Docker and Kubernetes - which is exactly the world this workshop lives in. My whole job is meeting developers where they are, so please treat this as hands-on and interrupt me with questions. Let's look at where we're headed.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-03.webp" alt="Slide 3" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Here's the shape of our time together. We open with **why supply chain security matters now**, then the **building blocks** you need in your toolkit. From there we go head to head - **standard image versus DHI** - before moving into **securing your CI pipeline**, which is the gate that everything has to pass through. Then the main event, **securing the agentic stack**, and finally we **wrap up**. Notice this list actually traces a journey from the left edge of development all the way to production, so keep that road in mind as we go. But before we walk through any of it, let me show you why we're all in this room - with something that actually happened.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-1.webp" alt="02:47 AM, a commit lands. Author: svc-build-agent" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: This actually happened. At **2:47 in the morning**, a commit lands - and the author isn't a person. It's an agent: **svc-build-agent**.
 
 ---
 
@@ -10,7 +34,7 @@ Note: Before I introduce myself or this talk, look at this. At **2:47 in the mor
 
 <img src="assets/slide-incident-2.webp" alt="02:47 AM commit - Change: bumped a base image, regenerated the Dockerfile" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: What did it change? It **bumped a base image and regenerated the Dockerfile** - real changes to how your app actually gets built.
+Note: What did it change? It **bumped a base image and regenerated the Dockerfile** - real changes to how the app actually gets built.
 
 ---
 
@@ -34,7 +58,7 @@ Note: And it shipped - straight to **production, 3:12 AM.** Twenty-five minutes 
 
 <img src="assets/slide-incident-5.webp" alt="02:47 AM commit - Reviewed by a human? No" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: And here's the row that matters. **Reviewed by a human? No.** Nobody was awake, nobody signed off - and it is running in prod right now.
+Note: And here's the row that matters. **Reviewed by a human? No.** Nobody was awake, nobody signed off - and it's running in prod right now.
 
 ---
 
@@ -42,31 +66,7 @@ Note: And here's the row that matters. **Reviewed by a human? No.** Nobody was a
 
 <img src="assets/slide-incident.webp" alt="02:47 AM commit, full recap - reviewed by a human: No. Who approved that build?" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: So before anything else, sit with the question: **who approved that build?** Hold onto it - everything we do today is about being able to answer it, provably. Now, let me introduce this session.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-01.webp" alt="Slide 1" width="1600" height="900" loading="eager" fetchpriority="low" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Welcome, everyone. Today we're talking about **Securing the Agentic Stack** - Docker Hardened Images and supply chain security. The reason those two things share a title is that the software supply chain has changed underneath us: it's not just humans pulling and building containers anymore, it's AI agents. Over the next stretch we'll walk a road from development to production and make every segment of it provable. Let's get into it.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-02.webp" alt="Meet your instructor: Ajeet Singh Raina, Developer Advocate, co-author of Operational AI with Docker" width="1600" height="900" loading="eager" fetchpriority="low" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Quick hello before we dive in - I'm **Ajeet Singh Raina**, Developer Advocate at Docker. Twenty-plus years across system integration testing, consulting, and developer relations; I'm a former Docker Captain and I run the 17,000-member Docker Bengaluru meetup. I also co-authored **Operational AI with Docker** (Packt) with Harsh Manvar, on deploying, scaling, and operating agentic AI services with Docker and Kubernetes - which is exactly the world this workshop lives in. My whole job is meeting developers where they are, so please treat this as hands-on and interrupt me with questions. Let's look at where we're headed.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-03.webp" alt="Slide 3" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Here's the shape of our time together. We open with **why supply chain security matters now**, then the **building blocks** you need in your toolkit. From there we go head to head - **standard image versus DHI** - before moving into **securing your CI pipeline**, which is the gate that everything has to pass through. Then the main event, **securing the agentic stack**, and finally we **wrap up**. Notice this list actually traces a journey from the left edge of development all the way to production, so keep that road in mind as we go.
+Note: So sit with the question: **who approved that build?** Every item on that agenda is really about being able to answer it - provably. Now, here's how we're going to get there.
 
 ---
 
@@ -106,15 +106,7 @@ Note: Here's the world we grew up in - **the traditional workflow**. A human wri
 
 <img src="assets/slide-07.webp" alt="The Agentic Workflow: the same inner and outer loops with an AI agent at every stage" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius. And you already saw where this leads - remember that 2:47 AM commit I opened with?
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-incident.webp" alt="02:47 AM a commit lands: author svc-build-agent, bumped a base image and regenerated the Dockerfile, approved by CI, deployed to production at 03:12 AM, reviewed by a human - No. Who approved that build?" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Here it is again - the commit I opened the session with. That **2:47 AM** change, authored by **svc-build-agent**, approved only by CI, shipped to prod with **no human in the loop** - it's not an abstract risk. It's the exact failure mode we're about to watch happen, step by step. So let me show you the app it happens to.
+Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius - the same failure mode as that 2:47 AM commit, now at every stage. Let me ground it in a real app: the one we're going to secure all the way to production.
 
 ---
 
