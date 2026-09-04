@@ -274,7 +274,15 @@ Note: **FIPS 140** is the Federal Information Processing Standard for validated 
 
 <img src="assets/slide-29.webp" alt="Slide 29" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Last one: **STIG** - the Security Technical Implementation Guide, DISA's DoD hardening standard. There's an interesting wrinkle here: DISA hasn't yet published a container-specific STIG, so Docker builds custom profiles based on the GPOS SRG and the DoD Container Hardening Process Guide. DHI ships signed STIG scan attestations, which cuts down the false positives that plague normal container STIG scans - and the STIG variant does require a Docker subscription. The command pattern is exactly what you've seen: `docker scout attest get` with the STIG predicate and `--verify`, or `attest list` to see everything on an image. And that list is the payoff for this whole section - on one image you'll now see SBOM, OpenVEX, SLSA, FIPS, STIG, Scout health, and secrets scan, all signed. That's checkpoint one: the BUILD stage turns green, because for the first time we can actually see and trust what's inside the image. Let's mark that on the road.
+Note: Last one: **STIG** - the Security Technical Implementation Guide, DISA's DoD hardening standard. There's an interesting wrinkle here: DISA hasn't yet published a container-specific STIG, so Docker builds custom profiles based on the GPOS SRG and the DoD Container Hardening Process Guide. DHI ships signed STIG scan attestations, which cuts down the false positives that plague normal container STIG scans - and the STIG variant does require a Docker subscription. The command pattern is exactly what you've seen: `docker scout attest get` with the STIG predicate and `--verify`, or `attest list` to see everything on an image. And that list is the payoff for this whole section - on one image you'll now see SBOM, OpenVEX, SLSA, FIPS, STIG, Scout health, and secrets scan, all signed. That's the payoff of this whole section: for the first time we can actually see and trust what's inside the image. Before we mark it done on the road, it's your turn.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-try-lab2.webp" alt="Try it - SBOM, VEX and SLSA: your turn to generate an SBOM, apply VEX, and verify SLSA provenance on the catalog image" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Your turn - this is the hands-on for **SBOM, VEX and SLSA**. In the workshop, generate an SBOM for the catalog image, apply a **VEX** statement to strip the CVE noise down to what's actually exploitable, and verify the **SLSA** provenance - the three building blocks we just walked through, now on your own terminal. Run them against the baseline and the hardened image and watch the difference. Once you've done it, come back and we'll mark the BUILD stage green.
 
 ---
 
@@ -330,7 +338,15 @@ Note: This is the actual migration for `catalog-service-node`, before on the lef
 
 <img src="assets/slide-11.webp" alt="Catalog service, where vulnerabilities enter: without the DHI MCP the agent picks base images freely (2 Critical, 46+ High CVEs); with the DHI MCP every service resolves to a hardened image (0 Critical, 0 High)" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: This is the whole Product Catalog stack, and it's where vulnerabilities actually enter. On the left - **without the DHI MCP, the agent picks base images freely**: the application on `node:20` brings 2 Critical and 26 High, PostgreSQL adds 8 High-plus, Kafka on `confluentinc/cp-kafka:7.6` piles on 12 High-plus, aws-sdk drags in more, and the **total stack exposure is 2 Critical and 46-plus High CVEs**. On the right - **with the DHI MCP, the agent queries first** and every service resolves to a hardened image: `dhi.io/node`, `dhi.io/postgresql`, `dhi.io/kafka`. Watch the right column collapse to **0 across the board - total stack exposure 0 Critical, 0 High**. The point isn't just that DHI is cleaner; it's that when the agent has to *ask* before it picks, the vulnerabilities never enter the stack in the first place. That prevention-at-the-source is the whole idea, and it closes out Lab 2 - let's mark it on the journey map.
+Note: This is the whole Product Catalog stack, and it's where vulnerabilities actually enter. On the left - **without the DHI MCP, the agent picks base images freely**: the application on `node:20` brings 2 Critical and 26 High, PostgreSQL adds 8 High-plus, Kafka on `confluentinc/cp-kafka:7.6` piles on 12 High-plus, aws-sdk drags in more, and the **total stack exposure is 2 Critical and 46-plus High CVEs**. On the right - **with the DHI MCP, the agent queries first** and every service resolves to a hardened image: `dhi.io/node`, `dhi.io/postgresql`, `dhi.io/kafka`. Watch the right column collapse to **0 across the board - total stack exposure 0 Critical, 0 High**. The point isn't just that DHI is cleaner; it's that when the agent has to *ask* before it picks, the vulnerabilities never enter the stack in the first place. That prevention-at-the-source is the whole idea. Before we close out Lab 2 on the road, it's your turn.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-try-dhi.webp" alt="Try it - DHI: your turn to swap a base image to a Docker Hardened Image and watch the CVE count collapse" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Your turn - the **Docker Hardened Images** hands-on. In the workshop, take the catalog service off its ungoverned `node:20` base and onto a DHI base with a one-line `FROM` swap, rebuild, and rescan. Watch the CVE count collapse the way it did on the last slide - 2 Critical and 46-plus High down toward zero - and confirm the SBOM, provenance, and signatures ride along. Once BASE is trustworthy, come back and we'll mark it green.
 
 ---
 
