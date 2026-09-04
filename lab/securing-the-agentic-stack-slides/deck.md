@@ -144,33 +144,9 @@ Note: Your turn. Head into the workshop - **agentic.dockerworkshop.com** - and r
 
 <!-- chrome: false -->
 
-<img src="assets/slide-framework-1.webp" alt="Four questions, spotlight 1 of 4 - Evidence: what is in this, and where did it come from? SBOM, VEX, SLSA provenance" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-framework.webp" alt="Every agent-driven change answers four questions: Evidence (what is in it, where from), Baseline (did it start trustworthy), Gate (is it allowed to pass), Boundary (what could it reach)" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: No matter how the agent produced a change, governing it comes down to **four questions**. **One - Evidence:** what is actually in this artifact, and where did it come from? That is **SBOM, VEX, and SLSA provenance** - the audit trail that lets you answer "who approved that build?"
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-framework-2.webp" alt="Four questions, spotlight 2 of 4 - Baseline: did it start from something trustworthy? Docker Hardened Images" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: **Two - Baseline:** did it start from something trustworthy? That is a **Docker Hardened Image** instead of whatever the agent grabbed off the internet. Evidence tells you what you have; baseline makes sure you began from a good place.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-framework-3.webp" alt="Four questions, spotlight 3 of 4 - Gate: is it allowed to pass? Build policies, image signing, admission" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: **Three - Gate:** is it allowed to pass? That is **build policies, image signing, and admission** - the check in the middle of the pipeline that fails closed, so nothing crosses into production unless it's provable.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-framework-4.webp" alt="Four questions, spotlight 4 of 4 - Boundary: what could it reach while it worked? Sandbox runtime - network, filesystem, credentials" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: **Four - Boundary:** what could it reach while it worked? That is the **sandbox runtime** - network, filesystem, and credentials. Evidence and baseline make governance possible; gate and boundary make it real. Hold these four, because the next slide draws them as a single road from development to production.
+Note: No matter how the agent produced a change, governing it comes down to **four questions** - and these are the four layers of the road we're about to walk. **Evidence:** what is in this artifact, and where did it come from - SBOM, VEX, SLSA provenance. **Baseline:** did it start from something trustworthy - a Docker Hardened Image. **Gate:** is it allowed to pass - build policies, signing, admission. **Boundary:** what could it reach while it worked - the sandbox runtime. Evidence and baseline make governance possible; gate and boundary make it real. We'll take one question per lab, and I'll bring the matching card back each time. Next, the road itself.
 
 ---
 
@@ -187,6 +163,14 @@ Note: This is the whole road we travel today - and it flows **left to right, dev
 Code moves along the road: developed, based on a trusted image, built with attestations, signed - then it has to pass the gate before it's deployed and invoked.
 
 Right now none of it is provable. The ungoverned baseline we just watched the agent ship is `FROM node:20`, 431 packages, no SBOM, running as root: **0 of 4 stages green**. Each of the four labs turns one segment of this road green, and we come back to this same picture at each checkpoint. This is checkpoint 0 of 4 - the start line.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-framework-1.webp" alt="Question 1 of 4 - Evidence: what is in this, and where did it come from? SBOM, VEX, SLSA provenance" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Lab 1 is about the first question - **Evidence:** what is actually in the image, and where did it come from? The answer is **SBOM, VEX, and SLSA provenance** - the audit trail that finally lets you answer "who approved that build?" For the next stretch we're going to generate that evidence and learn to read it. Let's start with the threat model it all hangs on.
 
 ---
 
@@ -304,6 +288,14 @@ Note: Checkpoint one - Lab 1 is done, so **BUILD** is green on the road. We can 
 
 <!-- chrome: false -->
 
+<img src="assets/slide-framework-2.webp" alt="Question 2 of 4 - Baseline: did it start from something trustworthy? Docker Hardened Images" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: That segment is the second question - **Baseline:** did the image start from something trustworthy? The answer is a **Docker Hardened Image** instead of whatever the agent grabbed off the internet. Evidence told us what's in the box; baseline makes sure we began from a good one. Here's what that looks like in practice.
+
+---
+
+<!-- chrome: false -->
+
 <img src="assets/slide-30.webp" alt="Slide 30" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: This kicks off Lab 2: **Standard Image versus Docker Hardened Images**. Everything upstream in your supply chain rides on the base image you pick, so this is the highest-leverage decision you make. The promise on the subtitle is the one I want you to hold onto - you'll **watch the CVE count change with a single `FROM` line swap**. No refactor, no re-architecture, just a better starting point. Let me show you what actually makes a hardened image hardened.
@@ -355,6 +347,14 @@ Note: Live demo two of four - this is where attestations stop being a bullet poi
 <img src="assets/slide-journey-2.webp" alt="The journey, checkpoint 2 of 4: Lab 2 done, BASE is now green - hardened base, the CVEs collapse" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: Checkpoint two - **Lab 2 is done, BASE turns green**. The hardened image now feeds the build: **DHI, 0 CVEs, SLSA L3**, and you can see the CVEs collapse right where we started this segment. The progress bar reads **2 of 4 stages provable**, Lab 1 and Lab 2 both lit. Two segments of the road are green; the base and the build are both trustworthy now. Next we push toward the CI gate that turns all of this into an enforced boundary.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-framework-3.webp" alt="Question 3 of 4 - Gate: is it allowed to pass? Build policies, image signing, admission" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: That boundary is the third question - **Gate:** is this artifact allowed to pass? The answer is **build policies, image signing, and admission** - the check in the middle of the pipeline that fails closed, so nothing crosses into production unless it's provable. Evidence and baseline made governance possible; this is where we make it real.
 
 ---
 
@@ -427,6 +427,14 @@ Note: **Live demo, 3 of 4** - **CI policy enforcement in action**. We're going t
 <img src="assets/slide-journey-3.webp" alt="The journey, checkpoint 3 of 4: Lab 3 done, SIGN, GATE and DEPLOY are now green - signed, gated, promoted to production" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: **Checkpoint 3 - Lab 3 is done.** Trace the road: the agent develops in a sandbox, builds on a hardened DHI base with zero CVEs, attaches SBOM and provenance at build, and now **SIGNs keylessly, bound to the digest**. The **CI GATE** - no critical CVEs, SBOM present, provenance verified - **fails closed** at the dev-to-prod boundary, and because our image is provable it passes and gets promoted: **DEPLOY** goes green with a signed image, verified and pinned by digest. **Three of four stages provable now** - Labs 1, 2, and 3 are lit. Compare that to the ungoverned baseline the agent shipped on your host: `FROM node:20`, 431 packages, no SBOM, root, nothing you can prove. The one box still grey is **INVOKE** - the running Agent/MCP client at the far right. Same discipline at both ends: the agent that *builds* runs in a box, and the service it *becomes* must run in a box too. That runtime end - MCP servers and tool isolation - is Lab 4, and it's next.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-framework-4.webp" alt="Question 4 of 4 - Boundary: what could it reach while it worked? Sandbox runtime - network, filesystem, credentials" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Lab 4 is the last question - **Boundary:** what could the agent reach while it worked? The answer is the **sandbox runtime** - network, filesystem, and credentials, bounded so the agent can act without an open blast radius. This is the fourth layer, and it closes the loop: same discipline at both ends of the road.
 
 ---
 
