@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#FFFFFF"/>
+<text x="70" y="74" font-size="40" font-weight="800" fill="#0B1533">DHI MCP Server - the agent chooses wisely</text>
+<text x="70" y="112" font-size="19" fill="#64748B">The agent that introduced vulnerabilities can now query what's secure - before picking a base image.</text>
+<text x="70" y="196" font-size="15" font-weight="800" fill="#0B1533" letter-spacing="0.6">CONNECT YOUR AI ASSISTANT (ONE CONFIG)</text>
+<rect x="70" y="212" width="690" height="372" rx="12" fill="#0B1220"/>
+<text x="96" y="252" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#7C8BA5"># Claude Desktop - claude_desktop_config.json</text>
+<text x="96" y="277" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#E6EAF2">{</text>
+<text x="96" y="302" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#E6EAF2">  "mcpServers": {</text>
+<text x="96" y="327" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#E6EAF2">    "dhi": {</text>
+<text x="96" y="352" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#E6EAF2">      "url": "https://dhi.io/mcp"</text>
+<text x="96" y="377" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#E6EAF2">    }</text>
+<text x="96" y="402" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#E6EAF2">  }</text>
+<text x="96" y="427" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#E6EAF2">}</text>
+<text x="96" y="477" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#7C8BA5"># Claude Code</text>
+<text x="96" y="502" font-size="15" font-family="Courier New, monospace" xml:space="preserve" fill="#E6EAF2">claude mcp add dhi --url https://dhi.io/mcp</text>
+<text x="70" y="622" font-size="15" font-weight="800" fill="#0B1533" letter-spacing="0.6">WHAT YOU CAN ASK</text>
+<rect x="70" y="636" width="690" height="44" rx="8" fill="#F3F5FA"/>
+<text x="90" y="664" font-size="14.5" font-style="italic" fill="#475569">"Find the Node.js hardened image with the fewest CVEs"</text>
+<rect x="70" y="686" width="690" height="44" rx="8" fill="#F3F5FA"/>
+<text x="90" y="714" font-size="14.5" font-style="italic" fill="#475569">"Does dhi.io/node:24-debian13 have FIPS and STIG attestations?"</text>
+<rect x="70" y="736" width="690" height="44" rx="8" fill="#F3F5FA"/>
+<text x="90" y="764" font-size="14.5" font-style="italic" fill="#475569">"What packages are in catalog-service:dhi and do any have known exploits?"</text>
+<text x="800" y="196" font-size="15" font-weight="800" fill="#0B1533" letter-spacing="0.6">10 TOOLS AVAILABLE TO THE AGENT</text>
+<rect x="800" y="212" width="355" height="80" rx="10" fill="#EAF1FE"/>
+<text x="822" y="246" font-size="15" font-weight="700" font-family="Courier New, monospace" fill="#2563EB">dhi_list_repositories</text>
+<text x="822" y="272" font-size="13.5" fill="#334155">Search catalog by name, FIPS, STIG</text>
+<rect x="1175" y="212" width="355" height="80" rx="10" fill="#EAF1FE"/>
+<text x="1197" y="246" font-size="15" font-weight="700" font-family="Courier New, monospace" fill="#2563EB">dhi_get_image_cves</text>
+<text x="1197" y="272" font-size="13.5" fill="#334155">CVEs with CVSS, EPSS, fix version</text>
+<rect x="800" y="300" width="355" height="80" rx="10" fill="#EAF1FE"/>
+<text x="822" y="334" font-size="15" font-weight="700" font-family="Courier New, monospace" fill="#2563EB">dhi_get_image_packages</text>
+<text x="822" y="360" font-size="13.5" fill="#334155">Full SBOM - packages, licenses, purls</text>
+<rect x="1175" y="300" width="355" height="80" rx="10" fill="#EAF1FE"/>
+<text x="1197" y="334" font-size="15" font-weight="700" font-family="Courier New, monospace" fill="#2563EB">dhi_get_image_attestations</text>
+<text x="1197" y="360" font-size="13.5" fill="#334155">SBOM, provenance, FIPS, STIG</text>
+<rect x="800" y="388" width="355" height="80" rx="10" fill="#EAF1FE"/>
+<text x="822" y="422" font-size="15" font-weight="700" font-family="Courier New, monospace" fill="#2563EB">dhi_get_repository</text>
+<text x="822" y="448" font-size="13.5" fill="#334155">Tags, platforms, vuln counts</text>
+<rect x="1175" y="388" width="355" height="80" rx="10" fill="#EAF1FE"/>
+<text x="1197" y="422" font-size="15" font-weight="700" font-family="Courier New, monospace" fill="#2563EB">dhi_create_mirror</text>
+<text x="1197" y="448" font-size="13.5" fill="#334155">Mirror DHI repo to your org</text>
+<rect x="800" y="484" width="730" height="104" rx="12" fill="#0B1533"/>
+<text x="826" y="526" font-size="17" fill="#FFFFFF">The agent that triggered vulnerabilities now has the tools to <tspan font-weight="800">never make</tspan></text>
+<text x="826" y="554" font-size="17" fill="#FFFFFF"><tspan font-weight="800">that mistake again</tspan> - by querying DHI before every FROM line.</text>
+</svg>
