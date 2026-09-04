@@ -1,6 +1,54 @@
 <!-- chrome: false -->
 
-<img src="assets/slide-01.webp" alt="Slide 1" width="1600" height="900" loading="eager" fetchpriority="high" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-incident-1.webp" alt="02:47 AM, a commit lands. Author: svc-build-agent" width="1600" height="900" loading="eager" fetchpriority="high" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Before I introduce myself or this talk, look at this. At **2:47 in the morning**, a commit lands - and the author isn't a person. It's an agent: **svc-build-agent**.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-2.webp" alt="02:47 AM commit - Change: bumped a base image, regenerated the Dockerfile" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: What did it change? It **bumped a base image and regenerated the Dockerfile** - real changes to how your app actually gets built.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-3.webp" alt="02:47 AM commit - Reviewer: approved by CI, all checks green" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Who reviewed it? **CI did** - all checks green. That is the only review this change ever got.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-4.webp" alt="02:47 AM commit - Deployed: production, 03:12 AM" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: And it shipped - straight to **production, 3:12 AM.** Twenty-five minutes from an agent's commit to running in prod.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-5.webp" alt="02:47 AM commit - Reviewed by a human? No" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: And here's the row that matters. **Reviewed by a human? No.** Nobody was awake, nobody signed off - and it is running in prod right now.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident.webp" alt="02:47 AM commit, full recap - reviewed by a human: No. Who approved that build?" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: So before anything else, sit with the question: **who approved that build?** Hold onto it - everything we do today is about being able to answer it, provably. Now, let me introduce this session.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-01.webp" alt="Slide 1" width="1600" height="900" loading="eager" fetchpriority="low" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: Welcome, everyone. Today we're talking about **Securing the Agentic Stack** - Docker Hardened Images and supply chain security. The reason those two things share a title is that the software supply chain has changed underneath us: it's not just humans pulling and building containers anymore, it's AI agents. Over the next stretch we'll walk a road from development to production and make every segment of it provable. Let's get into it.
 
@@ -58,7 +106,7 @@ Note: Here's the world we grew up in - **the traditional workflow**. A human wri
 
 <img src="assets/slide-07.webp" alt="The Agentic Workflow: the same inner and outer loops with an AI agent at every stage" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius - and it is not hypothetical. Let me show you what it looks like when one of those agents ships to production at 2:47 in the morning.
+Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius. And you already saw where this leads - remember that 2:47 AM commit I opened with?
 
 ---
 
@@ -66,7 +114,7 @@ Note: Same map, same inner and outer loops, same push in the middle - but look w
 
 <img src="assets/slide-incident.webp" alt="02:47 AM a commit lands: author svc-build-agent, bumped a base image and regenerated the Dockerfile, approved by CI, deployed to production at 03:12 AM, reviewed by a human - No. Who approved that build?" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Here's the kind of thing that is already happening. At **2:47 in the morning**, a commit lands. The author isn't a person - it's **svc-build-agent**. The change **bumped a base image and regenerated the Dockerfile**. The reviewer? **CI - all checks green.** It was deployed to **production at 3:12 AM**. And the one row that matters: **was this reviewed by a human? No.** Nobody was awake, nobody signed off, and it's running in prod right now. So the honest question is the one on the slide: **who approved that build?** For the rest of this workshop we want to be able to answer that - provably. Let me show you the app this actually happens to.
+Note: Here it is again - the commit I opened the session with. That **2:47 AM** change, authored by **svc-build-agent**, approved only by CI, shipped to prod with **no human in the loop** - it's not an abstract risk. It's the exact failure mode we're about to watch happen, step by step. So let me show you the app it happens to.
 
 ---
 
