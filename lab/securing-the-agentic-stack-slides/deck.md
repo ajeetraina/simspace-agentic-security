@@ -8,9 +8,9 @@ Note: Welcome, everyone. Today we're talking about **Securing the Agentic Stack*
 
 <!-- chrome: false -->
 
-<img src="assets/slide-02.webp" alt="Slide 2" width="1600" height="900" loading="eager" fetchpriority="low" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-02.webp" alt="Meet your instructor: Ajeet Singh Raina, Developer Advocate, co-author of Operational AI with Docker" width="1600" height="900" loading="eager" fetchpriority="low" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Quick hello before we dive in - I'm **Ajeet Singh Raina**, Developer Advocate, and you can find me at **@ajeetsraina** if you want to keep the conversation going after this. My whole job is meeting developers where they are, so please treat this as hands-on and interrupt me with questions. Let's look at where we're headed.
+Note: Quick hello before we dive in - I'm **Ajeet Singh Raina**, Developer Advocate at Docker. Twenty-plus years across system integration testing, consulting, and developer relations; I'm a former Docker Captain and I run the 17,000-member Docker Bengaluru meetup. I also co-authored **Operational AI with Docker** (Packt) with Harsh Manvar, on deploying, scaling, and operating agentic AI services with Docker and Kubernetes - which is exactly the world this workshop lives in. My whole job is meeting developers where they are, so please treat this as hands-on and interrupt me with questions. Let's look at where we're headed.
 
 ---
 
@@ -26,7 +26,63 @@ Note: Here's the shape of our time together. We open with **why supply chain sec
 
 <img src="assets/slide-04.webp" alt="Slide 4" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: And here's how the workshop is actually structured - four hands-on labs, all running inside a Simspace simulator so nobody has to fight local setup. **Lab 1 - Prerequisite & Setup (about 2 minutes)** is just getting into the Simspace. **Lab 2 - Secure Software Supply Chain (15-20 minutes)** covers why this matters now, how agents expand your attack surface, the building blocks - SBOM, VEX, and SLSA - and standard image versus Docker Hardened Images. **Lab 3 - Securing your CI Pipeline (45 minutes)** is the biggest block, going deep on Docker Scout build policies and CI policy enforcement, because CI is our gate. And **Lab 4 - Securing the Agentic Stack (30 minutes)** brings it home: an overview of the agentic supply chain, MCP servers running on DHI, and building your own security framework. Each lab turns one segment of that development-to-production road green. Before we touch a keyboard, let's ground ourselves in why this matters right now.
+Note: And here's how the workshop is actually structured - four hands-on labs, all running inside a Simspace simulator so nobody has to fight local setup. **Lab 1 - Prerequisite & Setup (about 2 minutes)** is just getting into the Simspace. **Lab 2 - Secure Software Supply Chain (15-20 minutes)** covers why this matters now, how agents expand your attack surface, the building blocks - SBOM, VEX, and SLSA - and standard image versus Docker Hardened Images. **Lab 3 - Securing your CI Pipeline (45 minutes)** is the biggest block, going deep on Docker Scout build policies and CI policy enforcement, because CI is our gate. And **Lab 4 - Securing the Agentic Stack (30 minutes)** brings it home: an overview of the agentic supply chain, MCP servers running on DHI, and building your own security framework. Each lab turns one segment of that development-to-production road green. And here's where you'll actually do them.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-access.webp" alt="Accessing the Workshop - https://agentic.dockerworkshop.com" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Everything today lives at one URL: **agentic.dockerworkshop.com**. That's your hands-on environment - the Simspace simulator with all four labs, open all day, nothing to install. Bookmark it now, because you'll be typing into it shortly. But before we touch a keyboard, let me show you why we're all in this room - with something that actually happened.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-1.webp" alt="02:47 AM, a commit lands. Author: svc-build-agent" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: This actually happened. At **2:47 in the morning**, a commit lands - and the author isn't a person. It's an agent: **svc-build-agent**.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-2.webp" alt="02:47 AM commit - Change: bumped a base image, regenerated the Dockerfile" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: What did it change? It **bumped a base image and regenerated the Dockerfile** - real changes to how the app actually gets built.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-3.webp" alt="02:47 AM commit - Reviewer: approved by CI, all checks green" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Who reviewed it? **CI did** - all checks green. That is the only review this change ever got.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-4.webp" alt="02:47 AM commit - Deployed: production, 03:12 AM" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: And it shipped - straight to **production, 3:12 AM.** Twenty-five minutes from an agent's commit to running in prod.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident-5.webp" alt="02:47 AM commit - Reviewed by a human? No" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: And here's the row that matters. **Reviewed by a human? No.** Nobody was awake, nobody signed off - and it's running in prod right now.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-incident.webp" alt="02:47 AM commit, full recap - reviewed by a human: No. Who approved that build?" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: So sit with the question: **who approved that build?** Everything we're about to do is really about being able to answer it - provably. Now let's ground ourselves in why this is suddenly so much harder.
 
 ---
 
@@ -58,23 +114,7 @@ Note: Here's the world we grew up in - **the traditional workflow**. A human wri
 
 <img src="assets/slide-07.webp" alt="The Agentic Workflow: the same inner and outer loops with an AI agent at every stage" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius. So the question for the rest of this workshop is simple: how do we make this road provable, segment by segment? Right now we're standing at the start line - zero of four stages provable - and over the next four labs we're going to turn each one green.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-journey-0.webp" alt="The journey, checkpoint 0 of 4: the whole development-to-production road, everything still to prove, red baseline hot" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: This is the whole road we travel today - and it flows **left to right, development to production**.
-
-- **Left = DEVELOPMENT:** the agent works inside an `sbx` microVM, host read-only.
-- **Right = PRODUCTION:** the runtime is locked down - read-only, cap-drop ALL, non-root.
-- **The CI GATE in the middle is the dev-to-prod boundary. It fails closed** - nothing crosses into production unless it's provable.
-
-Code moves along the road: developed, based on a trusted image, built with attestations, signed - then it has to pass the gate before it's deployed and invoked.
-
-Right now none of it is provable. The ungoverned baseline is `FROM node:20`, 431 packages, no SBOM, running as root: **0 of 4 stages green**. Each of the four labs turns one segment of this road green, and we come back to this same picture at each checkpoint. This is checkpoint 0 of 4 - the start line.
+Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius - the same failure mode as that 2:47 AM commit, now at every stage. Let me ground it in a real app: the one we're going to secure all the way to production.
 
 ---
 
@@ -90,7 +130,39 @@ Note: So this is the app we'll be securing all the way down that dev-to-prod roa
 
 <img src="assets/slide-09.webp" alt="The ungoverned agent: agent running straight on your host with no boundary, FROM node:20 chosen with no guidance, 6 high CVEs" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: This is our ungoverned baseline - the **ungoverned agent** running straight on your host, and it's exactly how a lot of teams are running today. Look at the container: the agent is sitting right on **your host**, with the host daemon, host credentials, and no boundary at all. We hand it a simple **prompt** - "containerize this app" - and because it has **full permissions** and can reach **open registries with no allowlist**, it just grabs whatever it wants. What it picks is `FROM node:20`, chosen with **no guidance**. And the result, down at the bottom, is the number we're going to keep coming back to: **0 critical, 6 high, 30 medium, 54 low CVEs** - built from **431 packages**, with **no SBOM, no attestation, running as root**. That is our start line, and every stage of this workshop is about closing that gap. First, let's frame why this actually matters.
+Note: This is our ungoverned baseline - the **ungoverned agent** running straight on your host, and it's exactly how a lot of teams are running today. Look at the container: the agent is sitting right on **your host**, with the host daemon, host credentials, and no boundary at all. We hand it a simple **prompt** - "containerize this app" - and because it has **full permissions** and can reach **open registries with no allowlist**, it just grabs whatever it wants. What it picks is `FROM node:20`, chosen with **no guidance**. And the result, down at the bottom, is the number we're going to keep coming back to: **0 critical, 6 high, 30 medium, 54 low CVEs** - built from **431 packages**, with **no SBOM, no attestation, running as root**. That is our start line. Before we talk about how to fix it, I want you to feel it yourself - so let's try.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-lets-try.webp" alt="Let's try - Agent containerising the Product Catalog application" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Your turn. Head into the workshop - **agentic.dockerworkshop.com** - and run the first hands-on: **let an agent containerize the Product Catalog application.** Give it the same simple prompt, with no guardrails, and watch what it does. It'll reach for `node:20` and hand you back exactly this ungoverned baseline - hundreds of packages, high CVEs, no SBOM, running as root. Take a few minutes, break it yourself, and once you've seen it happen on your own screen, come back - and we'll talk about how to govern it.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-framework.webp" alt="Every agent-driven change answers four questions: Evidence (what is in it, where from), Baseline (did it start trustworthy), Gate (is it allowed to pass), Boundary (what could it reach)" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: No matter how the agent produced a change, governing it comes down to **four questions** - and these are the four layers the road you are about to see is built from. **One, Evidence:** what is actually in this artifact, and where did it come from? That is **SBOM, VEX, and SLSA provenance**. **Two, Baseline:** did it start from something trustworthy? That is a **Docker Hardened Image** instead of whatever the agent grabbed. **Three, Gate:** is it allowed to pass? That is **build policies, image signing, and admission** - the check in the middle of the pipeline. **Four, Boundary:** what could it reach while it worked? That is the **sandbox runtime** - network, filesystem, and credentials. Evidence and baseline make governance possible; gate and boundary make it real. Hold these four, because the next slide draws them as a single road from development to production.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-journey-0.webp" alt="The journey, checkpoint 0 of 4: the whole development-to-production road, everything still to prove, red baseline hot" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: This is the whole road we travel today - and it flows **left to right, development to production**.
+
+- **Left = DEVELOPMENT:** the agent works inside an `sbx` microVM, host read-only.
+- **Right = PRODUCTION:** the runtime is locked down - read-only, cap-drop ALL, non-root.
+- **The CI GATE in the middle is the dev-to-prod boundary. It fails closed** - nothing crosses into production unless it's provable.
+
+Code moves along the road: developed, based on a trusted image, built with attestations, signed - then it has to pass the gate before it's deployed and invoked.
+
+Right now none of it is provable. The ungoverned baseline we just watched the agent ship is `FROM node:20`, 431 packages, no SBOM, running as root: **0 of 4 stages green**. Each of the four labs turns one segment of this road green, and we come back to this same picture at each checkpoint. This is checkpoint 0 of 4 - the start line.
 
 ---
 
