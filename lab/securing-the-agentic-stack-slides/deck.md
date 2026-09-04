@@ -58,7 +58,15 @@ Note: Here's the world we grew up in - **the traditional workflow**. A human wri
 
 <img src="assets/slide-07.webp" alt="The Agentic Workflow: the same inner and outer loops with an AI agent at every stage" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius. So the question for the rest of this workshop is simple: how do we make this road provable, segment by segment? Right now we're standing at the start line - zero of four stages provable - and over the next four labs we're going to turn each one green.
+Note: Same map, same inner and outer loops, same push in the middle - but look what changed: **every human icon is now an AI agent.** That's the whole point. In **the agentic workflow**, an agent sits at every single stage - code, open source, build, test, integrate, deploy - and so the attack surface is **no longer just what you pull.** It's every autonomous action, every tool call, every credential those agents touch across the entire road from inner loop to production. That's a lot of green robots and a lot of blast radius. So the question for the rest of this workshop is simple: how do we make this road provable, segment by segment? Before we look at the road itself, let's get the shape of the answer - the four questions every agent-driven change has to answer.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-framework.webp" alt="Every agent-driven change answers four questions: Evidence (what is in it, where from), Baseline (did it start trustworthy), Gate (is it allowed to pass), Boundary (what could it reach)" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: No matter how the agent produced a change, governing it comes down to **four questions** - and these are the four layers the road you are about to see is built from. **One, Evidence:** what is actually in this artifact, and where did it come from? That is **SBOM, VEX, and SLSA provenance**. **Two, Baseline:** did it start from something trustworthy? That is a **Docker Hardened Image** instead of whatever the agent grabbed. **Three, Gate:** is it allowed to pass? That is **build policies, image signing, and admission** - the check in the middle of the pipeline. **Four, Boundary:** what could it reach while it worked? That is the **sandbox runtime** - network, filesystem, and credentials. Evidence and baseline make governance possible; gate and boundary make it real. Hold these four, because the next slide draws them as a single road from development to production.
 
 ---
 
