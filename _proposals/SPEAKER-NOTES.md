@@ -178,13 +178,6 @@ And verifying SLSA provenance is a single command. On the right you run `docker 
 ## Slide 34 - slide-29
 `slide-29.webp`
 
-Security Technical Implementation Guide (STIG)
-What it is: A detailed checklist and rulebook created by the Defense Information Systems Agency (DISA) for the U.S. Department of Defense.
-Purpose: It explains how to "harden" software, hardware, operating systems, and networks to prevent cyberattacks.
-Who uses it: Military branches, government agencies, and many private companies that work as government contractors. 
-
-
-
 Last one: **STIG** - the Security Technical Implementation Guide, DISA's DoD hardening standard. There's an interesting wrinkle here: DISA hasn't yet published a container-specific STIG, so Docker builds custom profiles based on the GPOS SRG and the DoD Container Hardening Process Guide. DHI ships signed STIG scan attestations, which cuts down the false positives that plague normal container STIG scans - and the STIG variant does require a Docker subscription. The command pattern is exactly what you've seen: `docker scout attest get` with the STIG predicate and `--verify`, or `attest list` to see everything on an image. And that list is the payoff for this whole section - on one image you'll now see SBOM, OpenVEX, SLSA, FIPS, STIG, Scout health, and secrets scan, all signed. That's checkpoint one: the BUILD stage turns green, because for the first time we can actually see and trust what's inside the image. Let's mark that on the road.
 
 ## Slide 35 - The journey, checkpoint 1 of 4: Lab 1 done, the BUILD stage is now green - yo...
@@ -220,164 +213,159 @@ This is the actual migration for `catalog-service-node`, before on the left and 
 ## Slide 41 - Catalog service, where vulnerabilities enter: without the DHI MCP the agent p...
 `slide-11.webp`
 
-This is the whole Product Catalog stack, and it's where vulnerabilities actually enter. On the left - **without the DHI MCP, the agent picks base images freely**: the application on `node:20` brings 2 Critical and 26 High, PostgreSQL adds 8 High-plus, Kafka on `confluentinc/cp-kafka:7.6` piles on 12 High-plus, aws-sdk drags in more, and the **total stack exposure is 2 Critical and 46-plus High CVEs**. On the right - **with the DHI MCP, the agent queries first** and every service resolves to a hardened image: `dhi.io/node`, `dhi.io/postgresql`, `dhi.io/kafka`. Watch the right column collapse to **0 across the board - total stack exposure 0 Critical, 0 High**. The point isn't just that DHI is cleaner; it's that when the agent has to *ask* before it picks, the vulnerabilities never enter the stack in the first place. That prevention-at-the-source is the whole idea, and next we make those attestations tangible.
+This is the whole Product Catalog stack, and it's where vulnerabilities actually enter. On the left - **without the DHI MCP, the agent picks base images freely**: the application on `node:20` brings 2 Critical and 26 High, PostgreSQL adds 8 High-plus, Kafka on `confluentinc/cp-kafka:7.6` piles on 12 High-plus, aws-sdk drags in more, and the **total stack exposure is 2 Critical and 46-plus High CVEs**. On the right - **with the DHI MCP, the agent queries first** and every service resolves to a hardened image: `dhi.io/node`, `dhi.io/postgresql`, `dhi.io/kafka`. Watch the right column collapse to **0 across the board - total stack exposure 0 Critical, 0 High**. The point isn't just that DHI is cleaner; it's that when the agent has to *ask* before it picks, the vulnerabilities never enter the stack in the first place. That prevention-at-the-source is the whole idea, and it closes out Lab 2 - let's mark it on the journey map.
 
-## Slide 42 - slide-34
-`slide-34.webp`
-
-Live demo two of four - this is where attestations stop being a bullet point and become commands you can run. On the left, you **build with attestations**: `docker buildx build --sbom=true --provenance=mode=max -t YOUR_ORG/catalog-service:v1.0 .` - two flags and the SBOM and provenance are attached to the image. On the right, you **inspect and verify**: `docker scout attest list` shows what's attached, `docker scout attest get` with the SLSA provenance predicate type verifies it, and `docker scout policy ... --exit-code` turns it into a **pass/fail gate** you can wire into CI. That `--exit-code` is the bridge to the fail-closed gate later in the road - verification that a machine can enforce, not a human that has to remember. Let's close out Lab 2 on the journey map.
-
-## Slide 43 - The journey, checkpoint 2 of 4: Lab 2 done, BASE is now green - hardened base...
+## Slide 42 - The journey, checkpoint 2 of 4: Lab 2 done, BASE is now green - hardened base...
 `slide-journey-2.webp`
 
 Checkpoint two - **Lab 2 is done, BASE turns green**. The hardened image now feeds the build: **DHI, 0 CVEs, SLSA L3**, and you can see the CVEs collapse right where we started this segment. The progress bar reads **2 of 4 stages provable**, Lab 1 and Lab 2 both lit. Two segments of the road are green; the base and the build are both trustworthy now. Next we push toward the CI gate that turns all of this into an enforced boundary.
 
-## Slide 44 - Question 3 of 4 - Gate: is it allowed to pass? Build policies, image signing,...
+## Slide 43 - Question 3 of 4 - Gate: is it allowed to pass? Build policies, image signing,...
 `slide-framework-3.webp`
 
 That boundary is the third question - **Gate:** is this artifact allowed to pass? The answer is **build policies, image signing, and admission** - the check in the middle of the pipeline that fails closed, so nothing crosses into production unless it's provable. Evidence and baseline made governance possible; this is where we make it real.
 
-## Slide 45 - slide-35
+## Slide 44 - slide-35
 `slide-35.webp`
 
 This is **Part 3 of 4**: Securing Your CI Pipeline. We've come a long way on the dev-to-prod road. The agent already builds on a hardened base with zero CVEs, and we've got an SBOM, provenance, and SLSA attestations attached. But building a good image and *proving* it's good are two different things, and nothing yet stops a bad image from reaching production. This part is where we make the boundary real: **build policies**, **image signing**, and a **GitHub Actions** gate that fails closed. The theme for the next few slides is simple - verify it, then gate it. Let's start with the policies that decide whether an image is even allowed to leave the pipeline.
 
-## Slide 46 - slide-36
+## Slide 45 - slide-36
 `slide-36.webp`
 
 This is **security as code**. Instead of a human eyeballing a scan report, you define rules that **automatically fail the build** before anything insecure reaches your registry or production. One command does it: `docker scout policy catalog-service:dhi --exit-code`. That exit code is the whole point - a non-zero exit stops the pipeline dead. The policies we're enforcing today are on the left: **no fixable critical or high CVEs**, **supply chain attestations present**, **no unapproved base images**, and a **default non-root user**. And you're not limited to the defaults - the optional `policy-config.json` on the right lets you tune thresholds, for instance scoping fixable-vulnerabilities to just CRITICAL and HIGH, or disabling a policy you don't want yet. When all seven pass, the image earns its way to the registry. Next, let's see the full menu of policies Scout gives you out of the box.
 
-## Slide 47 - slide-37
+## Slide 46 - slide-37
 `slide-37.webp`
 
 Passing a policy tells you an image is clean; **signing** tells you it's *authentic* - that this exact digest is the one your pipeline produced and nobody swapped it. We use **Cosign** with keyless signing, and the flow is four steps: build with attestations, sign with Cosign via **OIDC**, the signature lands in the **Sigstore transparency log**, and you verify at deploy time in a CI gate or admission controller. The magic word is keyless - `cosign sign` mints a short-lived certificate from your OIDC identity, so there's **no private key to manage, rotate, or leak**. Verification pins both the identity and the issuer with `--certificate-identity-regexp` and `--certificate-oidc-issuer`, and `docker scout attest list` and `attest get --verify` let you inspect and check the attestations bound to that image. This works with Docker Hub, ECR, ACR, GHCR - any OCI registry. Now let's assemble policy plus signing into one CI pipeline.
 
-## Slide 48 - slide-38
+## Slide 47 - slide-38
 `slide-38.webp`
 
 Here's the whole secure CI pipeline in four steps, running on **GitHub Actions**. Step one, **checkout** with `actions/checkout@v4`. Step two, **build and attest** - `docker build --sbom=true --provenance=mode=max -t $IMAGE`, so the SBOM and provenance are generated at build time and bound to the digest. Step three is the **key step**, the **policy gate**: `command: policy` with `exit-on: policy`. That's the dev-to-prod boundary in one line - if any policy fails, the step exits non-zero and, critically, **push never runs**. Only when the gate passes do we reach step four, **push** - `docker push "$IMAGE"` - with attestations bound to the digest that ships. The gate sits *before* the push on purpose: an unprovable image simply cannot be promoted. Let's look more closely at exactly which policies that gate evaluates.
 
-## Slide 49 - slide-39
+## Slide 48 - slide-39
 `slide-39.webp`
 
 These are the **7 built-in Scout policies**, and the headline is **zero config required** - one command, `docker scout policy IMAGE --exit-code`, evaluates all of them. On the vulnerability side: **no fixable critical or high CVEs**, and **no high-profile vulnerabilities** - think Log4Shell, the XZ backdoor, anything in the CISA KEV catalog. On hygiene: **no copyleft licenses** like AGPL or GPL, **no outdated base images**, and **no unapproved base images** that must match an allowlist. And the two that tie back to our supply chain work: **supply chain attestations** - SBOM plus SLSA provenance must be present - and **default non-root user**. Everything is **configurable via JSON**, you can write **custom policies in Rego** with OPA, and it all **runs fully local** - no Scout service call needed, which matters for air-gapped or privacy-sensitive pipelines. Next, the complete workflow file you can copy straight into your repo.
 
-## Slide 50 - slide-40
+## Slide 49 - slide-40
 `slide-40.webp`
 
 This is the **complete `secure-build.yaml` workflow, ready to copy**. It triggers `on: [push]`, sets `IMAGE` to your image tagged with the commit SHA, and runs five steps. Checkout, then **login** to Docker Hub with `docker/login-action` using `DOCKER_USER` and `DOCKER_PAT` secrets. Step three **builds on the DHI base and attaches SBOM and provenance** - `docker build --sbom=true --provenance=mode=max`. Step four is the **policy gate** via `docker/scout-action@v1` with `command: policy` and `exit-on: policy` - the comment says it plainly, before push, and if it fails the push never runs. Step five **pushes only if the gate passes**. The point I want to land: this is not pseudocode - it's a real file living at `.gitea/workflows/secure-build.yaml` in the repo, so you can lift it today and adapt the secret names. Now let's contrast what this gate actually does with a hardened base versus an ordinary one.
 
-## Slide 51 - slide-41
+## Slide 50 - slide-41
 `slide-41.webp`
 
 Here's why all the earlier hardening pays off at the gate. **With a DHI base** on the left: no critical or high CVEs, SBOM and provenance present, non-root by default, up-to-date base - the **gate passes and the image is pushed**. **With a standard base** on the right: CVEs found, no SBOM, running as root - the **gate fails, and push never runs**. Same pipeline, same policies, opposite outcomes - the only variable is the base image the agent built on. This is the concrete cash-out of Labs 1 and 2: the hardened base isn't just nice-to-have hygiene, it's what lets you cleanly clear a fail-closed gate instead of getting blocked at the boundary. That's Lab 3 done - let's mark it on the journey map.
 
-## Slide 52 - The journey, checkpoint 3 of 4: Lab 3 done, SIGN, GATE and DEPLOY are now gre...
+## Slide 51 - The journey, checkpoint 3 of 4: Lab 3 done, SIGN, GATE and DEPLOY are now gre...
 `slide-journey-3.webp`
 
 **Checkpoint 3 - Lab 3 is done.** Trace the road: the agent develops in a sandbox, builds on a hardened DHI base with zero CVEs, attaches SBOM and provenance at build, and now **SIGNs keylessly, bound to the digest**. The **CI GATE** - no critical CVEs, SBOM present, provenance verified - **fails closed** at the dev-to-prod boundary, and because our image is provable it passes and gets promoted: **DEPLOY** goes green with a signed image, verified and pinned by digest. **Three of four stages provable now** - Labs 1, 2, and 3 are lit. Compare that to the ungoverned baseline the agent shipped on your host: `FROM node:20`, 431 packages, no SBOM, root, nothing you can prove. The one box still grey is **INVOKE** - the running Agent/MCP client at the far right. Same discipline at both ends: the agent that *builds* runs in a box, and the service it *becomes* must run in a box too. That runtime end - MCP servers and tool isolation - is Lab 4, and it's next.
 
-## Slide 53 - Question 4 of 4 - Boundary: what could it reach while it worked? Sandbox runt...
+## Slide 52 - Question 4 of 4 - Boundary: what could it reach while it worked? Sandbox runt...
 `slide-framework-4.webp`
 
 Lab 4 is the last question - **Boundary:** what could the agent reach while it worked? The answer is the **sandbox runtime** - network, filesystem, and credentials, bounded so the agent can act without an open blast radius. This is the fourth layer, and it closes the loop: same discipline at both ends of the road.
 
-## Slide 54 - slide-43
+## Slide 53 - slide-43
 `slide-43.webp`
 
 This is our last segment, **Part 4 of 4: Securing the Agentic Stack**. We've walked the road from development to production, we've made CI fail closed, and now we close the loop on the piece that changes everything about that road - the agent itself. MCP servers, tool isolation, trusted foundations: that's what the next few slides are about. Because once an agent can build and ship for you, the tools it reaches for become part of your supply chain.
 
-## Slide 55 - Agent with a Sandbox: sbx microVM boundary, DHI MCP server, hardened base, ze...
+## Slide 54 - Agent with a Sandbox: sbx microVM boundary, DHI MCP server, hardened base, ze...
 `slide-10.webp`
 
 This is where we're headed - the clean end-state, the counterpart to the ungoverned-agent baseline from earlier. Everything the agent does now happens inside a **sandbox boundary, an `sbx` microVM** with its own daemon, its own network, and the host mounted read-only. Same prompt as before - "containerize app" - but watch the flow: the agent has full permissions inside the box, it queries the **DHI MCP server** which only serves signed tools, and it writes `FROM dhi.io/node` because it checked the trusted source before writing the line. The result at the bottom is the whole point: **0 critical, 0 high, 0 medium, 0 low CVEs**, 211 packages, SBOM attached, signed, non-root. Contrast that with the ungoverned `FROM node:20` baseline we started with - same agent, radically different outcome. Let me show you how that sandbox actually works.
 
-## Slide 56 - Sandboxes (experimental): run agents in isolation rather than on your bare ma...
+## Slide 55 - Sandboxes (experimental): run agents in isolation rather than on your bare ma...
 `slide-sandboxes.webp`
 
 This is the boundary itself - **Docker Sandboxes**, still experimental but exactly the primitive we want. Instead of letting an agent or Claude run loose on your bare machine, it runs in an **isolated sandbox that mirrors your workspace**. You define what access it gets - filesystem, network, internal resources, and tools - and your real files, data, and secrets **stay safe even if the agent goes off the rails**. On the right you can see it: `sbx run claude` starts the agent in a sandbox, mounts just the workspace, and applies a **deny-all network policy with an explicit allowlist**. Let me show you what's actually inside that box.
 
-## Slide 57 - Sandbox architecture: on the host machine, the agent container runs inside a ...
+## Slide 56 - Sandbox architecture: on the host machine, the agent container runs inside a ...
 `slide-sandbox-arch.webp`
 
 Here's the architecture. Everything sits on your **host machine**, but the agent runs inside a **microVM-based sandbox** - a real isolation boundary, not just a container namespace. You feed it three things from outside the box: the **workspace directories** it's allowed to see, the **network policies** that govern what it can reach, and the **secrets** it needs. Outbound traffic doesn't go straight out - it flows through a **network proxy** that enforces those policies before anything reaches **external systems**. The agent gets exactly the access you granted and nothing more. That's the runtime boundary for Lab 4 - here's what it looks like in day-to-day use.
 
-## Slide 58 - The Sandbox TUI: Docker Sandboxes live view - sandboxes on the left (claude-d...
+## Slide 57 - The Sandbox TUI: Docker Sandboxes live view - sandboxes on the left (claude-d...
 `slide-sandbox-tui.webp`
 
 This is the Sandbox TUI - `sbx` gives you a live view of every sandbox on your machine. On the left, each sandbox with its status, workspace, and resource use - `claude-docs` running, `claude-agent-demo` stopped - with controls to stop, exec, or remove. On the right, the **network log** for the selected sandbox: every outbound connection the agent attempted, with a hit count and an allowed-or-blocked status. Notice `api.anthropic.com`, `api.github.com`, and `registry.npmjs.org` allowed, while `http-intake.logs.us5.datadoghq.com` is **blocked**. This is the boundary made observable - you can see exactly what the agent reached for and what the policy stopped.
 
-## Slide 59 - Managing credentials: always prefer stored secrets over env vars (keychain en...
+## Slide 58 - Managing credentials: always prefer stored secrets over env vars (keychain en...
 `slide-credentials.webp`
 
 Credentials are the thing you least want an agent to leak, so two rules. **Always prefer stored secrets over environment variables** - the OS keychain encrypts them at rest. And **never set API keys manually inside the sandbox** - anything in there is readable by the agent. The CLI is small: `sbx secret set -g anthropic` stores a key for all sandboxes; scope it to one with `sbx secret set my-sandbox openai`. You can pipe a GitHub token straight in - `gh auth token | sbx secret set -g github` - so the agent can use the `gh` CLI without ever seeing the raw value. `sbx secret ls` and `rm` manage them, and the major providers are supported out of the box.
 
-## Slide 60 - Protecting MCP: tools are how agents act on the world - govern which servers ...
+## Slide 59 - Protecting MCP: tools are how agents act on the world - govern which servers ...
 `slide-protecting-mcp.webp`
 
 That's the sandbox itself - the boundary the agent runs in. Now the other half of Lab 4: **protecting MCP**. Tools are how an agent acts on the world, so the question shifts from "what can it reach" to "which servers exist, and which tools is it actually allowed to call?" The answer is to govern all of that at **one gateway**.
 
-## Slide 61 - The agent talks to one gateway, never to servers directly: the sandboxed agen...
+## Slide 60 - The agent talks to one gateway, never to servers directly: the sandboxed agen...
 `slide-mcp-gateway.webp`
 
 Here's the shape of it. The agent inside the sandbox never talks to MCP servers directly - it talks to **one endpoint**, the **mcp-gateway**, through a single `SBX_MCP_URL`. Behind that gateway all your servers - local-wiki, GitHub, Notion, DuckDuckGo - are aggregated. The payoff is the line at the bottom: **every tool call flows through one chokepoint**. Tools are namespaced `mcp__mcp-gateway__<tool>`, and that single point is where policy and audit apply - one place to govern instead of N servers to chase.
 
-## Slide 62 - Point it at a real gateway: local gateway http://localhost:8811 (Compose or D...
+## Slide 61 - Point it at a real gateway: local gateway http://localhost:8811 (Compose or D...
 `slide-gateway-options.webp`
 
 The `sbx mcp` subtree stays hidden until you set `SBX_MCP_URL`, and only two values carry the full governed flow. A **local gateway** at `http://localhost:8811` - Compose or the Desktop MCP Toolkit, you run it and control what's registered, best for learning the mechanics. Or a **hosted control plane** at `gateway.docker.com` - MCP Gateway Enterprise, where org policy governs what's invocable with central audit, the real governance story. And the crucial default: it is **fail-closed by design** - no policy loaded means deny-all. Policy is authored in Docker Hub, fetched at `docker login`, and developers can't override it.
 
-## Slide 63 - Author once in Docker Hub, enforce around the sandbox and at the gateway: Doc...
+## Slide 62 - Author once in Docker Hub, enforce around the sandbox and at the gateway: Doc...
 `slide-hub-governance.webp`
 
 This is the whole enforcement picture. You **author policy once in Docker Hub** - the AI Governance settings UI or the Governance API. It syncs to the host at `docker login`, takes precedence, and fails closed. On the developer laptop the agent runs in the microVM, and the **sbx daemon** enforces the network proxy, network policy, and filesystem policy - writing **every decision to an audit log** as JSONL. Tool calls leave via `SBX_MCP_URL` to the **MCP Gateway** - local 8811 or gateway.docker.com - which runs its own **policy check and audit on every call**. Same policy, enforced in two places: around the sandbox and at the gateway.
 
-## Slide 64 - The server lifecycle - five commands: sbx mcp add to register, sbx mcp ls/ins...
+## Slide 63 - The server lifecycle - five commands: sbx mcp add to register, sbx mcp ls/ins...
 `slide-mcp-lifecycle.webp`
 
 Hands-on, the `sbx mcp` lifecycle is basically five commands. **add** registers a server - `sbx mcp add local-wiki --command docker --args "run,-i,--rm,mcp/wikipedia-mcp"` - and it takes a list, stdio, remote-OAuth, or a docker.io image. **ls / inspect** shows the record, registration only - it doesn't start anything. **--static-mcp** attaches it to a sandbox at launch - `sbx run claude --static-mcp local-wiki` - or `sbx mcp load` into a live one; note the flag is `--static-mcp`, not `--mcp`. And inside the agent, **/mcp** verifies it's wired up - you'll see `mcp-gateway connected, 24 tools`, one aggregated gateway, not your individual servers.
 
-## Slide 65 - Default-deny allow-list over (server, tool), authored in Cedar: a permit poli...
+## Slide 64 - Default-deny allow-list over (server, tool), authored in Cedar: a permit poli...
 `slide-cedar-policy.webp`
 
 And here's what the policy actually looks like - a **default-deny allow-list over (server, tool) pairs, authored in Cedar**, the open-source authorization engine from AWS. Cedar answers "can principal X do action Y on resource Z in context C." This policy permits **exactly one tool - `get_me` on `github-official`** - and by default-deny, every other tool and every other server is **blocked**. It's evaluated **at the gateway on every invoke**, using the **same engine as your network and filesystem policy** - one surface, no bypass. The takeaway: author once, sync everywhere. A developer can `sbx mcp add` any server they like, but if org policy doesn't permit its tools, the calls are denied and audited.
 
-## Slide 66 - slide-47
+## Slide 65 - slide-47
 `slide-47.webp`
 
 This is the whole talk in one frame - **two paths, same agent, same prompt**, "containerize catalog service." The **traditional agentic SDLC** on the left pulls packages from random internet repos - npm, DockerHub community, apt, pip - writes `FROM node:20` with no security guidance, and lands at **2 critical, 26 high, 25 medium, 122 low CVEs**, 806 packages, no SBOM, no attestation, running as root. The **agentic SDLC with sbx plus DHI MCP** on the right runs the agent inside an isolated microVM, queries the DHI MCP server first with `dhi_list_repositories` and `dhi_get_image_cves`, and writes `FROM dhi.io/node:24-debian13` - the DHI-recommended base, 0 CVEs, signed, SLSA L3. Result: **all zeros**, 211 packages, SBOM attached, signed, non-root. Same intelligence, same instruction - the only variable is whether the agent is sandboxed and pointed at a trusted source. Let me show you that MCP server up close.
 
-## Slide 67 - slide-48
+## Slide 66 - slide-48
 `slide-48.webp`
 
 Here's the beautiful turn in the story: **the same agent that introduced the vulnerabilities can now query what's secure before it picks a base image**. Connecting it is one config - drop a `dhi` entry pointing at `https://dhi.io/mcp` into Claude Desktop, or a single `claude mcp add dhi --url https://dhi.io/mcp` in Claude Code. That gives the agent **10 tools**: `dhi_list_repositories` to search by name, FIPS, or STIG; `dhi_get_image_cves` with CVSS, EPSS, and fix versions; `dhi_get_image_packages` for the full SBOM; attestations, repository details, even `dhi_create_mirror`. So the agent can answer real questions - "find the Node.js hardened image with the fewest CVEs," "does this image have FIPS and STIG attestations." The line to land: the agent that triggered the vulnerabilities now has the tools to **never make that mistake again**, by querying DHI before every FROM line. Now let's wire that DHI MCP server into the sandbox.
 
-## Slide 68 - slide-50
+## Slide 67 - slide-50
 `slide-50.webp`
 
 Now we connect the two halves - **wire the DHI MCP server into the sandbox**. On the left, one-time setup: install `sbx`, export the gateway URL, start the sandbox daemon, then register the server by URL with `sbx mcp add remotedhi --url https://dhi.io/mcp`. Inspect it and you see it's a remote server over streamable-http - nothing hand-built. On the right you query it from the agent: `sbx run codex --static-mcp remotedhi`, and the agent's `/mcp` view now lists the tools through the gateway - `dhi_get_image_cves`, `dhi_get_image_details`, and eight more. The callout is the important nuance: **10 tools are now available**, but most are read-only queries. The mutating ones - `dhi_create_mirror`, `dhi_remove_mirror` - are exactly what you want to scope with policy. And that's the next slide.
 
-## Slide 69 - slide-51
+## Slide 68 - slide-51
 `slide-51.webp`
 
 Last technical slide, and it's the one that separates a demo from production - **govern the tools first, with a Cedar access policy**. On the left is the lab default: a quick unblock that permits every principal, every action - register, invokeTool, invokePrimordial - against every resource. It gets the lab moving, but as the note says, that's governance turned off; don't ship it as your exemplar, and never hand the gateway's built-in primordials a wide-open pass. On the right is the production-scoped version: anyone may register, but `invokeTool` is permitted only when the server is `remotedhi` **and** the tool is one of the named read-only queries - `dhi_get_image_cves`, `dhi_get_image_packages`, `dhi_list_repositories`, and so on. Scoped by design: `dhi_create_mirror`, `dhi_remove_mirror`, and wide-open primordials are deliberately left out - query the catalog, don't mutate it. One gotcha worth flagging - the real action name is `invokeTool`, not `invoke`. That completes the road: development to production, CI failing closed, and the agent sandboxed and governed on both ends. Let's wrap up.
 
-## Slide 70 - The journey, checkpoint 4 of 4: Lab 4 done, DEVELOP and INVOKE green, both sa...
+## Slide 69 - The journey, checkpoint 4 of 4: Lab 4 done, DEVELOP and INVOKE green, both sa...
 `slide-journey-4.webp`
 
 This is the final checkpoint, **4 of 4** - the whole road is green. On the left, **DEVELOPMENT** sits inside its own dashed box: the agent develops in an sbx microVM with the host read-only, on a hardened base with 0 CVEs and SLSA L3, buildx attaches SBOM and provenance, and signing binds everything to a verifiable digest. In the middle the **CI GATE** does its job - no critical CVEs, SBOM present, provenance verified - and it **FAILS CLOSED** at the dev-to-prod boundary. On the right, **PRODUCTION** is boxed too: the signed image is deployed pinned by digest, and the agent invokes MCP as a signed, read-only client under `cap_drop ALL` and non-root. The one line to land is at the bottom - **same discipline at both ends**: the agent that BUILDS runs in a box, and the service it BECOMES runs in a box. Least privilege on the left and the right of the road, and 4 of 4 stages provable.
 
-## Slide 71 - slide-54
+## Slide 70 - slide-54
 `slide-54.webp`
 
 If you take one slide home, take this one: **your security framework in five steps**. First, **know what is in your images** - SBOM plus VEX, so you can see every package and cut the noise on the ones that do not apply. Second, **verify where they came from** - SLSA provenance and image signing, so trust is bound to a digest, not a hope. Third, **start from a trusted base** - Docker Hardened Images, so you begin near zero CVEs instead of digging out of a pile. Fourth, **enforce at the pipeline** - Docker Scout build policies that fail closed at the dev-to-prod boundary. And fifth, **isolate your agents** - run MCP servers in hardened containers so the agent's tools stay in a box. Each of those was one of our labs; together they are a repeatable playbook you can apply to any agentic stack.
 
-## Slide 72 - slide-55
+## Slide 71 - slide-55
 `slide-55.webp`
 
 Here are the **resources and next steps** so you can keep going after today. Everything from this workshop lives in the **lab repo** at `github.com/ajeetraina/simspace-agentic-security` - clone it and run the four labs again at your own pace. Under **Docker docs** you have Hardened Images in Trusted Content, Docker Scout, and the MCP Catalog on Docker Hub. And on the **standards** side, these are the specs behind what we did - SLSA at slsa.dev, VEX at openvex.dev, Cosign and Sigstore for signing, and the MCP specification at modelcontextprotocol.io. Snap a photo of this slide, and then **come find us at the Docker booth** - we would love to hear what you build.
 
-## Slide 73 - slide-56
+## Slide 72 - slide-56
 `slide-56.webp`
 
 That is the journey - **provable trust, end to end**. Agents now build and ship our containers, and with hardened images, attestation, and sandboxing on both ends of the road, we can prove what they produced instead of just trusting it. Go run the lab, apply the five steps to your own stack, and come say hi at the booth. **Thank you.**
