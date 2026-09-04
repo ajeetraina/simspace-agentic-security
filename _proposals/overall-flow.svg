@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1600" height="900" fill="#E7ECFF"/>
+
+  <!-- Title -->
+  <text x="70" y="78" font-size="46" font-weight="800" fill="#0B1533">One path: development &#8594; production</text>
+  <text x="70" y="118" font-size="22" fill="#41507A">The agentic supply chain, end to end &#183; every step verifiable &#183; a box the process can&#8217;t escape at both ends</text>
+
+  <!-- ===================== DEVELOPMENT ZONE ===================== -->
+  <rect x="55" y="165" width="880" height="430" rx="18" fill="#DCE4FF" stroke="#2563EB" stroke-width="2.5" stroke-dasharray="9 7"/>
+  <text x="82" y="205" font-size="24" font-weight="800" fill="#1E3A8A">DEVELOPMENT</text>
+  <text x="82" y="230" font-size="15" fill="#3B5BDB">where the agent authors &#183; off your host</text>
+
+  <!-- sbx sandbox nested boundary around the agent -->
+  <rect x="76" y="250" width="200" height="205" rx="12" fill="#EEF3FF" stroke="#4F46E5" stroke-width="2" stroke-dasharray="5 5"/>
+  <text x="176" y="272" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3730A3">sbx microVM &#183; host read-only</text>
+
+  <!-- Stage cards (DEV) -->
+  <!-- DEVELOP -->
+  <rect x="90" y="285" width="172" height="150" rx="12" fill="#0B1533"/>
+  <text x="106" y="318" font-size="15" font-weight="800" fill="#7DA2FF" letter-spacing="1">DEVELOP</text>
+  <text x="106" y="348" font-size="17" font-weight="700" fill="#FFFFFF">Agent in sandbox</text>
+  <text x="106" y="374" font-size="13.5" fill="#9AA6C2">queries DHI MCP</text>
+  <text x="106" y="393" font-size="13.5" fill="#9AA6C2">before it writes FROM</text>
+  <rect x="106" y="405" width="66" height="22" rx="11" fill="#1E293B"/>
+  <text x="139" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#93C5FD">LAB 4</text>
+
+  <!-- BASE -->
+  <rect x="292" y="285" width="172" height="150" rx="12" fill="#0B1533"/>
+  <text x="308" y="318" font-size="15" font-weight="800" fill="#7DA2FF" letter-spacing="1">BASE</text>
+  <text x="308" y="348" font-size="17" font-weight="700" fill="#FFFFFF">Hardened image</text>
+  <text x="308" y="374" font-size="13.5" fill="#9AA6C2">DHI &#183; 0 CVEs</text>
+  <text x="308" y="393" font-size="13.5" fill="#9AA6C2">SLSA L3 inherited</text>
+  <rect x="308" y="405" width="66" height="22" rx="11" fill="#1E293B"/>
+  <text x="341" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#93C5FD">LAB 2</text>
+
+  <!-- BUILD -->
+  <rect x="494" y="285" width="172" height="150" rx="12" fill="#0B1533"/>
+  <text x="510" y="318" font-size="15" font-weight="800" fill="#7DA2FF" letter-spacing="1">BUILD</text>
+  <text x="510" y="348" font-size="17" font-weight="700" fill="#FFFFFF">Buildx</text>
+  <text x="510" y="374" font-size="13.5" fill="#9AA6C2">SBOM + provenance</text>
+  <text x="510" y="393" font-size="13.5" fill="#9AA6C2">attached at build</text>
+  <rect x="510" y="405" width="66" height="22" rx="11" fill="#1E293B"/>
+  <text x="543" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#93C5FD">LAB 1</text>
+
+  <!-- SIGN -->
+  <rect x="696" y="285" width="172" height="150" rx="12" fill="#0B1533"/>
+  <text x="712" y="318" font-size="15" font-weight="800" fill="#7DA2FF" letter-spacing="1">SIGN</text>
+  <text x="712" y="348" font-size="17" font-weight="700" fill="#FFFFFF">Keyless / Sigstore</text>
+  <text x="712" y="374" font-size="13.5" fill="#9AA6C2">bound to digest</text>
+  <text x="712" y="393" font-size="13.5" fill="#9AA6C2">verifiable</text>
+  <rect x="712" y="405" width="66" height="22" rx="11" fill="#1E293B"/>
+  <text x="745" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#93C5FD">LAB 3</text>
+
+  <!-- arrows within DEV -->
+  <g stroke="#64748B" stroke-width="2.5" fill="#64748B">
+    <line x1="264" y1="360" x2="288" y2="360"/><polygon points="288,354 300,360 288,366"/>
+    <line x1="466" y1="360" x2="490" y2="360"/><polygon points="490,354 502,360 490,366"/>
+    <line x1="668" y1="360" x2="692" y2="360"/><polygon points="692,354 704,360 692,366"/>
+  </g>
+
+  <!-- Ungoverned red ribbon under DEV -->
+  <rect x="76" y="470" width="838" height="104" rx="12" fill="#FDECEA" stroke="#F0B4AE" stroke-width="1.5"/>
+  <text x="96" y="502" font-size="15" font-weight="800" fill="#B91C1C">WITHOUT ANY OF THIS &#8212; what the agent shipped on your host</text>
+  <text x="96" y="530" font-size="14.5" fill="#8A1C13">FROM node:20 (picked blind) &#183; 431 packages &#183; no SBOM &#183; no provenance &#183; runs as root &#183; on your host daemon &amp; creds</text>
+  <text x="96" y="556" font-size="14.5" fill="#8A1C13">Nothing failed. Nothing warned. And you can prove nothing about it. &#8212; this is the baseline every lab measures against.</text>
+
+  <!-- ===================== CI GATE ===================== -->
+  <rect x="955" y="250" width="150" height="205" rx="16" fill="#FFF3E0" stroke="#D97706" stroke-width="3"/>
+  <text x="1030" y="292" text-anchor="middle" font-size="18" font-weight="800" fill="#9A3412">CI GATE</text>
+  <text x="1030" y="322" text-anchor="middle" font-size="12.5" fill="#9A3412">no critical CVEs</text>
+  <text x="1030" y="343" text-anchor="middle" font-size="12.5" fill="#9A3412">SBOM present</text>
+  <text x="1030" y="364" text-anchor="middle" font-size="12.5" fill="#9A3412">provenance verified</text>
+  <line x1="985" y1="380" x2="1075" y2="380" stroke="#E6B98A" stroke-width="1.5"/>
+  <text x="1030" y="406" text-anchor="middle" font-size="15" font-weight="800" fill="#B91C1C">FAIL CLOSED</text>
+  <text x="1030" y="430" text-anchor="middle" font-size="12" fill="#9A3412">before the push</text>
+  <rect x="997" y="440" width="66" height="0" />
+  <text x="1030" y="480" text-anchor="middle" font-size="12" font-weight="700" fill="#9A3412">the dev &#8594; prod boundary &#183; LAB 3</text>
+
+  <!-- arrow SIGN -> GATE -->
+  <g stroke="#64748B" stroke-width="2.5" fill="#64748B">
+    <line x1="870" y1="360" x2="951" y2="360"/><polygon points="951,354 963,360 951,366"/>
+  </g>
+  <!-- arrow GATE -> PROD -->
+  <g stroke="#1A7F37" stroke-width="3" fill="#1A7F37">
+    <line x1="1105" y1="360" x2="1152" y2="360"/><polygon points="1152,353 1166,360 1152,367"/>
+  </g>
+  <text x="1135" y="345" text-anchor="middle" font-size="12" font-weight="800" fill="#1A7F37">pass</text>
+
+  <!-- ===================== PRODUCTION ZONE ===================== -->
+  <rect x="1170" y="165" width="380" height="430" rx="18" fill="#E6F4EA" stroke="#1A7F37" stroke-width="2.5" stroke-dasharray="9 7"/>
+  <text x="1196" y="205" font-size="24" font-weight="800" fill="#14532D">PRODUCTION</text>
+  <text x="1196" y="230" font-size="15" fill="#1A7F37">only a signed, verified artifact runs here</text>
+
+  <!-- runtime sandbox nested boundary -->
+  <rect x="1188" y="250" width="344" height="205" rx="12" fill="#F0FAF3" stroke="#1A7F37" stroke-width="2" stroke-dasharray="5 5"/>
+  <text x="1360" y="272" text-anchor="middle" font-size="12.5" font-weight="700" fill="#14532D">runtime box &#183; read_only &#183; cap_drop ALL &#183; non-root</text>
+
+  <!-- DEPLOY -->
+  <rect x="1204" y="285" width="150" height="150" rx="12" fill="#0B1533"/>
+  <text x="1220" y="318" font-size="15" font-weight="800" fill="#6EE7A8" letter-spacing="1">DEPLOY</text>
+  <text x="1220" y="348" font-size="16" font-weight="700" fill="#FFFFFF">Signed image</text>
+  <text x="1220" y="374" font-size="13" fill="#9AA6C2">verified &#183; pinned</text>
+  <text x="1220" y="393" font-size="13" fill="#9AA6C2">by digest</text>
+  <rect x="1220" y="405" width="66" height="22" rx="11" fill="#1E293B"/>
+  <text x="1253" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#6EE7A8">LAB 3</text>
+
+  <!-- INVOKE -->
+  <rect x="1370" y="285" width="150" height="150" rx="12" fill="#0B1533"/>
+  <text x="1386" y="318" font-size="15" font-weight="800" fill="#6EE7A8" letter-spacing="1">INVOKE</text>
+  <text x="1386" y="348" font-size="16" font-weight="700" fill="#FFFFFF">Agent / MCP</text>
+  <text x="1386" y="368" font-size="16" font-weight="700" fill="#FFFFFF">client</text>
+  <text x="1386" y="392" font-size="13" fill="#9AA6C2">signed, read-only tools</text>
+  <rect x="1386" y="405" width="66" height="22" rx="11" fill="#1E293B"/>
+  <text x="1419" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#6EE7A8">LAB 4</text>
+
+  <!-- arrow DEPLOY -> INVOKE -->
+  <g stroke="#64748B" stroke-width="2.5" fill="#64748B">
+    <line x1="1354" y1="360" x2="1368" y2="360"/><polygon points="1368,354 1380,360 1368,366"/>
+  </g>
+
+  <!-- ===================== BOTTOM CAPTION (sandbox insight) ===================== -->
+  <rect x="55" y="620" width="1495" height="118" rx="16" fill="#0B1533"/>
+  <text x="80" y="662" font-size="21" font-weight="800" fill="#FFFFFF">The sandbox is not the last lab &#8212; it&#8217;s the same discipline at both ends of the path.</text>
+  <text x="80" y="696" font-size="17" fill="#C7D2FE">The agent that <tspan font-weight="700" fill="#93C5FD">builds</tspan> the image runs in a box it can&#8217;t escape (sbx microVM). The service it becomes runs in a box too (read_only &#183; cap_drop ALL).</text>
+  <text x="80" y="722" font-size="17" fill="#C7D2FE">Least privilege at authoring time and at runtime. Fix the input, not just the output &#8212; and the fast path becomes the safe path.</text>
+
+  <!-- footer legend -->
+  <text x="80" y="782" font-size="14" fill="#41507A">Read left to right: this is where the whole workshop is going. We open here, rewind to the red box, then earn each stage &#8212; Lab 1 measure &#183; Lab 2 base &#183; Lab 3 sign+gate &#183; Lab 4 sandbox.</text>
+</svg>

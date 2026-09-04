@@ -1,0 +1,1 @@
+That is the journey - **provable trust, end to end**. Agents now build and ship our containers, and with hardened images, attestation, and sandboxing on both ends of the road, we can prove what they produced instead of just trusting it. Go run the lab, apply the five steps to your own stack, and come say hi at the booth. **Thank you.**

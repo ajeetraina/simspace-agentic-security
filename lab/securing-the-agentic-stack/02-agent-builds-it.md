@@ -1,23 +1,33 @@
 # An Agent Built This
 
-<svg viewBox="0 0 900 52" width="100%" role="img" aria-label="Supply-chain progress: current Agent build, SBOM · VEX · SLSA, Hardened base, Verify &amp; Gate, Build Sandbox">
-  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" text-anchor="middle">
-    <rect x="1" y="11" width="168" height="30" rx="15" fill="#2496ED" stroke="#0b3d91" stroke-width="2"></rect>
-    <text x="85" y="30" fill="#ffffff" font-weight="700">Agent build</text>
-    <polygon points="172,22 180,26 172,30" fill="#9aa4b2"></polygon>
-    <rect x="184" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="268" y="30" fill="#5b6670">SBOM · VEX · SLSA</text>
-    <polygon points="355,22 363,26 355,30" fill="#9aa4b2"></polygon>
-    <rect x="367" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="451" y="30" fill="#5b6670">Hardened base</text>
-    <polygon points="538,22 546,26 538,30" fill="#9aa4b2"></polygon>
-    <rect x="550" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="634" y="30" fill="#5b6670">Verify &amp; Gate</text>
-    <polygon points="721,22 729,26 721,30" fill="#9aa4b2"></polygon>
-    <rect x="733" y="11" width="168" height="30" rx="15" fill="#eef1f5" stroke="#9aa4b2"></rect>
-    <text x="817" y="30" fill="#5b6670">Build Sandbox</text>
-  </g>
-</svg>
+<svg viewBox="0 0 900 104" width="100%" role="img" aria-label="Progress spine: the development-to-production road. Stages DEVELOP, BASE, BUILD, SIGN sit in the development zone (an sbx sandbox); a CI GATE is the boundary; DEPLOY and INVOKE sit in the production zone (a read-only runtime box). Done stages are checked green, the current stage is marked.">
+<g font-family="ui-sans-serif, system-ui, sans-serif">
+<rect x="2" y="14" width="516" height="82" rx="10" fill="#dce4ff" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="6 4"/>
+<text x="10" y="28" font-size="10.5" font-weight="800" fill="#1e3a8a">DEVELOPMENT</text>
+<text x="120" y="28" font-size="9" fill="#3730a3">sbx microVM · host read-only</text>
+<rect x="618" y="14" width="280" height="82" rx="10" fill="#e6f4ea" stroke="#1a7f37" stroke-width="1.3" stroke-dasharray="6 4"/>
+<text x="626" y="28" font-size="10.5" font-weight="800" fill="#14532d">PRODUCTION</text>
+<text x="720" y="28" font-size="9" fill="#14532d">read_only · cap_drop ALL</text>
+<rect x="8" y="40" width="118" height="44" rx="9" fill="#e2e7f5"/><text x="67.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#7a86a8">DEVELOP</text>
+<rect x="134" y="40" width="118" height="44" rx="9" fill="#e2e7f5"/><text x="193.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#7a86a8">BASE</text>
+<rect x="260" y="40" width="118" height="44" rx="9" fill="#e2e7f5"/><text x="319.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#7a86a8">BUILD</text>
+<rect x="386" y="40" width="118" height="44" rx="9" fill="#e2e7f5"/><text x="445.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#7a86a8">SIGN</text>
+<rect x="536" y="32" width="70" height="60" rx="10" fill="#efe4d2" stroke="#d9a066" stroke-width="1.5"/><text x="571.0" y="58" text-anchor="middle" font-size="12" font-weight="800" fill="#b79878">GATE</text><text x="571.0" y="76" text-anchor="middle" font-size="8.5" fill="#b79878">fail closed</text>
+<rect x="628" y="40" width="126" height="44" rx="9" fill="#e2e7f5"/><text x="691.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#7a86a8">DEPLOY</text>
+<rect x="766" y="40" width="126" height="44" rx="9" fill="#e2e7f5"/><text x="829.0" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="#7a86a8">INVOKE</text>
+<g stroke="#9aa6c2" stroke-width="1.6" fill="#9aa6c2">
+<line x1="126" y1="62" x2="134" y2="62"/><polygon points="134,59 139,62 134,65"/>
+<line x1="252" y1="62" x2="260" y2="62"/><polygon points="260,59 265,62 260,65"/>
+<line x1="378" y1="62" x2="386" y2="62"/><polygon points="386,59 391,62 386,65"/>
+<line x1="504" y1="62" x2="536" y2="62"/><polygon points="536,59 541,62 536,65"/>
+<line x1="606" y1="62" x2="628" y2="62"/><polygon points="628,59 633,62 628,65"/>
+</g>
+<text x="10" y="90" font-size="9" font-weight="700" fill="#b91c1c">baseline: node:20 · 431 pkgs · no SBOM · root — nothing to prove</text>
+</g></svg>
+
+> **Where you are on the road:** the start line. Everything the agent produces here is the
+> red box from the Introduction - the ungoverned baseline every later stage is measured
+> against.
 
 You are going to give an AI agent one instruction and watch it containerise the whole
 service - with no mention of base images, versions, security, or best practice.

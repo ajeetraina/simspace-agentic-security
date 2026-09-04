@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 1125" font-family="Helvetica, Arial, sans-serif">
+<rect width="2000" height="1125" fill="#ffffff"/>
+<text x="110" y="130" font-size="78" font-weight="800" fill="#111827">The Traditional Workflow</text>
+<text x="112" y="205" font-size="40" fill="#334155">A human writes, reviews, and ships at every stage. The attack surface is</text>
+<text x="112" y="255" font-size="40" fill="#334155">only what <tspan font-weight="700">you</tspan> choose to pull.</text>
+<path d="M 710.8 510.4 A 155 155 0 0 1 851.6 632.8" fill="none" stroke="#24467f" stroke-width="26" stroke-linecap="round"/>
+<polygon points="860.8,676.0 821.3,639.2 881.9,626.3" fill="#24467f"/>
+<path d="M 854.6 675.8 A 155 155 0 0 1 732.2 816.6" fill="none" stroke="#24467f" stroke-width="26" stroke-linecap="round"/>
+<polygon points="689.0,825.8 725.8,786.3 738.7,846.9" fill="#24467f"/>
+<path d="M 689.2 819.6 A 155 155 0 0 1 548.4 697.2" fill="none" stroke="#24467f" stroke-width="26" stroke-linecap="round"/>
+<polygon points="539.2,654.0 578.7,690.8 518.1,703.7" fill="#24467f"/>
+<path d="M 545.4 654.2 A 155 155 0 0 1 667.8 513.4" fill="none" stroke="#24467f" stroke-width="26" stroke-linecap="round"/>
+<polygon points="711.0,504.2 674.2,543.7 661.3,483.1" fill="#24467f"/>
+<text x="700" y="659" text-anchor="middle" font-size="46" fill="#1f2937">Inner</text>
+<text x="700" y="709" text-anchor="middle" font-size="46" fill="#1f2937">Loop</text>
+<g><circle cx="700.0" cy="407.0" r="15.8" fill="#1f3a63"/><path d="M 672.7 457.4 C 672.7 425.9 685.3 430.1 700.0 430.1 C 714.7 430.1 727.3 425.9 727.3 457.4 Z" fill="#1f3a63"/></g>
+<text x="700" y="343" text-anchor="middle" font-size="34" font-weight="600" fill="#4b5563">Build</text>
+<g><circle cx="867.6" cy="811.6" r="15.8" fill="#1f3a63"/><path d="M 840.3 862.0 C 840.3 830.5 852.9 834.7 867.6 834.7 C 882.3 834.7 894.9 830.5 894.9 862.0 Z" fill="#1f3a63"/></g>
+<text x="935" y="910" text-anchor="middle" font-size="34" font-weight="600" fill="#4b5563">Test</text>
+<g><circle cx="532.4" cy="811.6" r="15.8" fill="#1f3a63"/><path d="M 505.1 862.0 C 505.1 830.5 517.7 834.7 532.4 834.7 C 547.1 834.7 559.7 830.5 559.7 862.0 Z" fill="#1f3a63"/></g>
+<text x="465" y="910" text-anchor="middle" font-size="34" font-weight="600" fill="#4b5563">Open Source</text>
+<g><circle cx="463.0" cy="644.0" r="15.8" fill="#1f3a63"/><path d="M 435.7 694.4 C 435.7 662.9 448.3 667.1 463.0 667.1 C 477.7 667.1 490.3 662.9 490.3 694.4 Z" fill="#1f3a63"/></g>
+<text x="368" y="675" text-anchor="middle" font-size="34" font-weight="600" fill="#4b5563">Code</text>
+<path d="M 1374.6 455.5 A 210 210 0 0 1 1565.4 621.3" fill="none" stroke="#24467f" stroke-width="30" stroke-linecap="round"/>
+<polygon points="1576.0,671.2 1530.5,628.8 1600.3,613.9" fill="#24467f"/>
+<path d="M 1569.5 679.6 A 210 210 0 0 1 1403.7 870.4" fill="none" stroke="#24467f" stroke-width="30" stroke-linecap="round"/>
+<polygon points="1353.8,881.0 1396.2,835.5 1411.1,905.3" fill="#24467f"/>
+<path d="M 1345.4 874.5 A 210 210 0 0 1 1154.6 708.7" fill="none" stroke="#24467f" stroke-width="30" stroke-linecap="round"/>
+<polygon points="1144.0,658.8 1189.5,701.2 1119.7,716.1" fill="#24467f"/>
+<path d="M 1150.5 650.4 A 210 210 0 0 1 1316.3 459.6" fill="none" stroke="#24467f" stroke-width="30" stroke-linecap="round"/>
+<polygon points="1366.2,449.0 1323.8,494.5 1308.9,424.7" fill="#24467f"/>
+<text x="1360" y="659" text-anchor="middle" font-size="52" fill="#1f2937">Outer</text>
+<text x="1360" y="715" text-anchor="middle" font-size="52" fill="#1f2937">Loop</text>
+<g><circle cx="1360.0" cy="350.6" r="16.8" fill="#1f3a63"/><path d="M 1330.9 404.4 C 1330.9 370.8 1344.3 375.2 1360.0 375.2 C 1375.7 375.2 1389.1 370.8 1389.1 404.4 Z" fill="#1f3a63"/></g>
+<text x="1360" y="283" text-anchor="middle" font-size="34" font-weight="600" fill="#4b5563">Integrate</text>
+<g><circle cx="1652.0" cy="642.6" r="16.8" fill="#1f3a63"/><path d="M 1622.9 696.4 C 1622.9 662.8 1636.3 667.2 1652.0 667.2 C 1667.7 667.2 1681.1 662.8 1681.1 696.4 Z" fill="#1f3a63"/></g>
+<text x="1752" y="675" text-anchor="middle" font-size="34" font-weight="600" fill="#4b5563">Test</text>
+<g><circle cx="1360.0" cy="934.6" r="16.8" fill="#1f3a63"/><path d="M 1330.9 988.4 C 1330.9 954.8 1344.3 959.2 1360.0 959.2 C 1375.7 959.2 1389.1 954.8 1389.1 988.4 Z" fill="#1f3a63"/></g>
+<text x="1360" y="1067" text-anchor="middle" font-size="34" font-weight="600" fill="#4b5563">Deploy</text>
+<g stroke="#24467f" stroke-width="16" stroke-linecap="round" fill="#24467f"><line x1="889" y1="665" x2="1104" y2="665"/><polygon points="1104,647 1134,665 1104,683"/></g>
+<text x="1002" y="631" text-anchor="middle" font-size="34" font-weight="600" fill="#4b5563">Push</text>
+</svg>

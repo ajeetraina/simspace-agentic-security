@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#E7ECFF"/>
+<text x="70" y="76" font-size="42" font-weight="800" fill="#0B1533">The journey: development → production</text>
+<text x="70" y="116" font-size="23" font-weight="700" fill="#14532D">Lab 2 done — hardened base, the CVEs collapse</text>
+<rect x="55" y="150" width="880" height="330" rx="18" fill="#DCE4FF" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="9 7"/>
+<text x="82" y="188" font-size="24" font-weight="800" fill="#1E3A8A">DEVELOPMENT</text>
+<rect x="76" y="252" width="200" height="205" rx="12" fill="#EEF3FF" stroke="#4f46e5" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="176" y="274" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3730A3">sbx microVM · host read-only</text>
+<g opacity="0.55"><rect x="90" y="285" width="172" height="150" rx="12" fill="#20293f"/><text x="106" y="318" font-size="15" font-weight="800" fill="#5b6b8c" letter-spacing="1">DEVELOP</text><text x="106" y="348" font-size="17" font-weight="700" fill="#8a97b4">Agent in sandbox</text><text x="106" y="374" font-size="13.5" fill="#6b789a">queries DHI MCP</text><text x="106" y="393" font-size="13.5" fill="#6b789a">before FROM</text></g>
+<g><rect x="292" y="285" width="172" height="150" rx="12" fill="#0b1533" stroke="#1a7f37" stroke-width="3"/><text x="308" y="318" font-size="15" font-weight="800" fill="#7da2ff" letter-spacing="1">BASE</text><text x="308" y="348" font-size="17" font-weight="700" fill="#ffffff">Hardened image</text><text x="308" y="374" font-size="13.5" fill="#9aa6c2">DHI · 0 CVEs</text><text x="308" y="393" font-size="13.5" fill="#9aa6c2">SLSA L3</text><circle cx="440" cy="309" r="15" fill="#1a7f37"/><path d="M433,309 l5,6 l9,-11" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g><rect x="494" y="285" width="172" height="150" rx="12" fill="#0b1533" stroke="#1a7f37" stroke-width="3"/><text x="510" y="318" font-size="15" font-weight="800" fill="#7da2ff" letter-spacing="1">BUILD</text><text x="510" y="348" font-size="17" font-weight="700" fill="#ffffff">Buildx</text><text x="510" y="374" font-size="13.5" fill="#9aa6c2">SBOM + provenance</text><text x="510" y="393" font-size="13.5" fill="#9aa6c2">attached at build</text><circle cx="642" cy="309" r="15" fill="#1a7f37"/><path d="M635,309 l5,6 l9,-11" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g opacity="0.55"><rect x="696" y="285" width="172" height="150" rx="12" fill="#20293f"/><text x="712" y="318" font-size="15" font-weight="800" fill="#5b6b8c" letter-spacing="1">SIGN</text><text x="712" y="348" font-size="17" font-weight="700" fill="#8a97b4">Keyless / Sigstore</text><text x="712" y="374" font-size="13.5" fill="#6b789a">bound to digest</text><text x="712" y="393" font-size="13.5" fill="#6b789a">verifiable</text></g>
+<g opacity="0.55"><rect x="955" y="250" width="150" height="205" rx="16" fill="#efe4d2" stroke="#d97706" stroke-width="3"/><text x="1030.0" y="292" text-anchor="middle" font-size="18" font-weight="800" fill="#9a3412">CI GATE</text><text x="1030.0" y="322" text-anchor="middle" font-size="12.5" fill="#9a3412">no critical CVEs</text><text x="1030.0" y="343" text-anchor="middle" font-size="12.5" fill="#9a3412">SBOM present</text><text x="1030.0" y="364" text-anchor="middle" font-size="12.5" fill="#9a3412">provenance verified</text><line x1="985" y1="380" x2="1075" y2="380" stroke="#e6b98a" stroke-width="1.5"/><text x="1030.0" y="406" text-anchor="middle" font-size="15" font-weight="800" fill="#b91c1c">FAIL CLOSED</text><text x="1030.0" y="430" text-anchor="middle" font-size="11.5" fill="#9a3412">dev → prod boundary</text></g>
+<rect x="1170" y="150" width="380" height="330" rx="18" fill="#E6F4EA" stroke="#1a7f37" stroke-width="2.5" stroke-dasharray="9 7" opacity="0.8"/>
+<text x="1196" y="188" font-size="24" font-weight="800" fill="#14532D">PRODUCTION</text>
+<rect x="1188" y="252" width="344" height="205" rx="12" fill="#F0FAF3" stroke="#1a7f37" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="1360" y="274" text-anchor="middle" font-size="12" font-weight="700" fill="#14532D">runtime box · read_only · cap_drop ALL · non-root</text>
+<g opacity="0.55"><rect x="1204" y="285" width="150" height="150" rx="12" fill="#20293f"/><text x="1220" y="318" font-size="15" font-weight="800" fill="#5b6b8c" letter-spacing="1">DEPLOY</text><text x="1220" y="348" font-size="17" font-weight="700" fill="#8a97b4">Signed image</text><text x="1220" y="374" font-size="13.5" fill="#6b789a">verified · pinned</text><text x="1220" y="393" font-size="13.5" fill="#6b789a">by digest</text></g>
+<g opacity="0.55"><rect x="1370" y="285" width="150" height="150" rx="12" fill="#20293f"/><text x="1386" y="318" font-size="15" font-weight="800" fill="#5b6b8c" letter-spacing="1">INVOKE</text><text x="1386" y="348" font-size="17" font-weight="700" fill="#8a97b4">Agent / MCP</text><text x="1386" y="374" font-size="13.5" fill="#6b789a">client</text><text x="1386" y="393" font-size="13.5" fill="#6b789a">signed, read-only</text></g>
+<g stroke="#64748B" stroke-width="2.5" fill="#64748B">
+<line x1="264" y1="360" x2="286" y2="360"/><polygon points="286,354 298,360 286,366"/>
+<line x1="466" y1="360" x2="488" y2="360"/><polygon points="488,354 500,360 488,366"/>
+<line x1="668" y1="360" x2="690" y2="360"/><polygon points="690,354 702,360 690,366"/>
+<line x1="870" y1="360" x2="951" y2="360"/><polygon points="951,354 963,360 951,366"/>
+</g>
+<g stroke="#1a7f37" stroke-width="3" fill="#1a7f37"><line x1="1105" y1="360" x2="1152" y2="360"/><polygon points="1152,353 1166,360 1152,367"/></g>
+<text x="1135" y="345" text-anchor="middle" font-size="12" font-weight="800" fill="#1a7f37">pass</text>
+<g opacity="0.4"><rect x="55" y="500" width="1050" height="66" rx="12" fill="#FDECEA" stroke="#F0B4AE" stroke-width="1.5"/>
+<text x="80" y="528" font-size="15" font-weight="800" fill="#B91C1C">UNGOVERNED BASELINE — what the agent shipped on your host</text>
+<text x="80" y="552" font-size="14" fill="#8A1C13">FROM node:20 · 431 pkgs · no SBOM · root · nothing you can prove</text></g>
+<text x="1130" y="524" font-size="15" font-weight="800" fill="#0B1533">2 / 4 stages provable</text>
+<rect x="1130" y="540" width="96" height="20" rx="10" fill="#1a7f37"/>
+<text x="1178.0" y="592" text-anchor="middle" font-size="13" font-weight="700" fill="#14532D">Lab 1</text>
+<rect x="1238" y="540" width="96" height="20" rx="10" fill="#1a7f37"/>
+<text x="1286.0" y="592" text-anchor="middle" font-size="13" font-weight="700" fill="#14532D">Lab 2</text>
+<rect x="1346" y="540" width="96" height="20" rx="10" fill="#c3cbe4"/>
+<text x="1394.0" y="592" text-anchor="middle" font-size="13" font-weight="700" fill="#8a93b4">Lab 3</text>
+<rect x="1454" y="540" width="96" height="20" rx="10" fill="#c3cbe4"/>
+<text x="1502.0" y="592" text-anchor="middle" font-size="13" font-weight="700" fill="#8a93b4">Lab 4</text>
+<rect x="55" y="640" width="1495" height="96" rx="16" fill="#0B1533"/>
+<text x="80" y="682" font-size="20" font-weight="800" fill="#FFFFFF">Same discipline at both ends — the agent that BUILDS runs in a box; the service it BECOMES runs in a box.</text>
+<text x="80" y="714" font-size="16" fill="#C7D2FE">sbx microVM at authoring time · read_only + cap_drop ALL at runtime. Least privilege on the left and the right of the road.</text>
+</svg>
