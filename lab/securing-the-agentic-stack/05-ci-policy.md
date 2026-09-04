@@ -126,8 +126,15 @@ moment you will make the pipeline check it for you, on every push.
 
 This is the most useful ninety seconds in the workshop.
 
-1. Rebuild with a trivial change - a **plain build, no attestations** - and push to the
-   **same tag**:
+Right now the `:dhi` tag points to the **attested** image you built in Lab 2 with `--sbom`
+and `--provenance=mode=max`. You are about to play the attacker: overwrite that **same tag**
+with a plain, unsigned rebuild and watch the provenance vanish. Same tag, different image -
+that is the whole trick.
+
+1. Rebuild with a **plain `docker build`** - no `--sbom`, no `--provenance`, unlike Lab 2 -
+   and push it to the **same tag**. The `--no-cache` flag forces a fresh build, so the tag
+   now resolves to a *different, unsigned* image - not the attested one it pointed at a
+   moment ago:
 
     ```bash terminal-id=build
     docker build -t registry.dockerlabs.xyz/catalog-service:dhi --no-cache .
@@ -160,27 +167,37 @@ a gate and watch your pipeline catch the *identical* substitution automatically,
 
 ## Write the policy
 
-You watched the default policy fail in Lab 1. That was an *evaluation*. Now make it a
-*gate*. Save this `docker-scout-policy.yaml` - three rules, one per question from the spine:
+You watched the default policy fail in Lab 1. That was an *evaluation* - a report you read.
+Now make it a *gate*. A Docker Scout policy is just a list of pass/fail **rules**: each has a
+`type` (what to check), its criteria, and an `action` - and `action: fail` means "block the
+build if this rule is not met." Save this `docker-scout-policy.yaml` - three rules, one per
+question from the spine (*is it safe*, *what is in it*, *where did it come from*):
 
 ```yaml save-as=docker-scout-policy.yaml
-version: "1"
+version: "1"          # policy schema version
 policies:
+  # Is it safe?  Fail the build if the image has any CRITICAL-severity CVE.
   - name: no-critical-cves
     type: vulnerability
     severity: critical
     action: fail
 
+  # What is in it?  Fail unless an SBOM attestation is attached to the image.
   - name: require-sbom
     type: attestation
     attestation: sbom
     action: fail
 
+  # Where did it come from?  Fail unless SLSA build provenance is attached.
   - name: require-provenance
     type: attestation
     attestation: slsa-provenance
     action: fail
 ```
+
+Read top to bottom: **fail** if there is a critical CVE, **fail** if there is no SBOM,
+**fail** if there is no provenance. An image passes the gate only when all three hold - which
+is exactly why the hardened `:dhi` image clears it and the ungoverned `:baseline` does not.
 
 Evaluate both images and compare:
 
