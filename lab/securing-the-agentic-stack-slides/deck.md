@@ -40,49 +40,49 @@ Note: Everything today lives at one URL: **agentic.dockerworkshop.com**. That's 
 
 <!-- chrome: false -->
 
-<img src="assets/slide-incident-1.webp" alt="02:47 AM, a commit lands. Author: svc-build-agent" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-incident-commit.webp" alt="02:47 AM. A commit landed. git log shows the author is svc-build-agent, an agent, changing the Dockerfile and 812 lines of dependencies" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: This actually happened. At **2:47 in the morning**, a commit lands - and the author isn't a person. It's an agent: **svc-build-agent**.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-incident-2.webp" alt="02:47 AM commit - Change: bumped a base image, regenerated the Dockerfile" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: What did it change? It **bumped a base image and regenerated the Dockerfile** - real changes to how the app actually gets built.
+Note: This actually happened. At **2:47 in the morning** a commit lands - and the author isn't a person, it's an agent: **svc-build-agent**. Look at what it did: bumped a base image, regenerated the Dockerfile, and pulled in **812 lines** of new dependencies. Real changes to how the app actually gets built.
 
 ---
 
 <!-- chrome: false -->
 
-<img src="assets/slide-incident-3.webp" alt="02:47 AM commit - Reviewer: approved by CI, all checks green" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-incident-review.webp" alt="Who reviewed it? gh pr checks show build, scan, publish all pass and merged to main, but the reviews array is empty" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Who reviewed it? **CI did** - all checks green. That is the only review this change ever got.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-incident-4.webp" alt="02:47 AM commit - Deployed: production, 03:12 AM" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: And it shipped - straight to **production, 3:12 AM.** Twenty-five minutes from an agent's commit to running in prod.
+Note: So who reviewed it? **CI did** - build, scan, publish, all green, merged straight to main. But ask git who actually looked at it and **the reviewers array is empty**. Green checks were the only review this change ever got, and it's running in prod right now.
 
 ---
 
 <!-- chrome: false -->
 
-<img src="assets/slide-incident-5.webp" alt="02:47 AM commit - Reviewed by a human? No" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-incident-approve.webp" alt="Who approved that build? git shows the author is an agent and the human reviewer count is 0 - no human ever approved it" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: And here's the row that matters. **Reviewed by a human? No.** Nobody was awake, nobody signed off - and it's running in prod right now.
+Note: So sit with the question: **who approved that build?** An agent wrote it, CI approved it, and **no human ever did**. Everything we're about to do is really about being able to answer that question - provably. And if that feels like an edge case, it isn't - here are two that actually happened.
 
 ---
 
 <!-- chrome: false -->
 
-<img src="assets/slide-incident.webp" alt="02:47 AM commit, full recap - reviewed by a human: No. Who approved that build?" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+<img src="assets/slide-horror.webp" alt="Horror stories from the wild: 'clean up my project folder' led an agent with root to run rm -rf * and destroy .ssh, .aws and prod.db; 'organize my wife's desktop' became rm -rf family_photos with the Trash bypassed" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: So sit with the question: **who approved that build?** Everything we're about to do is really about being able to answer it - provably. Now let's ground ourselves in why this is suddenly so much harder.
+Note: These aren't thought experiments - they're documented. In both, someone handed an agent a small chore, and the agent had far more reach than the task ever needed. Same shape as the 2:47 AM commit: capability with no boundary. Let me show you both.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-horror-1.webp" alt="AI coding agent horror story: asked to clean up a project folder, an agent with root access runs rm -rf * and deletes .ssh, .aws, .env, logs and the production database" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Story one, from Docker's own write-up. Someone asked an agent to **"clean up my project folder."** The agent had **root the whole time**, ran **`rm -rf *`**, and took `.ssh` keys, `.aws` credentials, and the production database with it. The blast radius was the entire machine - because nothing scoped what the agent could reach. Source: docker.com/blog/ai-coding-agent-horror-stories-security-risks.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-horror-2.webp" alt="Claude Cowork horror story: asked to organize a desktop with 'temporary files only' permission, the agent runs rm -rf family_photos, bypasses the macOS Trash, and 15 years of photos are only saved by iCloud 30-day retention" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Story two. **"Organize my wife's desktop"** - permission was supposedly *temporary Office files only*. The agent ran **`rm -rf family_photos/`**, **bypassed the macOS Trash**, and 15 years of photos were gone. They got lucky - iCloud's 30-day retention still had a copy. **Same story, different path, same damage** - and luck is not a control. Source: docker.com/blog/coding-agent-horror-stories-the-rm-rf-incident.
 
 ---
 

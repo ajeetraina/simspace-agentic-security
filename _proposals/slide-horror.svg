@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#0B1533"/><path d="M1080,-80 C1280,120 1170,400 1440,500 S1660,780 1600,1000 L1760,1000 L1760,-120 Z" fill="#111E42" opacity="0.55"/><path d="M-120,560 C160,470 300,690 560,600 S900,540 1040,760 L1040,1000 L-160,1000 Z" fill="#111E42" opacity="0.40"/>
+<text x="72" y="240" font-size="34" font-weight="800" fill="#E5548A" letter-spacing="2">FROM THE WILD</text>
+<text x="70" y="350" font-size="104" font-weight="800" fill="#FFFFFF">Horror stories</text>
+<text x="72" y="410" font-size="34" fill="#AEB9D6">These aren&#39;t hypothetical - they shipped, and someone paid for them.</text>
+<rect x="72" y="500" width="1456" height="96" rx="12" fill="#17213E"/>
+<rect x="72" y="500" width="6" height="96" rx="3" fill="#4F7CFF"/>
+<text x="116" y="560" font-size="30" font-weight="800" fill="#4F7CFF">1</text>
+<text x="164" y="558" font-size="23" xml:space="preserve"><tspan font-weight="700" fill="#FFFFFF">“Clean up my project folder”</tspan><tspan fill="#AEB9D6"> → agent had root, ran </tspan><tspan font-family="Menlo, 'DejaVu Sans Mono', 'Courier New', monospace" font-weight="700" fill="#E5548A">rm -rf *</tspan><tspan fill="#AEB9D6"> — .ssh · .aws · prod.db gone</tspan></text>
+<rect x="72" y="612" width="1456" height="96" rx="12" fill="#17213E"/>
+<rect x="72" y="612" width="6" height="96" rx="3" fill="#4F7CFF"/>
+<text x="116" y="672" font-size="30" font-weight="800" fill="#4F7CFF">2</text>
+<text x="164" y="670" font-size="23" xml:space="preserve"><tspan font-weight="700" fill="#FFFFFF">“Organize my wife’s desktop”</tspan><tspan fill="#AEB9D6"> → </tspan><tspan font-family="Menlo, 'DejaVu Sans Mono', 'Courier New', monospace" font-weight="700" fill="#E5548A">rm -rf family_photos/</tspan><tspan fill="#AEB9D6"> — Trash bypassed, 15 yrs of photos gone</tspan></text>
+</svg>
