@@ -456,6 +456,14 @@ Note: This is our last segment, **Part 4 of 4: Securing the Agentic Stack**. We'
 
 <!-- chrome: false -->
 
+<img src="assets/slide-governance.webp" alt="A layered approach to AI governance: Docker Business + AI governance policies - Gordon (in-product guidance), Agentic Compose & Docker Agent (declarative orchestration, golden templates), Docker Model Runner (local air-gapped LLM execution), MCP Toolkit & Gateway (only authorized MCP servers), Docker Sandboxes (isolated portable runtime), and Docker Hardened Images as the trusted foundation" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Before we jump into sandboxing, let me show you what we're actually talking about. Securing the agentic stack isn't one product - it's a **layered set of enforceable controls**, and the policies travel with the workload whether it runs on a laptop or in the cloud. **Gordon** gives in-product governance guidance right inside Docker Desktop; **Agentic Compose and the Docker Agent** give you declarative, golden-template orchestration; **Docker Model Runner** keeps LLM execution local and air-gapped; the **MCP Toolkit and Gateway** limit agents to the servers you authorize; **Docker Sandboxes** give each agent an isolated, portable runtime; and underneath it all, **Docker Hardened Images** are the trusted foundation - scanned, verified, authorized. The next few slides zoom into that sandbox layer.
+
+---
+
+<!-- chrome: false -->
+
 <img src="assets/slide-10.webp" alt="Agent with a Sandbox: sbx microVM boundary, DHI MCP server, hardened base, zero CVEs" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: This is where we're headed - the clean end-state, the counterpart to the ungoverned-agent baseline from earlier. Everything the agent does now happens inside a **sandbox boundary, an `sbx` microVM** with its own daemon, its own network, and the host mounted read-only. Same prompt as before - "containerize app" - but watch the flow: the agent has full permissions inside the box, it queries the **DHI MCP server** which only serves signed tools, and it writes `FROM dhi.io/node` because it checked the trusted source before writing the line. The result at the bottom is the whole point: **0 critical, 0 high, 0 medium, 0 low CVEs**, 211 packages, SBOM attached, signed, non-root. Contrast that with the ungoverned `FROM node:20` baseline we started with - same agent, radically different outcome. Let me show you how that sandbox actually works.

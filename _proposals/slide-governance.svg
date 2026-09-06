@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#0B1533"/><path d="M1080,-80 C1280,120 1170,400 1440,500 S1660,780 1600,1000 L1760,1000 L1760,-120 Z" fill="#111E42" opacity="0.55"/><path d="M-120,560 C160,470 300,690 560,600 S900,540 1040,760 L1040,1000 L-160,1000 Z" fill="#111E42" opacity="0.40"/>
+<text x="80" y="96" font-size="48" font-weight="800" fill="#FFFFFF">A layered approach to AI governance</text>
+<text x="80" y="146" font-size="24" fill="#AEB9D6">Every layer adds an enforceable control and the policies travel with the workload, whether it</text>
+<text x="80" y="178" font-size="24" fill="#AEB9D6">runs on a laptop or in the cloud.</text>
+<rect x="90" y="222" width="1420" height="650" rx="16" fill="#0E1A38" stroke="#3B6FE0" stroke-width="2" stroke-dasharray="9 7"/>
+<text x="132" y="272" font-size="20" font-weight="800" fill="#58A6FF" letter-spacing="1.5">DOCKER BUSINESS  +  AI GOVERNANCE POLICIES</text>
+<rect x="132" y="298" width="1336" height="80" rx="10" fill="#16223F" stroke="#28375E" stroke-width="1.5"/>
+<text x="168" y="347" font-size="25" font-weight="800" fill="#FFFFFF">Gordon</text>
+<text x="652" y="347" font-size="22" fill="#A6B6D9">In-product governance guidance, inside Docker Desktop</text>
+<rect x="132" y="390" width="1336" height="80" rx="10" fill="#16223F" stroke="#28375E" stroke-width="1.5"/>
+<text x="168" y="439" font-size="25" font-weight="800" fill="#FFFFFF">Agentic Compose &amp; Docker Agent</text>
+<text x="652" y="439" font-size="22" fill="#A6B6D9">Declarative multi-agent orchestration - secure golden templates</text>
+<rect x="132" y="482" width="1336" height="80" rx="10" fill="#16223F" stroke="#28375E" stroke-width="1.5"/>
+<text x="168" y="531" font-size="25" font-weight="800" fill="#FFFFFF">Docker Model Runner</text>
+<text x="652" y="531" font-size="22" fill="#A6B6D9">Local, air-gapped LLM execution for your workloads</text>
+<rect x="132" y="574" width="1336" height="80" rx="10" fill="#16223F" stroke="#28375E" stroke-width="1.5"/>
+<text x="168" y="623" font-size="25" font-weight="800" fill="#FFFFFF">MCP Toolkit &amp; Gateway</text>
+<text x="652" y="623" font-size="22" fill="#A6B6D9">Access only to MCP servers the organization authorizes</text>
+<rect x="132" y="666" width="1336" height="80" rx="10" fill="#16223F" stroke="#28375E" stroke-width="1.5"/>
+<text x="168" y="715" font-size="25" font-weight="800" fill="#FFFFFF">Docker Sandboxes</text>
+<text x="652" y="715" font-size="22" fill="#A6B6D9">Isolated, portable runtime - policies travel with the sandbox</text>
+<rect x="132" y="758" width="1336" height="80" rx="10" fill="#1B4BA6" stroke="#5B8DEF" stroke-width="2"/>
+<text x="168" y="807" font-size="25" font-weight="800" fill="#FFFFFF">Docker Hardened Images (DHI)</text>
+<text x="652" y="807" font-size="22" fill="#D5E1F7">The trusted foundation: scanned, verified, authorized</text>
+</svg>
