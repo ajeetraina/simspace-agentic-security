@@ -42,7 +42,39 @@ Note: Everything today lives at one URL: **agentic.dockerworkshop.com**. That's 
 
 <img src="assets/slide-05.webp" alt="Slide 5" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: So - **why does supply chain security matter?** We've been saying it for years, and it's always been true. But the subtitle is the part that's new: **especially when agents are doing the pulling.** For a long time the mental model was that a human made a deliberate choice about every dependency and every base image that entered the build. That assumption is quietly breaking. Once an agent is doing the pulling, the discipline you relied on - a person choosing, reviewing, deciding - isn't automatically there anymore. Let me show you exactly what changes.
+Note: So - **why does supply chain security matter?** We've been saying it for years, and it's always been true. But the subtitle is the part that's new: **especially when agents are doing the pulling.** For a long time the mental model was that a human made a deliberate choice about every dependency and every base image that entered the build. That assumption is quietly breaking. Once an agent is doing the pulling, the discipline you relied on - a person choosing, reviewing, deciding - isn't automatically there anymore. But before we get into the supply chain, let's step back and look at why agents change the picture at all.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-agents-real-work.webp" alt="AI Agents are here and doing real work — three columns: Engineering ships PRs, Marketing pulls CRM data and launches campaigns, Finance reconciles reports and queries systems live" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Let's be clear-eyed: **agents are already doing real work** across the business, not just answering questions. In **engineering**, they read whole codebases and ship pull requests with no human in the loop. In **marketing**, they pull CRM data and launch campaigns end to end, moving from research to send. And in **finance**, they reconcile reports and query live systems, closing the loop between ledger, dashboard, and decision. The common thread is that each of these agents has real access to real systems and takes real actions. That's the value — and, as we'll see next, that's exactly where the danger begins.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-claws.webp" alt="Then came Claws — agents that take actions autonomously, with the OpenClaw ecosystem of agents touching customer records, financial systems, and the open internet" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Then came **Claws** — a shorthand for the new breed of agents that don't just answer, they *act*. A Claw will chat with you and then go update the record, send the email, and make the payment, all on your behalf, turning read access into **write access**. And it's not one tool — the **OpenClaw ecosystem** shown here means every employee now has an army of agents touching customer records, financial systems, and the open internet, each one carrying that person's identity and permissions. That's a profound shift: the blast radius of a single mistake or a single manipulated agent is suddenly enormous. So how does this actually land inside a typical company? Let's follow the approval trail.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-agents-approved.webp" alt="Agents got approved, security found out last — leadership decides, teams plug them in, security hears about it last; the choice between allow it or block it, and the real job is neither" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: Here's the uncomfortable pattern in most organizations today: **agents got approved, and security found out last**. Leadership decides on the timeline, teams plug agents into repos and cloud accounts and production data, and only then does security hear about it — usually once the agent already has access. That leaves security two bad options: **allow it** and take on risk nobody fully understands, or **block it** and get routed around as adoption moves into the shadows anyway. The real job, as the slide says, is **neither** — it's to help the business move fast *without* losing control. That reframing is the heart of governance, and it starts with understanding the one structural weakness every agent shares.
+
+---
+
+<!-- chrome: false -->
+
+<img src="assets/slide-lethal-trifecta.webp" alt="The lethal trifecta — access to private data, exposure to untrusted content, and ability to act externally; a useful agent has all three by design and the only fix is enforcement at runtime" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: This is the single most important concept in the whole session: the **lethal trifecta**. Every genuinely useful agent has three things at once — **access to private data**, **exposure to untrusted content** like web pages, emails, and MCP responses, and the **ability to act externally** by sending email or hitting APIs. Individually each is fine; together they mean untrusted content can carry an instruction the agent follows, using your private data, to take an action you never intended. And here's the kicker: a useful agent has **all three by design** — you can't train it out, prompt it out, or policy-doc it out. The only real fix is an **enforcement layer at runtime**, which is exactly what this workshop builds. Before we get there, let's see *why* this is so different from how we've always worked.
 
 ---
 
@@ -98,23 +130,7 @@ Note: Your turn. Head into the workshop - **agentic.dockerworkshop.com** - and r
 
 <img src="assets/slide-framework.webp" alt="Every agent-driven change answers four questions: Evidence (what is in it, where from), Baseline (did it start trustworthy), Gate (is it allowed to pass), Boundary (what could it reach)" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: No matter how the agent produced a change, governing it comes down to **four questions** - and these are the four layers of the road we're about to walk. **Evidence:** what is in this artifact, and where did it come from - SBOM, VEX, SLSA provenance. **Baseline:** did it start from something trustworthy - a Docker Hardened Image. **Gate:** is it allowed to pass - build policies, signing, admission. **Boundary:** what could it reach while it worked - the sandbox runtime. Evidence and baseline make governance possible; gate and boundary make it real. We'll take one question per lab, and I'll bring the matching card back each time. Next, the road itself.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-journey-0.webp" alt="The journey, checkpoint 0 of 4: the whole development-to-production road, everything still to prove, red baseline hot" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: This is the whole road we travel today - and it flows **left to right, development to production**.
-
-- **Left = DEVELOPMENT:** the agent works inside an `sbx` microVM, host read-only.
-- **Right = PRODUCTION:** the runtime is locked down - read-only, cap-drop ALL, non-root.
-- **The CI GATE in the middle is the dev-to-prod boundary. It fails closed** - nothing crosses into production unless it's provable.
-
-Code moves along the road: developed, based on a trusted image, built with attestations, signed - then it has to pass the gate before it's deployed and invoked.
-
-Right now none of it is provable. The ungoverned baseline we just watched the agent ship is `FROM node:20`, 431 packages, no SBOM, running as root: **0 of 4 stages green**. Each of the four labs turns one segment of this road green, and we come back to this same picture at each checkpoint. This is checkpoint 0 of 4 - the start line.
+Note: No matter how the agent produced a change, governing it comes down to **four questions** - and these are the four layers of the road we're about to walk. **Evidence:** what is in this artifact, and where did it come from - SBOM, VEX, SLSA provenance. **Baseline:** did it start from something trustworthy - a Docker Hardened Image. **Gate:** is it allowed to pass - build policies, signing, admission. **Boundary:** what could it reach while it worked - the sandbox runtime. Evidence and baseline make governance possible; gate and boundary make it real. We'll take one question per lab, and I'll bring the matching card back each time. Let's start with the first question - Evidence.
 
 ---
 
@@ -240,14 +256,6 @@ Note: Your turn - this is the hands-on for **SBOM, VEX and SLSA**. In the worksh
 
 <!-- chrome: false -->
 
-<img src="assets/slide-journey-1.webp" alt="The journey, checkpoint 1 of 4: Lab 1 done, the BUILD stage is now green - you can see what is in the image" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Checkpoint one - Lab 1 is done, so **BUILD** is green on the road. We can now see what's inside the image: Buildx attached an **SBOM plus provenance at build time**, so the box is no longer a black hole. Notice the progress bar - **1 of 4 stages provable** - and that ungoverned baseline strip underneath is the reminder of where we started: `FROM node:20`, 431 packages, no SBOM, running as root, nothing you can prove. Same discipline shows up at both ends of this road: the agent that builds runs in a box, and the service it becomes runs in a box. Next we tackle the segment just to the left of BUILD - the base image itself.
-
----
-
-<!-- chrome: false -->
-
 <img src="assets/slide-framework-2.webp" alt="Question 2 of 4 - Baseline: did it start from something trustworthy? Docker Hardened Images" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: That segment is the second question - **Baseline:** did the image start from something trustworthy? The answer is a **Docker Hardened Image** instead of whatever the agent grabbed off the internet. Evidence told us what's in the box; baseline makes sure we began from a good one. Here's what that looks like in practice.
@@ -280,6 +288,14 @@ Note: Here's the same `docker scout compare` you'd run yourself, side by side. O
 
 <!-- chrome: false -->
 
+<img src="assets/slide-hardened-images.webp" alt="Docker Hardened Images: ultra-minimal footprint with near-zero CVEs; 7-day remediation for critical and high CVEs, SLA-guaranteed; built-in provenance, SLSA compliance and SBOMs - browse the catalog at hub.docker.com/hardened-images/catalog" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
+
+Note: And this is where those numbers come from - the **Docker Hardened Images** catalog itself. Three promises define every image here. **Ultra-minimal footprint with near-zero CVEs** - that's the column of zeros you just saw. **7-day remediation for critical and high CVEs, SLA-guaranteed** - so when something does land, it's Docker's job to fix it fast, not yours. And **built-in provenance, SLSA compliance, and SBOMs** - the evidence rides along in every image. On the right you can see the breadth: databases, runtimes, tools - arangodb, redis, tomcat, grafana, golang, node.js, and more - each Alpine or Debian, multi-arch, FIPS-ready. Browse the whole catalog at **hub.docker.com/hardened-images/catalog**. Now let's see exactly what that swap looks like in a real Dockerfile.
+
+---
+
+<!-- chrome: false -->
+
 <img src="assets/slide-33.webp" alt="Slide 33" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: This is the actual migration for `catalog-service-node`, before on the left and after on the right. The change that matters is the **`FROM` line**: `node:22-slim` becomes a two-stage build - `dhi.io/node:24-debian13-dev` for the build stage where you run `npm ci`, and the distroless `dhi.io/node:24-debian13` for the final stage, copying `node_modules` across with `--from=base`. Notice what *drops out* on the right: no more `RUN useradd` and `USER appuser`, because DHI already runs as non-root for you. As the callout says, the runtime stage is **distroless - no shell, no npm** - your build tooling lives only in the dev stage, the **source is unchanged, and the Compose file doesn't change at all**. This is a base swap, not a rewrite. Now let's zoom out from one service to the whole stack.
@@ -299,14 +315,6 @@ Note: This is the whole Product Catalog stack, and it's where vulnerabilities ac
 <img src="assets/slide-try-dhi.webp" alt="Try it - DHI: your turn to swap a base image to a Docker Hardened Image and watch the CVE count collapse" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: Your turn - the **Docker Hardened Images** hands-on. In the workshop, take the catalog service off its ungoverned `node:20` base and onto a DHI base with a one-line `FROM` swap, rebuild, and rescan. Watch the CVE count collapse the way it did on the last slide - 2 Critical and 46-plus High down toward zero - and confirm the SBOM, provenance, and signatures ride along. Once BASE is trustworthy, come back and we'll mark it green.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-journey-2.webp" alt="The journey, checkpoint 2 of 4: Lab 2 done, BASE is now green - hardened base, the CVEs collapse" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Checkpoint two - **Lab 2 is done, BASE turns green**. The hardened image now feeds the build: **DHI, 0 CVEs, SLSA L3**, and you can see the CVEs collapse right where we started this segment. The progress bar reads **2 of 4 stages provable**, Lab 1 and Lab 2 both lit. Two segments of the road are green; the base and the build are both trustworthy now. Next we push toward the CI gate that turns all of this into an enforced boundary.
 
 ---
 
@@ -379,14 +387,6 @@ Note: Here's why all the earlier hardening pays off at the gate. **With a DHI ba
 <img src="assets/slide-try-lab3.webp" alt="Try it - Verify it. Gate it.: your turn to write a Docker Scout policy and make CI fail closed on the ungoverned image" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: Your turn - the **Verify it, Gate it** hands-on. In the workshop, attach and verify the attestations, then write the `docker-scout-policy.yaml` and run it against both images: watch the ungoverned `:baseline` fail the gate and the hardened `:dhi` pass. Then wire that same policy into the CI workflow so the pipeline fails closed on every push - no human eyeballing required. Once the gate holds, come back and we'll mark SIGN, GATE and DEPLOY green.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-journey-3.webp" alt="The journey, checkpoint 3 of 4: Lab 3 done, SIGN, GATE and DEPLOY are now green - signed, gated, promoted to production" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: **Checkpoint 3 - Lab 3 is done.** Trace the road: the agent develops in a sandbox, builds on a hardened DHI base with zero CVEs, attaches SBOM and provenance at build, and now **SIGNs keylessly, bound to the digest**. The **CI GATE** - no critical CVEs, SBOM present, provenance verified - **fails closed** at the dev-to-prod boundary, and because our image is provable it passes and gets promoted: **DEPLOY** goes green with a signed image, verified and pinned by digest. **Three of four stages provable now** - Labs 1, 2, and 3 are lit. Compare that to the ungoverned baseline the agent shipped on your host: `FROM node:20`, 431 packages, no SBOM, root, nothing you can prove. The one box still grey is **INVOKE** - the running Agent/MCP client at the far right. Same discipline at both ends: the agent that *builds* runs in a box, and the service it *becomes* must run in a box too. That runtime end - MCP servers and tool isolation - is Lab 4, and it's next.
 
 ---
 
@@ -538,15 +538,7 @@ Note: Last technical slide, and it's the one that separates a demo from producti
 
 <img src="assets/slide-try-lab4.webp" alt="Try it - Securing the Agentic Stack: your turn to run the agent in a sandbox and wire MCP servers through the governed gateway" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
-Note: Your turn - the **Securing the Agentic Stack** hands-on. In the workshop, run the agent inside an `sbx` sandbox so it can't touch your host, wire the DHI MCP server in through the gateway, and apply a Cedar policy that permits only the tools you named - then watch a disallowed tool call get denied and audited. That closes the loop: the agent that builds runs in a box, and the tools it reaches for are governed. Once it's boxed and governed, come back and we'll light up the final checkpoint.
-
----
-
-<!-- chrome: false -->
-
-<img src="assets/slide-journey-4.webp" alt="The journey, checkpoint 4 of 4: Lab 4 done, DEVELOP and INVOKE green, both sandbox boxes solid, the road is provable end to end" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: This is the final checkpoint, **4 of 4** - the whole road is green. On the left, **DEVELOPMENT** sits inside its own dashed box: the agent develops in an sbx microVM with the host read-only, on a hardened base with 0 CVEs and SLSA L3, buildx attaches SBOM and provenance, and signing binds everything to a verifiable digest. In the middle the **CI GATE** does its job - no critical CVEs, SBOM present, provenance verified - and it **FAILS CLOSED** at the dev-to-prod boundary. On the right, **PRODUCTION** is boxed too: the signed image is deployed pinned by digest, and the agent invokes MCP as a signed, read-only client under `cap_drop ALL` and non-root. The one line to land is at the bottom - **same discipline at both ends**: the agent that BUILDS runs in a box, and the service it BECOMES runs in a box. Least privilege on the left and the right of the road, and 4 of 4 stages provable.
+Note: Your turn - the **Securing the Agentic Stack** hands-on. In the workshop, run the agent inside an `sbx` sandbox so it can't touch your host, wire the DHI MCP server in through the gateway, and apply a Cedar policy that permits only the tools you named - then watch a disallowed tool call get denied and audited. That closes the loop: the agent that builds runs in a box, and the tools it reaches for are governed. Once it's boxed and governed, come back and we'll bring it home.
 
 ---
 
