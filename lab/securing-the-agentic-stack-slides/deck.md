@@ -176,14 +176,6 @@ Note: This is our section marker for Lab 1 - the three building blocks: **SBOM, 
 
 <!-- chrome: false -->
 
-<img src="assets/slide-20.webp" alt="Slide 20" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: These are the three building blocks we'll lean on for the rest of this lab, so let's put names to them up front. **SBOM** is the software bill of materials - the full ingredient list of what's actually inside the image. **VEX** is the exploitability layer on top of that - which of the CVEs we find actually matter for this product. And **SLSA** is the provenance story - proof of how and where the artifact was built. Keep this left-to-right order in your head: SBOM tells you what's in the box, VEX tells you what to worry about, and SLSA tells you to trust where the box came from. We'll walk through each one in turn.
-
----
-
-<!-- chrome: false -->
-
 <img src="assets/slide-22.webp" alt="Slide 22" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: Let's start with the **SBOM** - your software ingredient list. The SBOM is simply the complete list of every package inside the image, and image analysis uses it to understand exactly what packages and versions are present. Here's the key detail on the right: Docker Scout matches those packages, expressed as **PURLs**, against an advisory database aggregated from 23 sources. Notice it's PURL-based matching, not CPE - that's what keeps false positives down. And when it scores severity, it prioritizes the vendor advisory first, falls back to NIST, and prefers CVSS v4 over v3. One thing worth calling out: Scout will use an SBOM attestation if the image already has one, but if it doesn't, Scout just indexes the image contents and builds one on the fly. Next let's see how you actually generate and query these.
