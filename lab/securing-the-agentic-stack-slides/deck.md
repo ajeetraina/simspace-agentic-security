@@ -80,14 +80,6 @@ Note: This is the single most important concept in the whole session: the **leth
 
 <!-- chrome: false -->
 
-<img src="assets/slide-06.webp" alt="Slide 6" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
-
-Note: Put the two workflows side by side. On the left, the **traditional workflow**: a developer pulls the base image manually, with intent; installs dependencies that get reviewed in a PR; and CI runs against human-authored config. Every one of those steps has a person in the loop who chose it. On the right, the **agentic workflow**, and notice everything turns into a warning triangle - the agent pulls the base image autonomously, installs packages with no human review, invokes external tools with real credentials, and modifies the Dockerfile mid-pipeline. Same steps, but the judgment and the review are gone, and now there are live credentials in the mix. The line at the bottom is the one to remember: **"the better the agent, the bigger the blast radius."** A more capable agent does more, touches more, and can therefore break more. Let's visualize where all those agents actually sit.
-
----
-
-<!-- chrome: false -->
-
 <img src="assets/slide-06b.webp" alt="The Traditional Workflow: inner and outer development loops with a human developer at every stage" width="1600" height="900" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill" />
 
 Note: Here's the world we grew up in - **the traditional workflow**. A human writes, reviews, and ships at every stage, and the key line is at the top: **the attack surface is only what you choose to pull.** You've got the **inner loop** on the left - code, open source, build, test - the fast cycle on your own machine, and every icon around it is a person. Then you **push**, and it flows into the **outer loop** on the right - integrate, test, deploy - again, humans at every point. It's a chain of deliberate human decisions from left to right. Hold this picture in your head, because the next slide keeps the exact same map and swaps out just one thing.
