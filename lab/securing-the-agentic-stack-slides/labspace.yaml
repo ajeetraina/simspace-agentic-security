@@ -1,5 +1,5 @@
-# The "Securing the Agentic Stack" workshop deck (the WAD MasterCopy PDF under
-# abstract/slides/), presented in Simspace as full-bleed slides. Every page is a
+# The "Securing the Agentic Stack" workshop deck (FINALE_WAD_Workshop, the new
+# Docker /Next theme), presented in Simspace as full-bleed slides. Every page is a
 # full-bleed image so the branding/content matches the master exactly. The sibling
 # `securing-the-agentic-stack` lab's simulator is wired in, so scripted terminal
 # demos can be spliced into the deck if desired (see spec/slidedeck.md in
